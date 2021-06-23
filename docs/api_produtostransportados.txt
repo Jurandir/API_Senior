@@ -1,0 +1,14 @@
+endpoint:
+GET /api/produtostransportados
+
+Objetivo:
+Receber a lista de tipos de produtos transportados pela TERMACO
+
+SQL CARGAS:
+SELECT CODIGO,UPPER( NOME ) NOME ,DATATU FROM CARGASSQL.dbo.PRD ORDER BY NOME
+
+PARAMETROS:
+(null)
+
+TABELAS:
+PRD : "Cadastro de tipos de produtos"

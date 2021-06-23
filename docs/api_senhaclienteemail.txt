@@ -1,0 +1,14 @@
+endpoint:
+GET /api/senhaclienteemail
+
+Objetivo:
+Receber a lista de emails do cliente cadastrada no sistema
+
+SQL CARGAS:
+SELECT lower(CONCAT(EMAIL,';',EMAILSADICIONAIS)) EMAILS FROM CLI WHERE CGCCPF = '${cnpj}'
+
+PARAMETROS:
+CNPJ
+
+TABELAS:
+CLI : "Cadastro de clientes"

@@ -1,0 +1,64 @@
+endpoint:
+GET /api/posicaocargaapp
+
+Objetivo:
+Lista de Notas Fiscais em CTRC por CNPJ por periodo
+
+SQL CARGAS:
+SELECT  CNH.DATA,
+        CNH.CLI_CGCCPF_REMET CNPJ_REMETENTE,
+        CNH.CLI_CGCCPF_DEST CNPJ_DESTINATARIO,
+        REME.NOME REMETENTE,
+        DEST.NOME DESTINATARIO,
+        NFR.NF NOTAFISCAL,
+        NFR.SERIE SERIE_NF,
+        CNH.TRE_CODIGO TRECHO,
+        CONCAT(NFR.EMP_CODIGO,NFR.CNH_SERIE,NFR.CNH_CTRC) CTRC,
+        CNH.NATUREZA,
+        NFR.VOLUME,
+    CASE WHEN (CNH.CLI_CGCCPF_DEST   ='${cnpj}') THEN 1 ELSE 0 END FLAG_DESTINATARIO,
+    CASE WHEN (CNH.CLI_CGCCPF_REMET  ='${cnpj}') THEN 1 ELSE 0 END FLAG_REMETENTE,
+    CASE WHEN (CNH.CLI_CGCCPF_RECEB  ='${cnpj}') THEN 1 ELSE 0 END FLAG_RECEBEDOR,
+    CASE WHEN (CNH.CLI_CGCCPF_TOMADOR='${cnpj}') THEN 1 ELSE 0 END FLAG_TOMADOR,
+    CASE WHEN (CNH.CLI_CGCCPF_PAG    ='${cnpj}') THEN 1 ELSE 0 END FLAG_PAGADOR,
+    CNH.ENTREGADO FLAG_ENTREGUE,
+    CNH.PREVENTREGA,
+    CNH.DATAENTREGA 
+    FROM CNH
+    JOIN NFR ON NFR.EMP_CODIGO = CNH.EMP_CODIGO AND NFR.CNH_CTRC = CNH.CTRC AND NFR.CNH_SERIE = CNH.SERIE
+    JOIN CLI REME ON REME.CGCCPF = CNH.CLI_CGCCPF_REMET
+    JOIN CLI DEST ON DEST.CGCCPF = CNH.CLI_CGCCPF_DEST
+    WHERE 1=1
+        ${s_where} ${s_where2}
+        AND (CNH.CLI_CGCCPF_DEST      = '${cnpj}'
+        OR CNH.CLI_CGCCPF_REMET   = '${cnpj}'
+        OR CNH.CLI_CGCCPF_TOMADOR = '${cnpj}'
+        OR CNH.CLI_CGCCPF_PAG     = '${cnpj}'
+        OR CNH.CLI_CGCCPF_RECEB   = '${cnpj}')
+    ORDER BY CNH.DATA
+    OFFSET (${pagina_nro} - 1) * ${pagina_tam} ROWS
+    FETCH NEXT ${pagina_tam} ROWS ONLY 
+
+PARAMETROS:
+1) AND NFR.NF = ${i_numero} 
+2) AND NFR.CNH_CTRC = ${i_ctrc} AND NFR.EMP_CODIGO='${s_emp}' AND NFR.CNH_SERIE='${s_ctrc_serie}' 
+3) AND CNH.DATA  >= '${dt_inicial}' 
+4) AND CNH.DATA  <= '${dt_final}' 
+
+OBS:
+i_numero : "Numero da Nota Fiscal"
+i_ctrc : "Numero do conhecimento de frete"
+s_emp : "Sigla da filial emitente do conhecimento"
+s_ctrc_serie : "Serie do conhecimento"
+dt_inicial : "Data Inicial"
+dt_final : "Data Final"
+
+PAGINAÇÃO :
+pagina_nro : "Numero da pagina a ser retornada no SQL"
+pagina_tam : "Quantidade de linhas/registros por pagina"
+
+TABELAS:
+CNH : "Conhecimento de transporte CTRC"
+NFR : "Nota Fiscal do cliente"
+CLI : "Cadastro de clientes"
+

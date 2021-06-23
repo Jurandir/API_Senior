@@ -1,0 +1,32 @@
+endpoint:
+GET /api/cartafreteplacas
+
+Objetivo:
+Retornar ultimas cartas fretes para uma placa de veiculo.
+
+SQL CARGAS:
+    SELECT OPG.EMP_CODIGO EMPRESA,OPG.CODIGO,CONCAT(OPG.EMP_CODIGO,'-',OPG.CODIGO) CARTAFRETE,
+            TRIM(CONCAT(VEI_PLACA,' ',CARRETA,' ',VEI_PLACA_SEMIREBOQUE)) PLACAS,
+            TRIM(CONCAT(CID.NOME,' / ',CID.UF)) CIDADE,
+            MOT.NOME MOTORISTA,
+            TRE_CODIGO TRECHO,
+            DATA
+    FROM CARGASSQL.dbo.OPG
+    JOIN CARGASSQL.dbo.MOT ON MOT.PRONTUARIO = OPG.MOT_PRONTUARIO
+    JOIN CARGASSQL.dbo.VEI ON PLACA = '${placas}'
+    JOIN CARGASSQL.dbo.CID ON CID.CODIGO = VEI.CID_CODIGO				
+    WHERE (VEI_PLACA='${placas}' OR CARRETA='${placas}' OR VEI_PLACA_SEMIREBOQUE='${placas}')
+    and CAST(DATA as date) >= (SELECT DATEADD(DAY, -5, MAX(CAST(DATA as date)) ) FROM OPG 
+                                WHERE VEI_PLACA='${placas}' OR 
+                                    CARRETA='${placas}' OR 
+                                    VEI_PLACA_SEMIREBOQUE='${placas}' )
+    ORDER BY OPG.DATATU DESC 
+
+PARAMETROS:    
+placas : "Placa do Veiculo"
+
+TABELAS:
+OPG : "Carta Frete"
+MOT : "Cadastro de Motoristas"
+VEI : "Cadastro de Veiculos"
+CID : "Cadastro de Cidades"

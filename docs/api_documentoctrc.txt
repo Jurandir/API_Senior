@@ -1,0 +1,46 @@
+endpoint:
+POST /api/documentoctrc
+
+Objetivo:
+Obter dados gerais da CTRC.
+
+SQL CARGAS:
+SELECT 
+    CNH.DATA,
+    CONCAT(CNH.EMP_CODIGO,'-',CNH.SERIE,'-',CNH.CTRC) as CONHECIMENTO,
+    REME.NOME              as REMETENTE,
+    DEST.NOME              as DESTINATARIO,
+    CNH.NF,
+    CNH.TRE_CODIGO         as TRECHO,
+    CNH.EMP_CODIGO         as FILIAL,
+    CNH.CTRC               as NUMERO_CTRC,
+    CNH.CHAVECTE,
+    EMP.CGC                as EMITENTE,
+    DAE.CODDAE             as DAE_CODIGO,
+    DAE.CODRECEITA         as DAE_CODRECEITA,
+    DAE.CLI_CGCCPF_CLIDEST as DAE_CONTRIBUINTE,
+    DAE.DATAEMISSAO        as DAE_EMISSAO,
+    DAE.VENCIMENTO         as DAE_VENCIMENTO,
+    DAE.DATABAIXA          as DAE_BAIXA,
+    DAE.VALOR              as DAE_VALOR,
+    CONCAT(DAE.EMP_CODIGO,DAE.CODIGO) as DAE_IMPRESSO
+    FROM CNH
+    LEFT JOIN CLI REME ON REME.CGCCPF    = CNH.CLI_CGCCPF_REMET
+    LEFT JOIN CLI DEST ON DEST.CGCCPF    = CNH.CLI_CGCCPF_REMET
+    LEFT JOIN EMP      ON EMP.CODIGO     = CNH.EMP_CODIGO
+    LEFT JOIN DAE      ON EMP_CODIGO_CNH = CNH.EMP_CODIGO AND CNH_CTRC = CNH.CTRC
+WHERE  
+        CNH.EMP_CODIGO = '${empresa}' AND
+        CNH.SERIE      = '${serie}'   AND
+        CNH.CTRC       = ${documento}
+
+PARAMETROS:
+empresa   : "Sigla da Filial"
+serie     : "Serie da CTRC"
+documento : "Numero do conhecimento CTRC"
+
+TABELAS:
+CNH : "Tabela de conhecimento / CTRC"
+CLI : "Cadastro de clientes"
+EMP : "Cadastro de Filial e Parceiros"
+DAE : "Documento de Arrecadação Estadual"

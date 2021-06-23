@@ -1,0 +1,23 @@
+endpoint:
+POST /api/listaNFctrc
+
+Objetivo:
+Retornar com a lista de NFs de uma CTRC informada
+
+SQL CARGAS:
+SELECT DISTINCT 
+    CONCAT (NFR.EMP_CODIGO,'-',NFR.CNH_SERIE,'-',NFR.CNH_CTRC) AS DOCUMENTO,
+    NFR.DATA, CNH.DATAENTREGA, NFR.NF, NFR.VALOR, NFR.VOLUME, NFR.CHAVENFE, NFR.CLI_CGCCPF_REMET AS EMITENTE_NFE
+FROM CARGASSQL.dbo.NFR
+JOIN CARGASSQL.dbo.CNH ON NFR.EMP_CODIGO=CNH.EMP_CODIGO AND NFR.CNH_SERIE=CNH.SERIE AND NFR.CNH_CTRC=CNH.CTRC
+WHERE 
+NFR.EMP_CODIGO='${empresa}' AND NFR.CNH_SERIE='${serie}' AND NFR.CNH_CTRC=${numero}
+
+PARAMETROS:
+empresa : "Sigla da Empresa/Filial"
+serie   : "Serie da CTRC"
+numero  : "Numero da CTRC"
+
+TABELAS:
+NFR : "Tabela de notafiscal"
+CNH : "Tabela de Conhecimento/CTRC"

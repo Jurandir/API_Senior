@@ -1,0 +1,25 @@
+POST /api/placasveiculo
+
+Objetivo:
+Recuperar dados do veiculo com base na placa
+
+SQL CARGAS:
+SELECT 
+        VEI.PLACA,
+        VEI.MARCA,
+        AGR.NOME AGREGADO,
+        VEI.BLOQUEIO,
+        CONCAT(CID.NOME,' / ',CID.UF) CIDADE,
+        CURRENT_TIMESTAMP DATA
+    FROM CARGASSQL.dbo.VEI 
+        JOIN CARGASSQL.dbo.AGR ON AGR.CGCCPF = VEI.AGR_CGCCPF
+        JOIN CARGASSQL.dbo.CID ON CID.CODIGO = VEI.CID_CODIGO
+    WHERE PLACA = '${placas}'
+
+PARAMETROS:
+placas : "Placa do veiculo"
+
+TABELAS:
+VEI : "Cadastro de Veiculos"
+ARG : "Cadastro de Agregados"
+CID : "Cadastro de Cidades"

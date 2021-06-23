@@ -1,0 +1,102 @@
+endpoint:
+POST /api/posicaoCargaXLS
+
+Objetivo:
+Obter dados sobre o CTRC para montar uma planilha Excel.
+
+SQL CARGAS:
+Sql-1:
+            SELECT TOP ${QTDE_LINHAS_XLS} 
+                cnh.pedido AS PEDIDO
+                ,nfr.nf AS NF
+                ,nfr.serie AS SERIENF
+                ,nfr.pnf AS PESONF
+                ,cnh.emp_codigo AS EMPCODIGO
+                ,cnh.serie AS SERIECTRC
+                ,cnh.ctrc AS CTRC
+                ,cnh.data AS DATACTRC
+                ,cnh.dataembarque AS DATAEMBARQUE
+                ,cnh.totfrete AS TOTFRETE
+                ,cli_remet.nome AS NOMEREMET
+                ,cnh.cli_cgccpf_remet AS CGCCPFREMET
+                ,cid_remet.nome AS CIDADEREMET
+                ,cid_remet.uf AS UFREMETENTE
+                ,cli_dest.nome AS NOMEDEST
+                ,cnh.cli_cgccpf_dest AS CGCCPFDEST
+                ,cid_dest.nome AS CIDADEDEST
+                ,cid_dest.uf AS UFDESTINATARIO
+                ,cnh.datacoleta AS DATACOLETA
+                ,cnh.preventrega AS PREVENTREGA
+                ,cnh.dataentrega AS DATAENTREGA
+                ,fat.codigo AS FATURA
+                ,fat.valor AS FATVALOR
+                ,fat.datavenc AS FATVENC
+                ,cnh.datachegada AS DATACHEGADA
+                ,nfr.valor AS VALORNF
+            FROM cnh
+            LEFT JOIN nfr ON nfr.emp_codigo = cnh.emp_codigo
+                AND nfr.cnh_serie = cnh.serie
+                AND nfr.cnh_ctrc = cnh.ctrc
+            LEFT JOIN cli cli_remet ON cli_remet.cgccpf = cnh.cli_cgccpf_remet
+            LEFT JOIN cli cli_dest ON cli_dest.cgccpf = cnh.cli_cgccpf_dest
+            LEFT JOIN cli cli_pag ON cli_pag.cgccpf = cnh.cli_cgccpf_pag
+            LEFT JOIN cid cid_remet ON cid_remet.codigo = cli_remet.cid_codigo
+            LEFT JOIN cid cid_dest ON cid_dest.codigo = cli_dest.cid_codigo
+            LEFT JOIN fat ON fat.codigo = cnh.fat_codigo
+            WHERE cnh.data >= Convert(DATETIME, '${dataini}', 120)
+                AND cnh.data <= Convert(DATETIME, '${datafim}', 120)
+                AND cnh.STATUS = 'I'
+                AND cnh.serie = 'E'
+                AND (
+                    ( SUBSTRING(cnh.cli_cgccpf_remet,1,8) = ${wraiz}) OR 
+                    ( SUBSTRING(cnh.cli_cgccpf_dest,1,8) = ${wraiz} )  OR 
+                    ( SUBSTRING(cnh.cli_cgccpf_pag,1,8) = ${wraiz}  ) )
+            ORDER BY cnh.data
+                ,cnh.ctrc
+                ,cnh.dataentrega 
+
+Sql-2:
+            SELECT TOP 1 
+                 mnf.emp_codigo       AS EMPRESA
+                ,mnf.codigo           AS MNFCODIGO
+                ,mnf.data             AS DATAMNF
+                ,mnf.chegada          AS CHEGADAMNF
+                ,mnf.dtiniciodescarga AS INICIODESCARGA
+                ,mnf.dtfinaldescarga  AS FINALDESCARGA
+            FROM trb
+            LEFT JOIN mnf ON trb.emp_codigo = mnf.emp_codigo
+                AND trb.mnf_codigo = mnf.codigo
+            WHERE trb.emp_codigo_cnh = '${emp}'
+                AND trb.cnh_serie = '${ser}'
+                AND trb.cnh_ctrc = '${ctrc}'
+            ORDER BY mnf.chegada
+
+Sql-3:
+select CONCAT('[ ',convert(varchar, oun.dataoco ,105),' ',convert(varchar, oun.dataoco ,108),' - ',oco.nome,' ]') OCORRENCIA
+   from oco
+   left join oun on oun.oco_codigo=oco.codigo
+  where
+    oun.chave='${emp}${ser}${ctrc}' and oco.codigo <> '99'
+  order by oun.dataoco             
+
+Sql-4:
+select 
+        ime.meg_codigo AS CODIGOMEG, 
+        ime.emp_codigo AS EMPCODIGOMEG,
+        ime.recebedor  AS RECEBEDOR
+from ime where ime.cnh_ctrc='${ctrc}' 
+    and ime.cnh_serie='${ser}' 
+    and ime.emp_codigo_cnh='${emp}' 
+
+Sql-5:
+select 
+    data         AS DATAMEG, 
+    tipoentrega  AS TIPOENTREGA
+from meg where CODIGO = '${megCod}' 
+    and emp_codigo = '${megEmp}'
+
+Sql-6:
+
+PARAMETROS:
+
+TABELAS:

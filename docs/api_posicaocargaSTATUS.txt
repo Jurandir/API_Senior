@@ -1,0 +1,49 @@
+endpoint:
+GET /api/posicaocargaSTATUS
+
+Objetivo:
+Receber o STATUS de um determinado conhecimento CTRC
+000 - Sem Status
+001 - Mercadoria aguardando Embarque na Origem desde ${ format_data_atc( dados.DATACTRC ) }
+002 - Mercadoria em Transito desde ${ format_data_atc( dados.DATAEMBARQUE ) }
+003 - Veiculo no Patio desde ${ format_data_atc(dados.CHEGADAMNF) } (Mercadoria Aguardando Descarga)
+004 - Mercadoria em deposito destino desde ${ format_data_atc(dados.INICIODESCARGA) } (Descarregando)
+005 - Mercadoria em deposito destino desde ${ format_data_atc(dados.FINALDESCARGA) }
+006 - Mercadoria saiu para entrega por Redespacho em ${ format_data_atc(dados.DATAMEG) }
+007 - Mercadoria saiu para Entrega em ${ format_data_atc(dados.DATAMEG) }
+008 - Mercadoria entregue por Redespacho em ${ format_data_atc(dados.DATAENTREGA) }
+009 - Mercadoria Entregue em ${ format_data_atc(dados.DATAENTREGA) }
+
+SQL CARGAS:
+SELECT CNH.DATA AS DATACTRC
+    ,MNF.DATA AS DATAMNF
+    ,MNF.CHEGADA AS CHEGADAMNF
+    ,IME.MEG_CODIGO AS CODIGOMEG
+    ,MEG.DATA AS DATAMEG
+    ,MEG.TIPOENTREGA AS TIPOENTREGA
+    ,MNF.DTINICIODESCARGA AS INICIODESCARGA
+    ,MNF.DTFINALDESCARGA AS FINALDESCARGA
+    ,CNH.DATAENTREGA AS DATAENTREGA
+FROM CNH
+LEFT JOIN TRB ON CNH.EMP_CODIGO = TRB.EMP_CODIGO_CNH AND CNH.SERIE      = TRB.CNH_SERIE	AND CNH.CTRC           = TRB.CNH_CTRC
+LEFT JOIN MNF ON TRB.EMP_CODIGO = MNF.EMP_CODIGO	 AND TRB.MNF_CODIGO = MNF.CODIGO
+LEFT JOIN IME ON IME.CNH_CTRC   = CNH.CTRC	         AND IME.CNH_SERIE  = CNH.SERIE	    AND IME.EMP_CODIGO_CNH = CNH.EMP_CODIGO
+LEFT JOIN MEG ON MEG.CODIGO     = IME.MEG_CODIGO	 AND MEG.EMP_CODIGO = IME.EMP_CODIGO
+WHERE CNH.EMP_CODIGO = '${emp}'
+    AND CNH.SERIE = '${serie}'
+    AND CNH.CTRC = ${numero}
+                
+PARAMETROS:
+EMP_CODIGO : "Empresa/Filial emitiu o conhecimento/CTRC"
+CTRC : "Numero do Conhecimento/CTRC"
+SERIE : "Serie do conhecimento"
+
+TABELAS:
+MNF : "Manifestos"
+CNH : "Conhecimentos CTRC"
+IME : "Relação conhecimentos no Mapa de Entrega"
+MEG : "Mapa de Entrega"
+TRB : "RElação de cnhecimento no Manifesto"
+
+OBS:
+A API usa o resultado deste SQL para determinar o STATUS com base nas informações obtidas.

@@ -1,0 +1,121 @@
+endpoint:
+POST /api/apiCliente
+
+Objetivo:
+Retornar a uma interface cliente API REST com informações sobre a posição de carga e pesquisa por NF
+
+SQLs CARGAS:
+-- Nota Fiscal
+    SELECT NFR.EMP_CODIGO AS CNH_EMPRESA,NFR.CNH_SERIE,NFR.CNH_CTRC,
+          NFR.NF,NFR.SERIE,NFR.DATA,NFR.VALOR,NFR.CHAVENFE,
+          CNH.CLI_CGCCPF_DEST   
+    FROM NFR
+    JOIN CNH ON CNH.EMP_CODIGO = NFR.EMP_CODIGO AND CNH.SERIE = NFR.CNH_SERIE AND CNH.CTRC = NFR.CNH_CTRC
+    WHERE (CNH.CLI_CGCCPF_REMET='${wcnpj}' 
+      OR  CNH.CLI_CGCCPF_REMET='${userId_Token}' 
+      OR  CNH.CLI_CGCCPF_PAG  ='${wcnpj}'
+      OR  NFR.CLI_CGCCPF_REMET='${wcnpj}')
+      AND  NFR.NF = ${wnf}
+      AND  NFR.SERIE = '${wnfserie}'
+    ORDER BY (CASE WHEN NFR.CNH_SERIE='E' THEN 0 ELSE 1 END )
+
+-- Chave NFe
+		SELECT NFR.EMP_CODIGO,
+			   NFR.CNH_SERIE,
+			   NFR.CNH_CTRC,
+			   NFR.NF,
+			   NFR.SERIE,
+			   NFR.CLI_CGCCPF_REMET,
+			   CNH.CLI_CGCCPF_REMET CNH_REMET,
+			   CONCAT(IME.EMP_CODIGO,'-',IME.MEG_CODIGO) MAPA,
+			   FORMAT(MEG.DATA, 'yyyy-MM-dd') DATAMAPA,
+			   IME.TIPOENTREGA,
+			   IME.ENTREGUE,
+			   IME.RECEBEDOR,
+			   MEG.VEI_PLACA VEICULO,
+			   MEG.MOT_PRONTUARIO MOTORISTA,			   
+			   CONCAT( FORMAT(IME.DATAENTREGA, 'yyyy-MM-dd'),'T', FORMAT(IME.HORACHEGADA, 'HH:mm:ss') ) DATAENTREGA
+			   
+		FROM NFR
+		LEFT JOIN CNH ON CNH.EMP_CODIGO = NFR.EMP_CODIGO AND CNH.SERIE = NFR.CNH_SERIE AND CNH.CTRC = NFR.CNH_CTRC
+		LEFT JOIN IME ON CNH.EMP_CODIGO = IME.EMP_CODIGO_CNH AND CNH.SERIE = IME.CNH_SERIE AND CNH.CTRC = IME.CNH_CTRC
+		LEFT JOIN MEG ON IME.MEG_CODIGO = MEG.CODIGO and IME.EMP_CODIGO = MEG.EMP_CODIGO
+		WHERE CHAVENFE = '${chave}'    
+
+-- Conhecimento / CTRC
+      SELECT CNH.*,
+            NFR.SERIE    AS NF_SERIE,
+            NFR.DATA     AS NF_EMISSAO,
+            NFR.CHAVENFE AS NF_CHAVE        
+      FROM CNH
+      LEFT JOIN NFR ON NFR.EMP_CODIGO = CNH.EMP_CODIGO 
+                   AND NFR.CNH_SERIE  = CNH.SERIE 
+                   AND NFR.CNH_CTRC   = CNH.CTRC
+                   AND NFR.NF         = '${wnf}'
+      WHERE
+        ( CNH.CLI_CGCCPF_REMET       = '${wcnpj}'
+          OR  CNH.CLI_CGCCPF_DEST    = '${wcnpj}'
+          OR  CNH.CLI_CGCCPF_PAG     = '${wcnpj}' ) 
+          AND CNH.NF LIKE '%${wnf}%'  
+-- Trecho
+    SELECT TRE.CODIGO   AS TRECHO
+        ,TRE.ORIGEM     AS TRECHO_ORIGEM
+        ,TRE.DESTINO    AS TRECHO_DESTINO
+        ,ORIGEM.NOME    AS CIDADE_ORIGEM
+        ,DESTINO.NOME   AS CIDADE_DESTINO
+        ,ORIGEM.UF      AS UF_ORIGEM
+        ,DESTINO.UF     AS UF_DESTINO
+        ,ORIGEM.CODMUN  AS IBGE_ORIGEM
+        ,DESTINO.CODMUN AS IBGE_DESTINO
+        ,TRE.EMP_CODIGO_ENTREGA AS UNID_DESTINO
+    FROM TRE
+    LEFT JOIN CID ORIGEM ON ORIGEM.CODIGO = SUBSTRING(TRE.CODIGO, 1, 3)
+    LEFT JOIN CID DESTINO ON DESTINO.CODIGO = SUBSTRING(TRE.CODIGO, 4, 3)
+    WHERE TRE.CODIGO = '${wtrecho}'
+
+-- Unidade Destino
+        SELECT EMP.CODIGO,  
+          EMP.NOME,    
+          EMP.ENDERECO,
+          EMP.NUMERO,  
+          EMP.BAIRRO,  
+          CID.CODMUN AS IBGE,  
+          CID.NOME AS CIDADE,    
+          CID.UF      
+        FROM EMP
+        LEFT JOIN CID ON CID.CODIGO = EMP.CID_CODIGO
+        WHERE EMP.CODIGO = '${wunidest}'    
+
+-- Loca de Entrega 
+        SELECT CLI.NOME,ENDERECO,NUMERO,BAIRRO,CID.NOME AS CIDADE,CID.UF,CID.CODMUN AS IBGE
+        FROM CLI 
+        LEFT JOIN CID ON CID.CODIGO = CLI.CID_CODIGO
+        WHERE CGCCPF = '${wcnpjentrega}'
+
+-- Ocorrências
+        SELECT OUN.*, OCO.NOME AS NOMEOCORRENCIA, MOT.NOME AS MOTORISTA  
+        FROM OUN  
+        LEFT JOIN OCO ON OCO.CODIGO=OUN.OCO_CODIGO  
+        LEFT JOIN MOT ON MOT.PRONTUARIO = OUN.MOT_PRONTUARIO  
+        WHERE TABELA='CNH' AND CHAVE='${wchave}' -- ( wchave == documento CTRC)
+        AND OCO.NAOENVIAEDI=0 
+        ORDER BY DATA
+
+PARAMETROS:
+cnpj         : "CNPJ cliente pesquisado"
+userId_Token : "CNPJ usuario API"
+wnf          : "Numero da NF"
+wnfserie     : "Serie da NF"
+chave        : "Chave NFe"
+
+TABELAS:
+OUN : "Movimentos de ocorrências"
+OCO : "Tipo de Ocorrências"
+MOT : "Tabela de Motoristas"
+CLI : "Tabela de Clientes"
+CID : "Tabela de Cidades"
+EMP : "Tabela de Filiais e Parceiros"
+CNH : "Tabela de Conhecimento / CTRC"
+NFR : "Tabela de Notas Fiscais"
+MEG : "Mapas de Entrega"
+IME : "Relação entre Mapa de entrega e Conhecimento"

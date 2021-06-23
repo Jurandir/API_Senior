@@ -1,0 +1,20 @@
+endpoint:
+POST /api/dadoscliente
+
+Objetivo:
+Retornar dados de apresentação do cliente.
+
+SQL CARGAS:
+    SELECT TOP  1 * FROM (
+        SELECT ${loginAD}NOME,RAZAO,CGCCPF as CNPJ,CGF as IE,ENDERECO,NUMERO,BAIRRO,CID_CODIGO as CIDADE,CEP 
+        FROM CLI WHERE CGCCPF = '${cnpj}' AND CGCCPF > '00000000000000'
+    UNION ALL
+        SELECT ${loginAD}NOME,RAZAO,CGCCPF as CNPJ,CGF as IE,ENDERECO,NUMERO,BAIRRO,CID_CODIGO as CIDADE,CEP 
+        FROM CLI WHERE CGCCPF = '20650899000103'
+    ) AS CLI
+
+PARAMETROS:
+cnpj : "CNPJ do cliente"
+
+TABELAS:
+CLI : "Tabela de Clientes"

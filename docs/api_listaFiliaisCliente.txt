@@ -1,0 +1,21 @@
+endpoint:
+GET /api/listaFiliaisCliente
+
+Objetivo:
+Receber a lista de filiais do cliente cadastrada no sistema
+
+SQL CARGAS:
+SELECT CLI.CGCCPF CNPJ,CLI.NOME,CID.NOME CIDADE,CID.UF 
+           FROM CARGASSQL.dbo.CLI 
+           JOIN CARGASSQL.dbo.CID ON CID.CODIGO = CLI.CID_CODIGO
+          WHERE CGCCPF like '${raiz}%'
+
+PARAMETROS:
+CNPJ
+
+OBS:
+raiz = "Os 8 primeiros caracteres do CNPJ"
+
+TABELAS:
+CID : "Cadastro de cidades"
+CLI : "Cadastro de clientes"

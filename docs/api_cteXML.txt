@@ -1,0 +1,24 @@
+endpoint:
+POST /api/cteXML
+
+Objetivo:
+Recuperar o XML gerado para o CTRC
+
+SQL CARGAS:
+SELECT 
+    XCT.XML AS XMLCTE
+FROM 
+    XCT
+WHERE 
+    XCT.EMP_CODIGO='${wempresa}' AND 
+    XCT.CNH_SERIE='${wserie}' AND 
+    XCT.CNH_CTRC='${wctrc}' AND 
+    XCT.ACAO = '1'
+
+PARAMETROS:
+EMP_CODIGO : "Empresa/Filial emitiu o conhecimento/CTRC"
+CTRC       : "Numero do Conhecimento/CTRC"
+SERIE      : "Serie do conhecimento"
+
+TABELAS:
+XCT : "Dados XML CTRC arquivado"

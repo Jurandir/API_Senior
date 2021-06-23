@@ -1,0 +1,48 @@
+endpoint:
+GET /api/steptracker
+
+Objetivo:
+Obter as datas e horarios dos eventros de tracker
+
+SQL CARGAS:
+SELECT DISTINCT 
+    '${s_tipo}' TIPO,
+    ${s_documento} DOCUMENTO,
+    ${s_data},  
+    CNH.DATAHORAEMISSAO      CTRC_EMISSAO,
+    CNH.DATACOLETA           COLETA,
+    CNH.DATAEMBARQUE         EMBARQUE,
+    CNH.DATACHEGADA          CHEGADA,
+    MEG.DATATU               SAIDA,
+    DAE.DATAEMISSAO          DAE_EMISSAO,
+    DAE.DATABAIXA            DAE_BAIXA,
+    CNH.DATAENTREGA          ENTREGA,
+    CNH.PREVENTREGA          PREVISAO,
+    CNH.PREVENTREGA_ORIGINAL PREVISAO_ORIGINAL,
+    CNH.COLETA               FLAG_COLETA,
+    CNH.COLETADO             FLAG_COLETADO,
+    CNH.ENTREGA              FLAG_ENTREGA,
+    CNH.ENTREGADO            FLAG_ENTREGADO,
+    MEG.BAIXADO              FLAG_BAIXADO
+FROM CARGASSQL.dbo.CNH
+LEFT JOIN CARGASSQL.dbo.DAE  ON DAE.EMP_CODIGO_CNH = CNH.EMP_CODIGO AND DAE.CNH_SERIE = CNH.SERIE AND  DAE.CNH_CTRC = CNH.CTRC
+LEFT JOIN CARGASSQL.dbo.IME  ON IME.EMP_CODIGO_CNH = CNH.EMP_CODIGO AND IME.CNH_SERIE = CNH.SERIE AND  IME.CNH_CTRC = CNH.CTRC
+LEFT JOIN CARGASSQL.dbo.MEG  ON MEG.EMP_CODIGO     = IME.EMP_CODIGO AND MEG.CODIGO    = IME.MEG_CODIGO
+JOIN CARGASSQL.dbo.NFR       ON NFR.EMP_CODIGO     = CNH.EMP_CODIGO AND NFR.CNH_SERIE = CNH.SERIE AND  NFR.CNH_CTRC = CNH.CTRC
+WHERE 
+    ${s_where} 
+
+PARAMETROS:
+s_tipo      : `CTRC` ou `NF`
+s_documento : (s_tipo=='NF')   `CONCAT(NFR.CLI_CGCCPF_REMET,'/',NFR.NF,'-',NFR.SERIE)`
+s_documento : (s_tipo=='CTRC') `CONCAT(CNH.EMP_CODIGO,CNH.SERIE,CNH.CTRC)` 
+s_data      : (s_tipo=='NF')   `NFR.DATA`
+s_data      : (s_tipo=='CTRC') `CNH.DATA` 
+s_where     : (s_tipo=='NF')   `NFR.CLI_CGCCPF_REMET='${cnpj}' AND NFR.NF=${i_numero}` 
+s_where     : (s_tipo=='CTRC') `CNH.EMP_CODIGO='${s_emp}' AND CNH.SERIE = '${s_serie}' AND CNH.CTRC = '${s_ctrc}'`
+
+TABELAS:
+DAE : "Documento de Arrecadação Estadual"
+CNH : "Conhecimentos CTRC"
+IME : "Relação conhecimentos no Mapa de Entrega"
+MEG : "Mapa de Entrega"

@@ -1,0 +1,39 @@
+endpoint:
+GET /api/cidadesatentidas
+
+Objetivo:
+Receber a lista de cidades atendidas pela TERMACO
+
+SQL CARGAS:
+SELECT CODIGO CID_CODIGO,
+        UF,
+        NOME CID_NOME,
+        CID_CODIGO_BASE CID_BASE,
+        CID_CODIGO_BASEENTREGA CID_BASE_ENTREGA, 
+        ACEITACOLETA,
+        ACEITAENTREGA,
+        ACEITAFOB 
+    FROM CID
+    WHERE NOT ( (NOME LIKE '%NÃO%UTILIZAR%') OR
+                (NOME LIKE '%NAO%UTILIZAR%') ) 
+        AND CID_CODIGO_BASE IS NOT NULL
+        AND EXISTS (SELECT 1 FROM TRE 
+                    WHERE (CID.CODIGO = SUBSTRING(TRE.CODIGO,1,3) OR 
+                            CID.CODIGO = SUBSTRING(TRE.CODIGO,4,3) ) 
+                    AND NOT( (TRE.DESTINO LIKE '%NÃO%UTILIZAR%') OR 
+                                (TRE.DESTINO LIKE '%NAO%UTILIZAR%') OR 
+                                (TRE.ORIGEM  LIKE '%NÃO%UTILIZAR%') OR
+                                (TRE.ORIGEM  LIKE '%NAO%UTILIZAR%') ) )
+        ${estadosValidos}
+        ${addSql}
+    ORDER BY UF,NOME
+
+PARAMETROS:
+UF     : AND (CID.UF = '${value}') 
+CIDADE : AND (CID.NOME LIKE '%${value}%') 
+
+OBS:
+estadosValidos : "SP e Estados do NE"
+
+TABELAS:
+CID : "Cadastro de cidades"
