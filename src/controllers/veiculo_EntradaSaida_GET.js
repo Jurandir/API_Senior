@@ -7,14 +7,17 @@ async function veiculo_EntradaSaida_GET( req, res ) {
         message: '',
         data: []
     }
-    let { help, Base, NrPlaca, CdVeiculo } = req.query
+    let { help, Base, NrPlaca, CdVeiculo, DtInicial, DtFinal } = req.query
 
     if(help) {
         retorno.success = true
         retorno.message = 'Uso da endpoint (veiculoEntradaSaida) - GET'
         retorno.data.push({parametro:'Base', referencias:'softran_modelo, softran_termaco, softran_transporte'})
-        retorno.data.push({parametro:'CdVeiculo', referencias:'Codigo do veiculo. (OPCIONAL)'})
-        retorno.data.push({parametro:'NrPlaca'  , referencias:'Placa do veiculo. (OPCIONAL)'})
+        retorno.data.push({parametro:'CdVeiculo'  , referencias:'Codigo do veiculo. (OPCIONAL)'})
+        retorno.data.push({parametro:'NrPlaca'    , referencias:'Placa do veiculo. (OPCIONAL)'})
+        retorno.data.push({parametro:'DtInicial'  , referencias:'DateTime Inicial. YYYY-MM-DD HH:MM:SS - (OPCIONAL)'})
+        retorno.data.push({parametro:'DtFinal'    , referencias:'DateTime Final. YYYY-MM-DD HH:MM:SS - (OPCIONAL)'})
+        
         res.json(retorno).status(200) 
         return 0
     }
@@ -24,20 +27,30 @@ async function veiculo_EntradaSaida_GET( req, res ) {
     }
     
     if(NrPlaca) {
-       par_where = `${par_where} AND NrPlaca = '${NrPlaca}'`
+       par_where = `${par_where} AND A.NrPlaca = '${NrPlaca}'`
     }
 
     if(CdVeiculo) {
         par_where = `${par_where} AND CdVeiculo = '${CdVeiculo}'`
-     }
- 
+    }
+
+    if(DtInicial) {
+        par_where = `${par_where} AND DtEntradaSaida >= CAST('${DtInicial}' AS DATE) 
+                                  AND  CAST(HrEntradaSaida AS TIME) >= CAST('${DtInicial}' AS TIME)`
+    }
+
+    if(DtFinal) {
+        par_where = `${par_where} AND DtEntradaSaida <= CAST('${DtFinal}' AS DATE) 
+                                  AND  CAST(HrEntradaSaida AS TIME) <= CAST('${DtFinal}' AS TIME)`
+    }
+
     let wsql = `
                 SELECT 
                 A.NrPlaca
                 ,A.NrPlacaReboque1
                 ,A.CdEmpresa
-                ,A.DtEntradaSaida
-                ,A.HrEntradaSaida
+                ,FORMAT(A.DtEntradaSaida,'yyyy-MM-dd') as DtEntradaSaida
+                ,FORMAT(A.HrEntradaSaida,'hh:mm:ss') as HrEntradaSaida                
                 ,A.InEntradaSaida                
                 ,(CASE WHEN A.InEntradaSaida = 0 THEN 'Entrada' 
                     WHEN A.InEntradaSaida = 1 THEN 'Saída'
@@ -61,9 +74,10 @@ async function veiculo_EntradaSaida_GET( req, res ) {
                 ,DtEntradaRef
                 ,HrEntradaRef
             FROM ${Base}.dbo.TRAESVEI A
-            LEFT JOIN ${Base}.dbo.TRAMOTES B ON A.CdMotivo = B.CdMotivo
-            LEFT JOIN ${Base}.dbo.SISEMPRE C ON A.CdEmpresa = C.CdEmpresa
-            LEFT JOIN ${Base}.dbo.SISCLI F ON A.CdInscricao = F.CdInscricao
+            LEFT JOIN ${Base}.dbo.TRAMOTES  B ON A.CdMotivo    = B.CdMotivo
+            LEFT JOIN ${Base}.dbo.SISEMPRE  C ON A.CdEmpresa   = C.CdEmpresa
+            LEFT JOIN ${Base}.dbo.SISCLI    F ON A.CdInscricao = F.CdInscricao
+            LEFT JOIN ${Base}.dbo.SISVeicu  V ON V.NrPlaca     = A.NrPlaca
             ${par_where}`
             
     try {
