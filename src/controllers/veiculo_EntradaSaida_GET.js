@@ -78,7 +78,10 @@ async function veiculo_EntradaSaida_GET( req, res ) {
             LEFT JOIN ${Base}.dbo.SISEMPRE  C ON A.CdEmpresa   = C.CdEmpresa
             LEFT JOIN ${Base}.dbo.SISCLI    F ON A.CdInscricao = F.CdInscricao
             LEFT JOIN ${Base}.dbo.SISVeicu  V ON V.NrPlaca     = A.NrPlaca
-            ${par_where}`
+                ${par_where}
+            ORDER BY
+                CONCAT(FORMAT(A.DtEntradaSaida,'yyyy-MM-dd'),'/',FORMAT(A.HrEntradaSaida,'hh:mm:ss')) DESC
+            `
             
     try {
         let data = await sqlQuery(wsql)

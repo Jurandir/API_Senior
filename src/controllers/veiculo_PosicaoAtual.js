@@ -29,6 +29,7 @@ async function veiculo_PosicaoAtual( Base, NrPlaca ) {
             ,CdEmpRef
             ,FORMAT(A.DtEntradaRef,'yyyy-MM-dd') as DtEntradaRef
             ,FORMAT(A.HrEntradaRef,'hh:mm:ss') as HrEntradaRef
+            ,FORMAT( CURRENT_TIMESTAMP,'yyyy-MM-dd hh:mm:ss') as DtAtual
         FROM ${Base}.dbo.TRAESVEI A
         LEFT JOIN ${Base}.dbo.TRAMOTES B ON A.CdMotivo      = B.CdMotivo
         LEFT JOIN ${Base}.dbo.SISEMPRE C ON A.CdEmpresa     = C.CdEmpresa
@@ -36,7 +37,7 @@ async function veiculo_PosicaoAtual( Base, NrPlaca ) {
         LEFT JOIN ${Base}.dbo.SISFun   F ON F.CdFuncionario = A.CdFuncionario
         LEFT JOIN ${Base}.dbo.GTCFUNDP M ON M.NrCPF         = A.CdMotorista
             ${par_where}
-        ORDER BY A.DtEntradaSaida DESC
+        ORDER BY CONCAT(FORMAT(A.DtEntradaSaida,'yyyy-MM-dd'),'/',FORMAT(A.HrEntradaSaida,'hh:mm:ss')) DESC
         `
     try {
         retorno.data = await sqlQuery(wsql)

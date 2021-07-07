@@ -67,7 +67,7 @@ async function veiculo_PosicaoAtual_GET( req, res ) {
         LEFT JOIN ${Base}.dbo.SISFun   F ON F.CdFuncionario = A.CdFuncionario
         LEFT JOIN ${Base}.dbo.GTCFUNDP M ON M.NrCPF         = A.CdMotorista
             ${par_where}
-        ORDER BY A.DtEntradaSaida DESC
+        ORDER BY CONCAT(FORMAT(A.DtEntradaSaida,'yyyy-MM-dd'),'/',FORMAT(A.HrEntradaSaida,'hh:mm:ss')) DESC
         `
     try {
         let data = await sqlQuery(wsql)
