@@ -56,8 +56,11 @@ const saida = async(base,campos,origem) => {
     ;    
     `
 
+    console.log('==============================================================================')
     console.log('SAIDA (campos)',campos)
     console.log('SAIDA (origem)',origem)
+    console.log('SAIDA (insert_SQL)',insert_SQL)
+    console.log('SAIDA (update_SQL)',update_SQL)
     console.log('SAIDA (SQL)',sql)
 
     try {

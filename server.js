@@ -2,9 +2,11 @@ const express      = require('express')
 const path         = require('path')
 const morgan       = require('morgan')
 const moment       = require('moment')
-const senior       = require('./src/routes/senior')
+const app          = express()  
 
-const app    = express()  
+require('dotenv').config()
+
+const senior       = require('./src/routes/senior')
 
 // parse application/json
 app.use(express.json({limit:'4mb'}))

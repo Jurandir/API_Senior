@@ -31,7 +31,7 @@ async function funcionario_GET( req, res ) {
         par_where = `${par_where} AND CdFuncionario = '${CdFuncionario}' `
      }
  
-    let wsql = `SELECT * FROM ${Base}.dbo.SISFun ${par_where}`
+    let wsql = `SELECT CdFuncionario,DsNome,NrCracha,NrCpf FROM ${Base}.dbo.SISFun ${par_where}`
     try {
         let data = await sqlQuery(wsql)
   

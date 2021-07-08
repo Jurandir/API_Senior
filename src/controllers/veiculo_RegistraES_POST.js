@@ -4,24 +4,47 @@ const insertMovimento      = require('../updates/controlePatio/insertMovimento')
 async function veiculo_RegistraES_POST( req, res ) {
     let retorno = {
         success: false,
+        TpMovimento: 'P',
         Base: '',
         message: '',
         movimento: {},
         origem: {},
     }
     
-    retorno.Base    = req.body.Base
+    retorno.Base        = req.body.Base
+    retorno.TpMovimento = req.body.TpMovimento
     
     let posicao = await veiculo_PosicaoAtual( req.body.Base, req.body.NrPlaca )
-
-    retorno.origem.CdEmpresa       = posicao.data[0].CdEmpresa
-    retorno.origem.DtEntradaSaida  = posicao.data[0].DtEntradaSaida
-    retorno.origem.HrEntradaSaida  = posicao.data[0].HrEntradaSaida
 
     // Testa tudo com possição atual
     if(posicao.success==false) {
       retorno.message  = posicao.message
       res.json(retorno).status(500) 
+      return 0
+    }
+
+    retorno.origem.CdEmpresa       = posicao.data[0].CdEmpresa
+    retorno.origem.DtEntradaSaida  = posicao.data[0].DtEntradaSaida
+    retorno.origem.HrEntradaSaida  = posicao.data[0].HrEntradaSaida
+
+    // Testa se Tipo de movimento compativel com a posição do veiculo (ENTRADA) - ok
+    if(retorno.TpMovimento=='E' && posicao.data[0].InEntradaSaida == 0) {
+      retorno.message  = `Não é possivel realizar ENTRADA. Veiculo encontra-se na filial: (${posicao.data[0].CdEmpresa}) !!!`
+      res.json(retorno).status(400) 
+      return 0
+    }
+
+    // Testa se Tipo de movimento compativel com a posição do veiculo (SAÍDA) - ok
+    if(retorno.TpMovimento=='S' && posicao.data[0].InEntradaSaida == 1) {
+      retorno.message  = `Não é possivel realizar SAÍDA. Veiculo encontra-se externo !!!`
+      res.json(retorno).status(400) 
+      return 0
+    }
+
+    // Testa se Tipo de movimento compativel com a posição do veiculo (SAÍDA EMPRESA) - ok
+    if(retorno.TpMovimento=='S' && posicao.data[0].CdEmpresa != req.body.CdEmpresa ) {
+      retorno.message  = `SAÍDA da filial (${req.body.CdEmpresa}) não é possivel. Veiculo encontra-se na filial (${posicao.data[0].CdEmpresa}) !!!`
+      res.json(retorno).status(400) 
       return 0
     }
 
@@ -57,9 +80,9 @@ async function veiculo_RegistraES_POST( req, res ) {
 
     // Se for movimento de Saída
     if(retorno.movimento.InEntradaSaida==1) {
-        retorno.movimento.CdEmpRef        = posicao.data[0].CdEmpRef
-        retorno.movimento.DtEntradaRef    = posicao.data[0].DtEntradaRef
-        retorno.movimento.HrEntradaRef    = posicao.data[0].HrEntradaRef
+        retorno.movimento.CdEmpRef        = posicao.data[0].CdEmpresa
+        retorno.movimento.DtEntradaRef    = posicao.data[0].DtEntradaSaida
+        retorno.movimento.HrEntradaRef    = posicao.data[0].HrEntradaSaida
     }
 
     try {
@@ -88,18 +111,20 @@ async function veiculo_RegistraES_POST( req, res ) {
 module.exports = veiculo_RegistraES_POST
 
 /*
-ENTRADA:
-  (CdEmpresa, DtEntradaSaida, HrEntradaSaida, InEntradaSaida, 
-  CdFuncionario, NrPlaca, InTpVeiculo, NrHodEntradaSaida, 
-  DsVeiculo, CdMotorista, CdMotivo, DsObs, 
-  InCarregado, DtPrevSaida, HrPrevSaida, DtPrevProxEnt, 
-  HrPrevEnt)
-
-SAÍDA:
-  (CdEmpresa, DtEntradaSaida, HrEntradaSaida, InEntradaSaida, 
-  CdFuncionario, NrPlaca, InTpVeiculo, NrHodEntradaSaida, 
-  DsVeiculo, CdMotorista, CdMotivo, DsObs, 
-  DtPrevRetorno, HrPrevRetorno, InCarregado, 
-  CdEmpRef, DtEntradaRef, HrEntradaRef)
-
+-- EXEMPLO: "/senior/veiculoRegistraES" (POST)
+{
+	"Base":              "softran_transporte",
+	"TpMovimento":       "S",
+	"CdEmpresa":         20, 
+	"InEntradaSaida":    1, 
+  "CdFuncionario":     5814, 
+	"NrPlaca":           "POC1909",
+	"CdMotorista":       "00046579001372",
+	"InTpVeiculo":       0, 
+	"NrHodEntradaSaida": 705110, 
+  "DsVeiculo":         "CAMPO DESCRIÇÃO", 
+	"CdMotivo":          1, 
+	"DsObs":             "CAMPO OBSERVAÇÃO - SAIDA TESTE", 
+  "InCarregado":       1
+}
 */
