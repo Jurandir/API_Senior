@@ -35,7 +35,7 @@ app.use('/senior', senior )
 
 // On-Line
 app.use('/', (req, res)=>{
-    res.send('<h1>On-Line.</h1>')
+    res.send(`<h1>API - On-Line.</h1><p>${moment().format()}</p>`)
 } )  
 
 // Serviço

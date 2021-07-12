@@ -14,7 +14,7 @@ const motivoEntradaSaida_GET   = require('../controllers/motivoEntradaSaida_GET'
 const veiculo_RegistraES_POST  = require('../controllers/veiculo_RegistraES_POST')
 const tokenControlePatio_POST  = require('../controllers/tokenControlePatio_POST')
 
-senior.post('/QRcode'              , QRcode )
+senior.use('/QRcode'               , QRcode )
 senior.post('/tokenControlePatio'  , tokenControlePatio_POST )
 
 senior.get('/motorista'            , verifyToken, motorista_GET )
