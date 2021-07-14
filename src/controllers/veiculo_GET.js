@@ -60,6 +60,8 @@ async function veiculo_GET( req, res ) {
     `
     try {
         let data = await sqlQuery(wsql)
+		
+		// console.log('veiculo_GET SQL:',wsql)
   
         let { Erro } = data
         if (Erro) { 

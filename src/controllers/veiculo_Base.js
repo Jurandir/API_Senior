@@ -12,7 +12,7 @@ async function veiculo_Base( NrPlaca ) {
         FROM softran_termaco.dbo.GTCVEIDP A 
     ) y
     WHERE Y.NrPlaca = '${NrPlaca}'
-    ORDER BY Y.Base
+    ORDER BY Y.Base DESC
     `
     try {
         let data = await sqlQuery(wsql)

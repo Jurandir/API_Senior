@@ -25,6 +25,8 @@ senior.get('/funcionario'          , verifyToken, funcionario_GET )
 senior.get('/usuario'              , verifyToken, usuario_GET )
 senior.get('/veiculoPosicaoAtual'  , verifyToken, veiculo_PosicaoAtual_GET )
 senior.get('/motivoEntradaSaida'   , verifyToken, motivoEntradaSaida_GET )
+//senior.get('/motivoEntradaSaida'   , motivoEntradaSaida_GET )
+
 senior.post('/veiculoRegistraES'   , verifyToken, veiculo_RegistraES_POST )
 
 module.exports = senior

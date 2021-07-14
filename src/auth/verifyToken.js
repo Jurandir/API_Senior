@@ -2,6 +2,9 @@ const jwt = require('jsonwebtoken')
 
 const verifyToken = (req, res, next) => {
     let bearer, token
+	
+	console.log('req.headers.authorization',req.headers.authorization)
+	
     try {
         bearer = req.headers.authorization.split(" ")[1]
         token  = bearer.replace('"','').replace('"','')
