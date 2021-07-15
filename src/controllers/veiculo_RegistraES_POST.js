@@ -1,5 +1,6 @@
 const veiculo_PosicaoAtual = require('./veiculo_PosicaoAtual')
 const insertMovimento      = require('../updates/controlePatio/insertMovimento')
+const veiculo_motorista    = require('./motorista')
 
 async function veiculo_RegistraES_POST( req, res ) {
     let retorno = {
@@ -13,8 +14,17 @@ async function veiculo_RegistraES_POST( req, res ) {
     
     retorno.Base        = req.body.Base
     retorno.TpMovimento = req.body.TpMovimento
-    
-    let posicao = await veiculo_PosicaoAtual( req.body.Base, req.body.NrPlaca )
+
+    let motorista = await veiculo_motorista( req.body.Base, req.body.CdMotorista )
+
+    // Testa existencia do motorista na base selecionada
+    if(!motorista.success) {
+      retorno.message  = `Motorista (${req.body.CdMotorista}), não localizado na base (${retorno.Base}) !!!`
+      res.json(retorno).status(400) 
+      return 0
+    }
+
+    let posicao   = await veiculo_PosicaoAtual( req.body.Base, req.body.NrPlaca )
 
     // Testa tudo com possição atual
     if(posicao.success==false) {

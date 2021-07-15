@@ -59,7 +59,7 @@ async function veiculo_PosicaoAtual_GET( req, res ) {
             ,M.DsNome as DsMotorista
             ,CdEmpRef
             ,FORMAT(A.DtEntradaRef,'yyyy-MM-dd') as DtEntradaRef
-            ,FORMAT(A.HrEntradaRef,'hh:mm:ss') as HrEntradaRef
+            ,FORMAT(A.HrEntradaRef,'HH:mm:ss') as HrEntradaRef
         FROM ${Base}.dbo.TRAESVEI A
         LEFT JOIN ${Base}.dbo.TRAMOTES B ON A.CdMotivo      = B.CdMotivo
         LEFT JOIN ${Base}.dbo.SISEMPRE C ON A.CdEmpresa     = C.CdEmpresa
@@ -67,7 +67,7 @@ async function veiculo_PosicaoAtual_GET( req, res ) {
         LEFT JOIN ${Base}.dbo.SISFun   F ON F.CdFuncionario = A.CdFuncionario
         LEFT JOIN ${Base}.dbo.GTCFUNDP M ON M.NrCPF         = A.CdMotorista
             ${par_where}
-        ORDER BY CONCAT(FORMAT(A.DtEntradaSaida,'yyyy-MM-dd'),'/',FORMAT(A.HrEntradaSaida,'hh:mm:ss')) DESC
+        ORDER BY CONCAT(FORMAT(A.DtEntradaSaida,'yyyy-MM-dd'),'/',FORMAT(A.HrEntradaSaida,'HH:mm:ss')) DESC
         `
     try {
         let data = await sqlQuery(wsql)

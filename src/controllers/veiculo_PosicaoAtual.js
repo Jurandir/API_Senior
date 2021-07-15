@@ -15,7 +15,7 @@ async function veiculo_PosicaoAtual( Base, NrPlaca ) {
             ,A.CdEmpresa
             ,C.DsEmpresa
             ,FORMAT(A.DtEntradaSaida,'yyyy-MM-dd') as DtEntradaSaida
-            ,FORMAT(A.HrEntradaSaida,'hh:mm:ss') as HrEntradaSaida
+            ,FORMAT(A.HrEntradaSaida,'HH:mm:ss') as HrEntradaSaida
             ,A.InEntradaSaida
             ,(CASE WHEN A.InEntradaSaida = 0 THEN 'Entrada'
                     WHEN A.InEntradaSaida = 1 THEN 'Saída'
@@ -28,8 +28,8 @@ async function veiculo_PosicaoAtual( Base, NrPlaca ) {
             ,M.DsNome as DsMotorista
             ,CdEmpRef
             ,FORMAT(A.DtEntradaRef,'yyyy-MM-dd') as DtEntradaRef
-            ,FORMAT(A.HrEntradaRef,'hh:mm:ss') as HrEntradaRef
-            ,FORMAT( CURRENT_TIMESTAMP,'yyyy-MM-dd hh:mm:ss') as DtAtual
+            ,FORMAT(A.HrEntradaRef,'HH:mm:ss') as HrEntradaRef
+            ,FORMAT(CURRENT_TIMESTAMP,'yyyy-MM-dd HH:mm:ss') as DtAtual
         FROM ${Base}.dbo.TRAESVEI A
         LEFT JOIN ${Base}.dbo.TRAMOTES B ON A.CdMotivo      = B.CdMotivo
         LEFT JOIN ${Base}.dbo.SISEMPRE C ON A.CdEmpresa     = C.CdEmpresa
@@ -37,7 +37,7 @@ async function veiculo_PosicaoAtual( Base, NrPlaca ) {
         LEFT JOIN ${Base}.dbo.SISFun   F ON F.CdFuncionario = A.CdFuncionario
         LEFT JOIN ${Base}.dbo.GTCFUNDP M ON M.NrCPF         = A.CdMotorista
             ${par_where}
-        ORDER BY CONCAT(FORMAT(A.DtEntradaSaida,'yyyy-MM-dd'),'/',FORMAT(A.HrEntradaSaida,'hh:mm:ss')) DESC
+        ORDER BY CONCAT(FORMAT(A.DtEntradaSaida,'yyyy-MM-dd'),'/',FORMAT(A.HrEntradaSaida,'HH:mm:ss')) DESC
         `
     try {
         retorno.data = await sqlQuery(wsql)
