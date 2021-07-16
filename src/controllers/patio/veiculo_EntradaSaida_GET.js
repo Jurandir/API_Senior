@@ -1,4 +1,4 @@
-const sqlQuery     = require('../connection/sqlSENIOR')
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function veiculo_EntradaSaida_GET( req, res ) {
     let par_where = `WHERE 1=1 `

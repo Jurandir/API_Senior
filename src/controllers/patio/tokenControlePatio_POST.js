@@ -1,5 +1,5 @@
-const sqlQuery     = require('../connection/sqlSENIOR')
-const getToken     = require('../auth/getToken')
+const sqlQuery     = require('../../connection/sqlSENIOR')
+const getToken     = require('../../auth/getToken')
 
 async function tokenControlePatio_POST( req, res ) {
     let retorno = {

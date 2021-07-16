@@ -1,4 +1,4 @@
-const sqlQuery     = require('../connection/sqlSENIOR')
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function veiculo_PosicaoAtual( Base, NrPlaca ) {
     let retorno = {success: false, message: '', data: [] , rows: 0 }

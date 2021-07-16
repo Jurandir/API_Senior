@@ -6,6 +6,7 @@ const app          = express()
 
 require('dotenv').config()
 
+const api          = require('./src/routes/api')
 const senior       = require('./src/routes/senior')
 
 // parse application/json
@@ -32,6 +33,7 @@ app.use(
 
 // Rotas Sênior
 app.use('/senior', senior )  
+app.use('/api'   , api )  
 
 // On-Line
 app.use('/', (req, res)=>{

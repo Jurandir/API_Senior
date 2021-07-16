@@ -1,4 +1,4 @@
-const sqlQuery     = require('../connection/sqlSENIOR')
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function motorista( Base, NrCPF ) {
     let retorno = {success: false, message: '', data: [] , rows: 0 }

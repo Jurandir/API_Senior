@@ -1,4 +1,4 @@
-const sqlQuery     = require('../connection/sqlSENIOR')
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function veiculo_Base( NrPlaca ) {
     let retorno = {success: false, message:'', NrPlaca: NrPlaca, Base: 'softran_modelo' }

@@ -1,6 +1,6 @@
 const veiculo_PosicaoAtual = require('./veiculo_PosicaoAtual')
-const insertMovimento      = require('../updates/controlePatio/insertMovimento')
 const veiculo_motorista    = require('./motorista')
+const insertMovimento      = require('../../updates/controlePatio/insertMovimento')
 
 async function veiculo_RegistraES_POST( req, res ) {
     let retorno = {

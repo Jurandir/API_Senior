@@ -1,4 +1,4 @@
-const sqlQuery     = require('../connection/sqlSENIOR')
+const sqlQuery     = require('../../connection/sqlSENIOR')
 const veiculo_Base = require('./veiculo_Base') 
 
 async function veiculo_GET( req, res ) {
