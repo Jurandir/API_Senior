@@ -68,21 +68,31 @@ async function apiCliente_GET( req, res ) {
             retorno.notaFiscal.valor        = ret.data[0].VlNotaFiscal
             retorno.notaFiscal.chaveNFe     = ret.data[0].NrChaveAcessoNFe
             retorno.unidadeDestino.sigla    = ret.data[0].DsFilialDestino
-            
-            //= ret.data[0].VlFreteCTe
+            retorno.unidadeDestino. nome    = ret.data[0].DsEmpresaDestino
+            retorno.unidadeDestino.endereco = ret.data[0].DsLogradouroDestino
+            retorno.unidadeDestino.numero   = ret.data[0].NrFilialDestino
+            retorno.unidadeDestino.bairro   = ret.data[0].DsBairroDestino
+            retorno.unidadeDestino.cidade   = {}
+            retorno.unidadeDestino.cidade.ibge = ret.data[0].CdIBGEDestino
+            retorno.unidadeDestino.cidade.nome = ret.data[0].DsLocalDestino
+            retorno.unidadeDestino.cidade.uf   = ret.data[0].DsUFDestino
+            retorno.destinoPrestacao.uf        = ret.data[0].DsUFDestino
+            retorno.destinoPrestacao.nome      = ret.data[0].DsLocalDestino
+            retorno.destinoPrestacao.ibge      = ret.data[0].CdIBGEDestino
+
+            retorno.localEntrega.nome          = ret.data[0].DsDestinatario
+            retorno.localEntrega.endereco      = ret.data[0].DsLogradouroEntrega
+            retorno.localEntrega.numero        = ret.data[0].NrEnderecoEntrega
+            retorno.localEntrega.bairro        = ret.data[0].DsBairroEntrega
+            retorno.localEntrega.cidade        = {}
+            retorno.localEntrega.cidade.nome   = ret.data[0].DsLocalEntrega
+            retorno.localEntrega.cidade.uf     = ret.data[0].DsUFEntrega
+            retorno.localEntrega.cidade.ibge   = ret.data[0].CdIBGEEntrega
+            retorno.documento      =`${retorno.filial}${retorno.numero}`
+            retorno.conhecimento   =`${retorno.filial}${retorno.numero}`
+            retorno.cnpj_remetente =  ret.data[0].NrCNPJCPFRemetente
             /*
-              "unidadeDestino": {
-                                "sigla": "SLU",
-                                "nome": "TERMACO SAO LUIS",
-                                "endereco": "ESTRADA DE RIBAMAR",
-                                "numero": "2007",
-                                "bairro": "SITIO SARAMANTA",
-                                "cidade": {
-                                "ibge": "2111201",
-                                "nome": "SAO JOSE DE RIBAMAR",
-                                "uf": "MA"
-                                }
-                            },
+            
             */
         }
                

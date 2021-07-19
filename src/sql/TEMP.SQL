@@ -6,7 +6,7 @@ SELECT
 	,a.nrdoctofiscal        AS CTRC                         -- NUMERO DO CTe
 	,f.dsapelido            AS DsTipoFiscal                 -- TIPO FISCAL DO DOCUMENTO
 	,a.dtemissao            AS DtEmissaoCTRC                -- DATA DE EMISSÃO DO CTRC
-	,${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 
+	,dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 
 	                        AS DtPrevisaoEntrega            -- PREVISÃO DE ENTREGA
 	,a.dtentrega            AS DtEntrega                    -- DATA DE ENTREGA
 	,b.nrnotafiscal         AS NrNotaFiscal                 -- NUMERO DA NOTA FISCAL
@@ -57,23 +57,22 @@ SELECT
 	,c.QtPeso               AS QtPesoNF                     -- PESO INFORMADO NA FOTAFISCAL
 	,a.QTVolume             AS QtVolumeCTe                  -- VOLUME TOTAL NO CONHECIMENTO
 	,c.QtVolume             AS QTVolumeNF                   -- VOLUME NA NOTAFISCAL
-FROM ${Base}.dbo.gtcconhe      a                                          -- Conhecimento
-LEFT JOIN ${Base}.dbo.sisempre aa ON aa.cdempresa         = a.cdempresa   -- Filial Origem
-LEFT JOIN ${Base}.dbo.gtcconce bb ON bb.cdempresa         = a.cdempresa	  AND bb.nrseqcontrole = a.nrseqcontrole -- CTe Fiscal
-LEFT JOIN ${Base}.dbo.gtcnfcon b  ON b.cdempresa          = a.cdempresa	  AND b.nrseqcontrole = a.nrseqcontrole  -- Link CTRC x NF
-LEFT JOIN ${Base}.dbo.gtcnf    c  ON c.cdremetente        = b.cdinscricao AND c.nrserie = b.nrserie AND c.nrnotafiscal = b.nrnotafiscal  -- NotaFiscal
-LEFT JOIN ${Base}.dbo.gtcmoven d  ON d.cdempresa          = a.cdempresa   AND d.nrseqcontrole = a.nrseqcontrole  -- Movimento de Ocorrencias
-LEFT JOIN ${Base}.dbo.gtchisen e  ON e.cdhistoricoentrega = d.cdocorrencia     -- Ocorrencias
-LEFT JOIN ${Base}.dbo.sistdf   f  ON f.cdtpdoctofiscal    = a.cdtpdoctofiscal  -- Tipo Fiscal
-LEFT JOIN ${Base}.dbo.siscli   g  ON g.cdinscricao        = a.cdremetente      -- Clientes Remetente
-LEFT JOIN ${Base}.dbo.siscli   h  ON h.cdinscricao        = a.cddestinatario   -- Clientes Destinatários
-LEFT JOIN ${Base}.dbo.siscli   i  ON i.cdinscricao        = a.cdinscricao      -- Clientes Pagador
-LEFT JOIN ${Base}.dbo.siscep   j  ON j.nrcep              = a.nrcepcoleta      -- CEP Filial Origem
-LEFT JOIN ${Base}.dbo.siscep   k  ON k.nrcep              = a.nrcepentrega     -- CEP Local Entrega
-LEFT JOIN ${Base}.dbo.sisempre l  ON l.cdempresa          = a.cdempresa        -- Filial Origem
-LEFT JOIN ${Base}.dbo.sisempre m  ON m.cdempresa          = a.cdempresadestino -- Filial Destino
-LEFT JOIN ${Base}.dbo.siscep   n  ON n.nrcep              = m.nrcep            -- CEP Filial Destino
+FROM dbo.gtcconhe      a                                          -- Conhecimento
+LEFT JOIN dbo.sisempre aa ON aa.cdempresa         = a.cdempresa   -- Filial Origem
+LEFT JOIN dbo.gtcconce bb ON bb.cdempresa         = a.cdempresa	  AND bb.nrseqcontrole = a.nrseqcontrole -- CTe Fiscal
+LEFT JOIN dbo.gtcnfcon b  ON b.cdempresa          = a.cdempresa	  AND b.nrseqcontrole = a.nrseqcontrole  -- Link CTRC x NF
+LEFT JOIN dbo.gtcnf    c  ON c.cdremetente        = b.cdinscricao AND c.nrserie = b.nrserie AND c.nrnotafiscal = b.nrnotafiscal  -- NotaFiscal
+LEFT JOIN dbo.gtcmoven d  ON d.cdempresa          = a.cdempresa   AND d.nrseqcontrole = a.nrseqcontrole  -- Movimento de Ocorrencias
+LEFT JOIN dbo.gtchisen e  ON e.cdhistoricoentrega = d.cdocorrencia     -- Ocorrencias
+LEFT JOIN dbo.sistdf   f  ON f.cdtpdoctofiscal    = a.cdtpdoctofiscal  -- Tipo Fiscal
+LEFT JOIN dbo.siscli   g  ON g.cdinscricao        = a.cdremetente      -- Clientes Remetente
+LEFT JOIN dbo.siscli   h  ON h.cdinscricao        = a.cddestinatario   -- Clientes Destinatários
+LEFT JOIN dbo.siscli   i  ON i.cdinscricao        = a.cdinscricao      -- Clientes Pagador
+LEFT JOIN dbo.siscep   j  ON j.nrcep              = a.nrcepcoleta      -- CEP Filial Origem
+LEFT JOIN dbo.siscep   k  ON k.nrcep              = a.nrcepentrega     -- CEP Local Entrega
+LEFT JOIN dbo.sisempre l  ON l.cdempresa          = a.cdempresa        -- Filial Origem
+LEFT JOIN dbo.sisempre m  ON m.cdempresa          = a.cdempresadestino -- Filial Destino
+LEFT JOIN dbo.siscep   n  ON n.nrcep              = m.nrcep            -- CEP Filial Destino
 WHERE isnull(e.InExibehist, 0) = 0
-      ${filtro}
 	-- AND b.nrnotafiscal=1517772
-	-- AND a.nrdoctofiscal = 4183
+	AND a.nrdoctofiscal = 4183
