@@ -1,6 +1,7 @@
 const express                  = require('express')
 const senior                   = express.Router()
 
+// APP Pátio
 const QRcode                   = require('../helpers/QRcode')
 const verifyToken              = require('../auth/verifyToken')
 const motorista_GET            = require('../controllers/patio/motorista_GET')
@@ -25,7 +26,6 @@ senior.get('/funcionario'          , verifyToken, funcionario_GET )
 senior.get('/usuario'              , verifyToken, usuario_GET )
 senior.get('/veiculoPosicaoAtual'  , verifyToken, veiculo_PosicaoAtual_GET )
 senior.get('/motivoEntradaSaida'   , verifyToken, motivoEntradaSaida_GET )
-
 senior.post('/veiculoRegistraES'   , verifyToken, veiculo_RegistraES_POST )
 
 module.exports = senior

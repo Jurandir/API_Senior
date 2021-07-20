@@ -14,8 +14,8 @@ SELECT
     ,c.DtEmissao            AS DtEmissaoNF                  -- DATA DE EMISSÃO DA NOTA FISCAL
 	,c.NrChaveAcessoNFe     AS NrChaveAcessoNFe             -- DANFE / CHAVE DA NFe
 	,d.cdocorrencia         AS CdOcorrencia                 -- CODIGO DA OCORRENCIA
-	,d.dtmovimento          AS DtOcorrencia                 -- DESCRIÇÃO DA OCORRENCIA
-	,e.dshistoricoentrega   AS DsOcorrencia                 -- DATA DA OCORRENCIA
+	,d.dtmovimento          AS DtOcorrencia                 -- DATA DA OCORRENCIA
+	,e.dshistoricoentrega   AS DsOcorrencia                 -- DESCRIÇÃO DA OCORRENCIA
 	,bb.CdChaveAcesso       AS NrChaveAcessoCTe             -- CHAVE DA CTe
 	,bb.insituacaosefaz     AS CdSituacaoSefaz              -- CODIGO DE SUTUAÇÃO NA SEFAZ
 	,bb.DsSituacaoSefaz     AS DsSituacaoSefaz              -- DESCRIÇÃO DA SITUAÇÃO NA SEFAZ

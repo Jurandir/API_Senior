@@ -29,6 +29,9 @@ async function apiCliente_GET( req, res ) {
     let method     = req.method
     let params     = method == 'GET' ? req.query : req.body
     let params_new = {}
+    let url        = `${req.url}`.toLowerCase()  // Testar se "/apitracking" para buscar o comprovante
+
+    console.log('REQ',url)
 
     if(method=='POST') {
         params_new = {
@@ -39,11 +42,18 @@ async function apiCliente_GET( req, res ) {
         } 
     }
 
+    if(method=='GET') {
+        params_new = {
+            Base:     `softran_termaco`,
+            NF_chave: params.chaveNFe,
+        } 
+    }
+
     try {
         let code = 200
         let ret  = await apiDados(params_new)
 
-        console.log('apiCliente_GET RET:',ret)
+        // console.log('apiCliente_GET RET:',ret)
          
         if(!ret.success){
             retorno = {}
@@ -88,9 +98,26 @@ async function apiCliente_GET( req, res ) {
             retorno.localEntrega.cidade.nome   = ret.data[0].DsLocalEntrega
             retorno.localEntrega.cidade.uf     = ret.data[0].DsUFEntrega
             retorno.localEntrega.cidade.ibge   = ret.data[0].CdIBGEEntrega
-            retorno.documento      =`${retorno.filial}${retorno.numero}`
-            retorno.conhecimento   =`${retorno.filial}${retorno.numero}`
-            retorno.cnpj_remetente =  ret.data[0].NrCNPJCPFRemetente
+            retorno.documento                  =`${retorno.filial}E${retorno.numero}`
+            retorno.conhecimento               =`${retorno.filial}-E-${retorno.numero}`
+            retorno.cnpj_remetente             =  ret.data[0].NrCNPJCPFRemetente
+            retorno.ocorrencias.push({
+                codigoInterno:0, 
+                codigoProceda:0, 
+                descricaoOcorrencia: 'PROCESSO DE TRANSPORTE INICIADO',  
+                dataRegistro: ret.data[0].DtEmissaoCTRC
+            })
+
+            ret.data.forEach(itn=>{
+                retorno.ocorrencias.push({
+                    codigoInterno: itn.CdOcorrencia, 
+                    codigoProceda:itn.CdOcorrencia, 
+                    descricaoOcorrencia: itn.DsOcorrencia,  
+                    dataRegistro: itn.DtOcorrencia
+                })
+    
+            })
+
             /*
             
             */

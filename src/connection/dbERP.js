@@ -1,5 +1,5 @@
 const sql    = require('mssql')  
-const config = require('../../config/dbERP.json')  
+const config = require('../../.config/dbERP.json')  
 
 const poolPromise = new sql.ConnectionPool(config)  
     .connect()  
