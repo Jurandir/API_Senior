@@ -8,6 +8,7 @@ SELECT
 	,a.dtemissao            AS DtEmissaoCTRC                -- DATA DE EMISSÃO DO CTRC
 	,dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 
 	                        AS DtPrevisaoEntrega            -- PREVISÃO DE ENTREGA
+	,o.DtCadastro           AS DtColeta                     -- DATA DA COLETA
 	,a.dtentrega            AS DtEntrega                    -- DATA DE ENTREGA
 	,b.nrnotafiscal         AS NrNotaFiscal                 -- NUMERO DA NOTA FISCAL
 	,b.nrserie              AS SerieNF                      -- SERIE DA NOTA FISCAL
@@ -73,6 +74,7 @@ LEFT JOIN dbo.siscep   k  ON k.nrcep              = a.nrcepentrega     -- CEP Lo
 LEFT JOIN dbo.sisempre l  ON l.cdempresa          = a.cdempresa        -- Filial Origem
 LEFT JOIN dbo.sisempre m  ON m.cdempresa          = a.cdempresadestino -- Filial Destino
 LEFT JOIN dbo.siscep   n  ON n.nrcep              = m.nrcep            -- CEP Filial Destino
+LEFT JOIN dbo.CCEColet o  ON o.CdEmpresa          = a.CdEmpresa  AND o.NrColeta = a.NrColeta  -- Dados Coleta
 WHERE isnull(e.InExibehist, 0) = 0
 	-- AND b.nrnotafiscal=1517772
 	AND a.nrdoctofiscal = 4183

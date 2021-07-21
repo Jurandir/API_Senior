@@ -1,20 +1,26 @@
-const { poolPromise } = require('../connection/dbTMS')
+// 21-07-2021
+
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function stepTracker( req, res ) {
-    let resposta = {
+    let retorno = {
         success: false,
         message: 'Dados não localizados !!!',
         data: [],
         rows: 0
     }
-    let {tipo,cnpj,documento} = req.query
+    let {Base, tipo, cnpj, documento } = req.query
     let s_where,s_emp,s_ctrc,s_serie,s_documento,s_data
     let i_numero = 0
 
     if(!documento || documento==undefined ) {
-        resposta.message = 'Documento invalido na pesquisa !!!'
-        res.json(resposta).status(200)
+        retorno.message = 'Documento invalido na pesquisa !!!'
+        res.json(retorno).status(200)
         return 0
+    }
+
+    if (!Base) {
+        Base = 'softran_termaco'
     }
 
     if(tipo=='CTRC') {
@@ -29,83 +35,88 @@ async function stepTracker( req, res ) {
     }
 
     if(!i_numero) {
-        resposta.message = 'Documento invalido !!!'
-        res.json(resposta).status(200)
+        retorno.message = 'Documento invalido !!!'
+        res.json(retorno).status(200)
         return 0
     }
 
     if(s_tipo == 'NF' && (!cnpj || cnpj==undefined)) {
-        resposta.message = 'CNPJ do emitente da NF, obrigatório na pesquisa !!!'
-        res.json(resposta).status(200)
+        retorno.message = 'CNPJ do emitente da NF, obrigatório na pesquisa !!!'
+        res.json(retorno).status(200)
         return 0
     }
 
     s_where = (s_tipo=='NF') 
                 ? `(CNH.CLI_CGCCPF_REMET='${cnpj}' OR CNH.CLI_CGCCPF_DEST='${cnpj}' OR CNH.CLI_CGCCPF_PAG='${cnpj}') AND NFR.NF=${i_numero}` 
-                : `CNH.EMP_CODIGO='${s_emp}' AND CNH.SERIE = '${s_serie}' AND CNH.CTRC = '${s_ctrc}'`
+                : `AA.DSAPELIDO='${s_emp}' AND A.NRDOCTOFISCAL ='${s_ctrc}'`
 
     s_documento = (s_tipo=='NF') 
                 ? `CONCAT(NFR.CLI_CGCCPF_REMET,'/',NFR.NF,'-',NFR.SERIE)`
-                : `CONCAT(CNH.EMP_CODIGO,CNH.SERIE,CNH.CTRC)`  
+                : `CONCAT(AA.DSAPELIDO,'E',A.NRDOCTOFISCAL)`  
 
     s_data      = (s_tipo=='NF') 
                 ? `NFR.DATA`
-                : `CNH.DATA`
+                : `A.DTEMISSAO`
         
-    let s_select = `SELECT DISTINCT 
-                   '${s_tipo}' TIPO,
-                    ${s_documento} DOCUMENTO,
-                    ${s_data}, 
-                    CNH.TIPOCTRC             CTRC_TIPO,
-                    CNH.DATAHORAEMISSAO      CTRC_EMISSAO,
-                    CNH.DATACOLETA           COLETA,
-                    CNH.DATAEMBARQUE         EMBARQUE,
-                    CNH.DATACHEGADA          CHEGADA,
-                    MEG.DATATU               SAIDA,
-					DAE.DATAEMISSAO          DAE_EMISSAO,
-					DAE.DATABAIXA            DAE_BAIXA,
-                    CNH.DATAENTREGA          ENTREGA,
-                    CNH.PREVENTREGA          PREVISAO,
-                    CNH.PREVENTREGA_ORIGINAL PREVISAO_ORIGINAL,
-                    CNH.COLETA               FLAG_COLETA,
-                    CNH.COLETADO             FLAG_COLETADO,
-                    CNH.ENTREGA              FLAG_ENTREGA,
-                    CNH.ENTREGADO            FLAG_ENTREGADO,
-                    MEG.BAIXADO              FLAG_BAIXADO
-                FROM CARGASSQL.dbo.CNH
-                LEFT JOIN CARGASSQL.dbo.DAE  ON DAE.EMP_CODIGO_CNH = CNH.EMP_CODIGO AND DAE.CNH_SERIE = CNH.SERIE AND  DAE.CNH_CTRC = CNH.CTRC
-                LEFT JOIN CARGASSQL.dbo.IME  ON IME.EMP_CODIGO_CNH = CNH.EMP_CODIGO AND IME.CNH_SERIE = CNH.SERIE AND  IME.CNH_CTRC = CNH.CTRC
-                LEFT JOIN CARGASSQL.dbo.MEG  ON MEG.EMP_CODIGO     = IME.EMP_CODIGO AND MEG.CODIGO    = IME.MEG_CODIGO
-                JOIN CARGASSQL.dbo.NFR       ON NFR.EMP_CODIGO     = CNH.EMP_CODIGO AND NFR.CNH_SERIE = CNH.SERIE AND  NFR.CNH_CTRC = CNH.CTRC
-                WHERE 
-                    ${s_where} `
+    let s_select = `
+                SELECT
+                    '${s_tipo}'                                                           AS TIPO
+                    ,${s_documento}                                                       AS DOCUMENTO
+                    ,MAX(${s_data})                                                       AS DATA
+                    ,0                                                                    AS CTRC_TIPO
+                    ,MAX(A.DTEMISSAO)                                                     AS CTRC_EMISSAO
+                    ,MAX(O.DTCADASTRO)                                                    AS COLETA
+                    ,MAX(CASE WHEN D.CDOCORRENCIA = 101 THEN D.DTMOVIMENTO ELSE NULL END) AS EMBARQUE
+                    ,MAX(CASE WHEN D.CDOCORRENCIA = 98  THEN D.DTMOVIMENTO ELSE NULL END) AS CHEGADA
+                    ,MAX(CASE WHEN D.CDOCORRENCIA = 100 THEN D.DTMOVIMENTO ELSE NULL END) AS SAIDA
+                    ,NULL                                                                 AS DAE_EMISSAO
+                    ,NULL                                                                 AS DAE_BAIXA
+                    ,MAX(A.DTENTREGA)                                                     AS ENTREGA
+                    ,MAX(${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(A.DTEMISSAO, A.CDEMPRESADESTINO, A.CDPERCURSO, A.CDTRANSPORTE, A.CDREMETENTE, A.CDDESTINATARIO, A.CDEMPRESA, A.NRSEQCONTROLE))
+                                                                                          AS PREVISAO
+                    ,NULL                                                                 AS PREVISAO_ORIGINAL
+                FROM ${Base}.dbo.GTCCONHE      A
+                LEFT JOIN ${Base}.dbo.SISEMPRE AA ON AA.CDEMPRESA  = A.CDEMPRESA 
+                LEFT JOIN ${Base}.dbo.GTCCONCE BB ON BB.CDEMPRESA  = A.CDEMPRESA   AND BB.NRSEQCONTROLE = A.NRSEQCONTROLE
+                LEFT JOIN ${Base}.dbo.GTCNFCON B  ON B.CDEMPRESA   = A.CDEMPRESA   AND B.NRSEQCONTROLE = A.NRSEQCONTROLE
+                LEFT JOIN ${Base}.dbo.GTCNF    C  ON C.CDREMETENTE = B.CDINSCRICAO AND C.NRSERIE = B.NRSERIE AND C.NRNOTAFISCAL = B.NRNOTAFISCAL
+                LEFT JOIN ${Base}.dbo.GTCMOVEN D  ON D.CDEMPRESA   = A.CDEMPRESA   AND D.NRSEQCONTROLE = A.NRSEQCONTROLE
+                LEFT JOIN ${Base}.dbo.CCECOLET O  ON O.CDEMPRESA   = A.CDEMPRESA   AND O.NRCOLETA = A.NRCOLETA
+                WHERE
+                    ${s_where}
+                GROUP BY 
+                    ${s_documento}`
         
-    try {  
-        const pool   = await poolPromise  
-        const result = await pool.request()  
-        .query( s_select ,function(err, profileset){  
-            if (err) {
-                
-                resposta.success = false
-                resposta.message = `ERRO: ${err}`
-                throw new Error(`DB ERRO - ${err}`)
+        console.log('stepTracker: s_select',s_select)
 
-            } else {  
-                let dados = []
-                dados.push(...profileset.recordset)
-                resposta.rows    = dados.length
-                resposta.success = (resposta.rows>0) ? true : false
-                resposta.message = resposta.success ? 'Sucesso. OK.' : resposta.message
-                resposta.data    = dados
-                res.json(resposta).status(200)
-                pool.close  
-            }  
-        })  
-        } catch (err) {  
-            resposta.success = false
-            resposta.message = 'ERRO: '+err.message
-            res.send(resposta).status(500)  
-        } 
+        try {
+            let data = await sqlQuery(s_select)
+      
+            let { Erro } = data
+            if (Erro) { 
+              throw new Error(`DB ERRO - ${Erro} - Params = [ ${Base}, ${s_where} ]`)
+            }
+            
+            retorno.data = data
+            if(!data || data.length==0){
+                retorno.message = `Dados não encontrada na Base (${Base})`
+                retorno.rows    = 0
+            } else {
+                retorno.success = true
+                retorno.message = `Sucesso. Ok.`
+                retorno.rows    =  data.length
+            }
+                   
+            res.json(retorno).status(200) 
+      
+        } catch (err) { 
+            retorno.message = err.message
+            retorno.rows    =  -1
+            retorno.rotine  = 'stepTracker.js'
+            retorno.sql     =  s_select
+            res.json(retorno).status(500) 
+        }
+    
 }
 
 module.exports = stepTracker
