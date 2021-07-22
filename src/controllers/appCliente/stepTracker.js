@@ -105,6 +105,14 @@ async function stepTracker( req, res ) {
                 retorno.success = true
                 retorno.message = `Sucesso. Ok.`
                 retorno.rows    =  data.length
+                data.forEach( (element,idx) => {
+                    retorno.data[idx].PREVISAO_ORIGINAL = element.PREVISAO_ORIGINAL ? element.PREVISAO_ORIGINAL : element.PREVISAO
+                    retorno.data[idx].FLAG_COLETA       = element.COLETA ? 1 : 0
+                    retorno.data[idx].FLAG_COLETADO     = 'S'
+                    retorno.data[idx].FLAG_ENTREGA      = element.ENTREGA ?   1 : 0
+                    retorno.data[idx].FLAG_ENTREGADO    = element.ENTREGA ? 'S' : 'N'
+                    retorno.data[idx].FLAG_BAIXADO      = element.ENTREGA ?   1 : 0
+                })
             }
                    
             res.json(retorno).status(200) 
