@@ -11,10 +11,12 @@ const dadosFiliais              = require('../controllers/appCliente/dadosFiliai
 const listaFiliaisCliente       = require('../controllers/appCliente/listaFiliaisCliente')
 const faturasTOTVS              = require('../controllers/appCliente/faturasTOTVS')
 const stepTracker               = require('../controllers/appCliente/stepTracker')
-/*
-const senhaClienteEmail         = require('../controllers/appCliente/senhaClienteEmail')
 const dadosCidadesAtendidas     = require('../controllers/appCliente/dadosCidadesAtendidas')
 const dadosCidadesAtendidasPOST = require('../controllers/appCliente/dadosCidadesAtendidasPOST')
+
+
+/*
+const senhaClienteEmail         = require('../controllers/appCliente/senhaClienteEmail')
 const posicaoCargaSTATUS        = require('../controllers/appCliente/posicaoCargaSTATUS')
 const posicaoCargaAPP           = require('../controllers/appCliente/posicaoCargaAPP')
 const listaDAE                  = require('../controllers/appCliente/listaDAE')
@@ -34,10 +36,13 @@ api.get('/filiais'                , dadosFiliais )
 api.get('/listafiliaiscliente'    , listaFiliaisCliente)
 api.get('/faturastotvs'           , validaToken, faturasTOTVS )
 api.get('/steptracker'            , stepTracker )
+api.get('/cidadesatendidas'       , dadosCidadesAtendidas )
+api.post('/cidadesatendidaspost'  , dadosCidadesAtendidasPOST)
+
+
+
 /*
 router.use('/senhaclienteemail'      , senhaClienteEmail )
-router.get('/cidadesatentidas'       , dadosCidadesAtendidas )
-router.post('/cidadesatentidaspost'  , dadosCidadesAtendidasPOST)
 router.get('/posicaoCargastatus'     , posicaoCargaSTATUS)
 router.get('/posicaocargaapp'        , validaToken, posicaoCargaAPP )
 router.get('/listadae'               , validaToken, listaDAE )

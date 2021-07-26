@@ -47,15 +47,15 @@ async function stepTracker( req, res ) {
     }
 
     s_where = (s_tipo=='NF') 
-                ? `(CNH.CLI_CGCCPF_REMET='${cnpj}' OR CNH.CLI_CGCCPF_DEST='${cnpj}' OR CNH.CLI_CGCCPF_PAG='${cnpj}') AND NFR.NF=${i_numero}` 
+                ? `(A.CDREMETENTE='${cnpj}' OR A.CDDESTINATARIO='${cnpj}' OR A.CDINSCRICAO='${cnpj}') AND B.NRNOTAFISCAL=${i_numero}` 
                 : `AA.DSAPELIDO='${s_emp}' AND A.NRDOCTOFISCAL ='${s_ctrc}'`
 
     s_documento = (s_tipo=='NF') 
-                ? `CONCAT(NFR.CLI_CGCCPF_REMET,'/',NFR.NF,'-',NFR.SERIE)`
+                ? `CONCAT(C.CDREMETENTE,'/',B.NRNOTAFISCAL,'-',B.NRSERIE)`
                 : `CONCAT(AA.DSAPELIDO,'E',A.NRDOCTOFISCAL)`  
 
     s_data      = (s_tipo=='NF') 
-                ? `NFR.DATA`
+                ? `C.DTEMISSAO`
                 : `A.DTEMISSAO`
         
     let s_select = `

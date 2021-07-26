@@ -1,24 +1,29 @@
-const { poolPromise } = require('../connection/dbTMS')
-const estadosAtendidos = require('../helpers/estadosAtendidos')
+// 26-07-2021 
+const sqlQuery         = require('../../connection/sqlSENIOR')
+const estadosAtendidos = require('../../helpers/estadosAtendidos')
 
 async function dadosCidadesAtendidas( req, res ) {
 
-    let {uf,cidade} = req.query
+    let {Base, uf, cidade} = req.query
     let addSql = ''
     let value = ''
 
+    if (!Base) {
+        Base = 'softran_termaco'
+    }
+
     if(uf) {
        value = `${uf}`.toUpperCase() 
-       addSql = addSql + ` AND (CID.UF = '${value}') `
+       addSql = addSql + ` AND (UF = '${value}') `
     }
 
     if(cidade) {
         value = `${cidade}`.toUpperCase()
-        addSql = addSql + ` AND (CID.NOME LIKE '%${value}%') `
+        addSql = addSql + ` AND (CID_NOME LIKE '%${value}%') `
      }
  
 
-    let resposta = {
+    let retorno = {
         success: false,
         message: 'Dados não localizados !!!',
         data: [],
@@ -28,52 +33,54 @@ async function dadosCidadesAtendidas( req, res ) {
     let listaUF        = estadosAtendidos()
     let estadosValidos = `AND '${ listaUF.join(',') }' like '%'+UF+'%'  `
 
-    let s_select = `SELECT CODIGO CID_CODIGO,
-                        UF,
-                        NOME CID_NOME,
-                        CID_CODIGO_BASE CID_BASE,
-                        CID_CODIGO_BASEENTREGA CID_BASE_ENTREGA, 
-                        ACEITACOLETA,
-                        ACEITAENTREGA,
-                        ACEITAFOB 
-                    FROM CID
-                    WHERE NOT ( (NOME LIKE '%NÃO%UTILIZAR%') OR
-                                (NOME LIKE '%NAO%UTILIZAR%') ) 
-                        AND CID_CODIGO_BASE IS NOT NULL
-                        AND EXISTS (SELECT 1 FROM TRE 
-                                    WHERE (CID.CODIGO = SUBSTRING(TRE.CODIGO,1,3) OR 
-                                           CID.CODIGO = SUBSTRING(TRE.CODIGO,4,3) ) 
-                                    AND NOT( (TRE.DESTINO LIKE '%NÃO%UTILIZAR%') OR 
-                                                (TRE.DESTINO LIKE '%NAO%UTILIZAR%') OR 
-                                                (TRE.ORIGEM  LIKE '%NÃO%UTILIZAR%') OR
-                                                (TRE.ORIGEM  LIKE '%NAO%UTILIZAR%') ) )
-                        ${estadosValidos}
-                        ${addSql}
-                    ORDER BY UF,NOME`
+    let s_select = `
+    SELECT * FROM (
+        SELECT 
+               (SELECT TOP 1 CDIBGE FROM ${Base}.dbo.SISCEP XX WHERE XX.CDREGIAO=A.CDREGIAO AND ISNULL(XX.CDIBGE,0)>0) AS CID_CODIGO,
+               (SELECT TOP 1 DSUF FROM ${Base}.dbo.SISCEP XX WHERE XX.CDREGIAO=A.CDREGIAO AND ISNULL(XX.CDIBGE,0)>0) AS UF,
+               A.DSREGIAO AS CID_NOME,
+               B.DSAPELIDO AS CID_BASE,
+               B.DSAPELIDO AS CID_BASE_ENTREGA,
+               ISNULL(A.INCOLETA,0) AS ACEITACOLETA, 
+               ISNULL(A.INENTREGA,0) AS ACEITAENTREGA,
+               CASE WHEN ISNULL(A.INFRETEAPAGAR,0)=0 THEN 'N' ELSE 'S' END  AS ACEITAFOB
+        FROM ${Base}.dbo.SISREGIA A
+        LEFT JOIN ${Base}.dbo.SISEMPRE B ON B.CDEMPRESA=A.CDEMPRESA
+        WHERE ISNULL(A.NRNIVEL,0)=0
+        ) Z 
+        WHERE 1=1    
+        ${estadosValidos}
+        ${addSql}
+        ORDER BY UF,CID_NOME
+        `
+        try {
+            let data = await sqlQuery(s_select)
+      
+            let { Erro } = data
+            if (Erro) { 
+              throw new Error(`DB ERRO - ${Erro} - Params = [ ${Base}, ${addSql} ]`)
+            }
+            
+            retorno.data = data
+            if(!data || data.length==0){
+                retorno.message = `Cidade não encontrada na Base (${Base})`
+                retorno.rows    = 0
+            } else {
+                retorno.success = true
+                retorno.message = `Sucesso. Ok.`
+                retorno.rows    =  data.length
+            }
+                   
+            res.json(retorno).status(200) 
+      
+        } catch (err) { 
+            retorno.message = err.message
+            retorno.rows    =  -1
+            retorno.rotine  = 'dadosCidadesAtendidasPOST.js'
+            retorno.sql     =  s_select
+            res.json(retorno).status(500) 
+        }
         
-    try {  
-        const pool   = await poolPromise  
-        const result = await pool.request()  
-        .query( s_select ,function(err, profileset){  
-            if (err) {
-                resposta.success = false
-                resposta.message = `ERRO: ${err}`  
-            } else {  
-                let dados = []
-                dados.push(...profileset.recordset)
-                resposta.rows    = dados.length
-                resposta.success = (resposta.rows>0) ? true : false
-                resposta.message = resposta.success ? 'Sucesso. OK.' : resposta.message
-                resposta.data    = dados
-                res.json(resposta).status(200)
-                pool.close  
-            }  
-        })  
-        } catch (err) {  
-            resposta.success = false
-            resposta.message = 'ERRO: '+err.message
-            res.send(resposta).status(500)  
-        } 
 }
 
 module.exports = dadosCidadesAtendidas
