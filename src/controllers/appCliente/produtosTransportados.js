@@ -1,4 +1,5 @@
-const sqlQuery     = require('../connection/sqlQuery')
+// 27-07-2021 
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function produtosTransportados(req, res) {
     let resposta = {
@@ -8,7 +9,19 @@ async function produtosTransportados(req, res) {
         rows: 0
     }
 
-    let wsql = `SELECT CODIGO,UPPER( NOME ) NOME ,DATATU FROM CARGASSQL.dbo.PRD ORDER BY NOME`
+    let { Base } = req.query
+
+    if (!Base) {
+        Base = 'softran_termaco'
+    }
+
+    let wsql = `
+    SELECT 
+        CdNatureza          as CODIGO
+    ,   UPPER( DsNatureza ) as NOME 
+    ,   CURRENT_TIMESTAMP   as DATATU
+    FROM ${Base}.dbo.GTCNATUR
+    ORDER BY UPPER( DsNatureza )`
 
     try {
         data = await sqlQuery(wsql)
