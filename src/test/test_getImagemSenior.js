@@ -1,25 +1,26 @@
-// 20-07-2021 
-const sqlQuery     = require('../connection/sqlSENIOR')
+// 28-07-2021 14:30
+// params  : { Base, CdEmpresa, NrDoctoFiscal, ctrc, DsFilial ,retTipo }
+// retTipo : ( 1-Download, 2-Base64 )
 
-const Base          = 'softran_termaco'
+const getImagemSenior     = require('../helpers/getImagemSenior')
+
 const CdEmpresa     = 2
+const DsFilial      = 'SPO'
 const NrDoctoFiscal = 1073
+const retTipo       = 1 
 
-let sql = `
-SELECT a.CdEmpresa
-,      a.NrDoctoFiscal
-,      a.NrSeqControle
-,      c.CdSequencia
-,      c.DsArquivo
-,      c.DsTipoArquivo
-,      c.DsNomeArquivo
-  FROM ${Base}.dbo.gtcconhe      a                                                                    -- Conhecimento
-  LEFT JOIN ${Base}.dbo.gtcconce b ON b.CdEmpresa = a.CdEmpresa AND b.NrSeqControle = a.NrSeqControle -- CTe Fiscal
-  LEFT JOIN ${Base}.dbo.GTCMVEDG c ON c.CdEmpresa = a.CdEmpresa AND c.NrSeqControle = a.NrSeqControle -- Comprovante de Entrega baixado pelo RMS
- WHERE a.CdEmpresa     = ${CdEmpresa}
-   AND a.NrDoctoFiscal = ${NrDoctoFiscal}
-`
+// Teste 01
+//getImagemSenior( {CdEmpresa,NrDoctoFiscal,retTipo} ).then( ret => {
+//    console.log('RET:',ret)
+//})
 
-sqlQuery(sql).then(ret=>{
+// Teste 02
+//getImagemSenior( {ctrc:'SPOE1073',retTipo} ).then( ret => {
+//  console.log('RET:',ret)
+//})
+
+// Teste 03
+getImagemSenior( {DsFilial,NrDoctoFiscal,retTipo} ).then( ret => {
     console.log('RET:',ret)
 })
+
