@@ -1,4 +1,5 @@
-const { poolPromise } = require('../connection/dbTMS')
+// 29-07-2021 17:10
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function posicaoCargaAPP( req, res ) {
     let resposta = {
@@ -18,6 +19,7 @@ async function posicaoCargaAPP( req, res ) {
 	let	s_emp        = ''
 	let	s_ctrc_serie = ''
     let s_where2     = ''
+    let Base         = 'softran_termaco'
 
     if(!cnpj || cnpj==undefined ) {
         resposta.message = 'Problemas com a autenticação !!!'
@@ -36,7 +38,7 @@ async function posicaoCargaAPP( req, res ) {
     if(notafiscal) {
         pagina_nro = 1
         i_numero   = Number.parseInt(notafiscal)
-        s_where    = ` AND NFR.NF = ${i_numero} `
+        s_where    = ` AND b.nrnotafiscal = ${i_numero} `
     } 
 	
 	if(ctrc) {
@@ -44,61 +46,101 @@ async function posicaoCargaAPP( req, res ) {
 		i_ctrc       = `${ctrc}`.substr(4,10)
 		s_emp        = `${ctrc}`.substr(0,3)
 		s_ctrc_serie = `${ctrc}`.substr(3,1)
-        s_where2     = ` AND NFR.CNH_CTRC = ${i_ctrc} AND NFR.EMP_CODIGO='${s_emp}' AND NFR.CNH_SERIE='${s_ctrc_serie}' `
+        s_where2     = ` AND a.nrdoctofiscal = ${i_ctrc} AND aa.dsapelido ='${s_emp}' `
     } 
 
 
     if(dt_inicial) {
-            s_where = s_where + ` AND CNH.DATA  >= '${dt_inicial}' `
+            s_where = s_where + ` AND  a.dtemissao  >= '${dt_inicial}' `
     }
 
     if(dt_final) {
-            s_where = s_where + ` AND CNH.DATA  <= '${dt_final}' `
+            s_where = s_where + ` AND  a.dtemissao  <= '${dt_final}' `
     }
 
     resposta.page   = Number.parseInt(pagina_nro)
     resposta.length = Number.parseInt(pagina_tam)
 
-    let sql_base =`SELECT 
-                        CNH.DATA,
-						CNH.TIPOCTRC as CTRC_TIPO,
-                        CNH.CLI_CGCCPF_REMET CNPJ_REMETENTE,
-                        CNH.CLI_CGCCPF_DEST CNPJ_DESTINATARIO,
-                        REME.NOME REMETENTE,
-                        DEST.NOME DESTINATARIO,
-                        NFR.NF NOTAFISCAL,
-                        NFR.SERIE SERIE_NF,
-                        CNH.TRE_CODIGO TRECHO,
-                        CONCAT(NFR.EMP_CODIGO,NFR.CNH_SERIE,NFR.CNH_CTRC) CTRC,
-                        CNH.NATUREZA,
-                        NFR.VOLUME,
-                    CASE WHEN (CNH.CLI_CGCCPF_DEST   ='${cnpj}') THEN 1 ELSE 0 END FLAG_DESTINATARIO,
-                    CASE WHEN (CNH.CLI_CGCCPF_REMET  ='${cnpj}') THEN 1 ELSE 0 END FLAG_REMETENTE,
-                    CASE WHEN (CNH.CLI_CGCCPF_RECEB  ='${cnpj}') THEN 1 ELSE 0 END FLAG_RECEBEDOR,
-                    CASE WHEN (CNH.CLI_CGCCPF_TOMADOR='${cnpj}') THEN 1 ELSE 0 END FLAG_TOMADOR,
-                    CASE WHEN (CNH.CLI_CGCCPF_PAG    ='${cnpj}') THEN 1 ELSE 0 END FLAG_PAGADOR,
-                    CNH.ENTREGADO FLAG_ENTREGUE,
-                    CNH.PREVENTREGA,
-                    CNH.DATAENTREGA 
-                    FROM CNH
-                    JOIN NFR ON NFR.EMP_CODIGO = CNH.EMP_CODIGO AND NFR.CNH_CTRC = CNH.CTRC AND NFR.CNH_SERIE = CNH.SERIE
-                    JOIN CLI REME ON REME.CGCCPF = CNH.CLI_CGCCPF_REMET
-                    JOIN CLI DEST ON DEST.CGCCPF = CNH.CLI_CGCCPF_DEST
-                    WHERE 1=1
-                        ${s_where} ${s_where2}
-                        AND (CNH.CLI_CGCCPF_DEST      = '${cnpj}'
-                        OR CNH.CLI_CGCCPF_REMET   = '${cnpj}'
-                        OR CNH.CLI_CGCCPF_TOMADOR = '${cnpj}'
-                        OR CNH.CLI_CGCCPF_PAG     = '${cnpj}'
-                        OR CNH.CLI_CGCCPF_RECEB   = '${cnpj}')
-                    ORDER BY CNH.DATA
-                    OFFSET (${pagina_nro} - 1) * ${pagina_tam} ROWS
-                    FETCH NEXT ${pagina_tam} ROWS ONLY `                
+    let s_select =`
+    SELECT 
+	    a.dtemissao                              AS DATA                -- DATA DE EMISSÃO DO CTRC
+	,   a.InTipoEmissao                          AS CTRC_TIPO           -- TIPO DE EMISSÃO/CTRC
+	,   g.NrCGCCPF                               AS CNPJ_REMETENTE      -- CNPJ DO REMETENTE
+	,   h.NrCGCCPF                               AS CNPJ_DESTINATARIO   -- CNPJ DO DESTINATARIO
+	,   g.dsentidade                             AS REMETENTE           -- NOME DO REMETENTE
+	,   h.dsentidade                             AS DESTINATARIO        -- NOME DO DESTINATARIO 
+	,   b.nrnotafiscal                           AS NOTAFISCAL          -- NUMERO DA NOTA FISCAL
+	,   b.nrserie                                AS SERIE_NF            -- SERIE DA NOTA FISCAL
+	,   CONCAT(aa.dsapelido,m.dsApelido)         AS TRECHO              -- SIGLAS ( ORIGEM/DESTINO )
+	,   CONCAT(aa.dsapelido,'E',a.nrdoctofiscal) AS CTRC                -- CTRC ( FILIAL/E/CONHECIMENTO )
+	,   'CARGA'                                  AS NATUREZA            -- CARGA EXPRESSA
+	,   c.QtVolume                               AS VOLUME              -- VOLUME NA NOTAFISCAL
+    ,   CASE WHEN (h.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_DESTINATARIO
+    ,   CASE WHEN (g.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_REMETENTE
+    ,   CASE WHEN (h.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_RECEBEDOR
+    ,   CASE WHEN (i.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_TOMADOR
+    ,   CASE WHEN (i.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_PAGADOR
+	,   dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 
+	                            AS PREVENTREGA            -- PREVISÃO DE ENTREGA
+    ,   a.dtentrega             AS DATAENTREGA            -- DATA DE ENTREGA
+    FROM dbo.gtcconhe      a                                          -- Conhecimento
+    LEFT JOIN ${Base}.dbo.sisempre aa ON aa.cdempresa         = a.cdempresa   -- Filial Origem
+    LEFT JOIN ${Base}.dbo.gtcconce bb ON bb.cdempresa         = a.cdempresa	  AND bb.nrseqcontrole = a.nrseqcontrole -- CTe Fiscal
+    LEFT JOIN ${Base}.dbo.gtcnfcon b  ON b.cdempresa          = a.cdempresa	  AND b.nrseqcontrole = a.nrseqcontrole  -- Link CTRC x NF
+    LEFT JOIN ${Base}.dbo.gtcnf    c  ON c.cdremetente        = b.cdinscricao AND c.nrserie = b.nrserie AND c.nrnotafiscal = b.nrnotafiscal  -- NotaFiscal
+    LEFT JOIN ${Base}.dbo.sistdf   f  ON f.cdtpdoctofiscal    = a.cdtpdoctofiscal  -- Tipo Fiscal
+    LEFT JOIN ${Base}.dbo.siscli   g  ON g.cdinscricao        = a.cdremetente      -- Clientes Remetente
+    LEFT JOIN ${Base}.dbo.siscli   h  ON h.cdinscricao        = a.cddestinatario   -- Clientes Destinatários
+    LEFT JOIN ${Base}.dbo.siscli   i  ON i.cdinscricao        = a.cdinscricao      -- Clientes Pagador
+    LEFT JOIN ${Base}.dbo.siscep   j  ON j.nrcep              = a.nrcepcoleta      -- CEP Filial Origem
+    LEFT JOIN ${Base}.dbo.siscep   k  ON k.nrcep              = a.nrcepentrega     -- CEP Local Entrega
+    LEFT JOIN ${Base}.dbo.sisempre l  ON l.cdempresa          = a.cdempresa        -- Filial Origem
+    LEFT JOIN ${Base}.dbo.sisempre m  ON m.cdempresa          = a.cdempresadestino -- Filial Destino
+    LEFT JOIN ${Base}.dbo.siscep   n  ON n.nrcep              = m.nrcep            -- CEP Filial Destino
+    WHERE 1=1
+        ${s_where} ${s_where2}
+     AND (h.NrCGCCPF = '${cnpj}' OR g.NrCGCCPF   = '${cnpj}' OR i.NrCGCCPF = '${cnpj}' )
+    ORDER BY a.dtemissao
+    OFFSET (${pagina_nro} - 1) * ${pagina_tam} ROWS
+    FETCH NEXT ${pagina_tam} ROWS ONLY `                
 
-    let s_select = sql_base
+    console.log('(posicaoCargaAPP) SQL:',s_select)
 
-    // console.log('SQL:',s_select)
+    try {
+        let data = await sqlQuery(s_select)
+  
+        let { Erro } = data
+        if (Erro) { 
+          throw new Error(`DB ERRO - ${Erro} - Params = [ ${Base}, ${cnpj} ]`)
+        }
         
+        resposta.data = data
+        if(!data || data.length==0){
+            resposta.message = `Dados não encontrados na Base (${Base})`
+            resposta.rows    = 0
+        } else {
+            resposta.success = true
+            resposta.message = `Sucesso. Ok.`
+            resposta.rows    =  data.length
+        }
+               
+        res.json(resposta).status(200) 
+  
+    } catch (err) { 
+        resposta.message = err.message
+        resposta.rows    =  -1
+        resposta.rotine  = 'posicaoCargaAPP.js'
+        resposta.sql     =  s_select
+        res.json(resposta).status(500) 
+    }
+
+        
+}
+
+module.exports = posicaoCargaAPP
+
+/*
+
     try {  
         const pool   = await poolPromise  
         const result = await pool.request()  
@@ -122,6 +164,5 @@ async function posicaoCargaAPP( req, res ) {
             resposta.message = 'ERRO: '+err.message
             res.send(resposta).status(500)  
         } 
-}
 
-module.exports = posicaoCargaAPP
+*/

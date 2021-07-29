@@ -1,4 +1,7 @@
-const apiDados = require('./apiDados')
+const apiDados        = require('./apiDados')
+const getMapaEntrega  = require('../../metodsDB/getMapaEntrega')
+const getImagemSenior = require('../../metodsDB/getImagemSenior')
+
 
 async function apiCliente_GET( req, res ) {
     let retorno = {
@@ -117,6 +120,30 @@ async function apiCliente_GET( req, res ) {
                 })
     
             })
+
+            let mapa = await getMapaEntrega({ 
+                CdEmpresa: ret.data[0].CdEmpresa, 
+                NrDoctoFiscal: ret.data[0].NrDoctoFiscal
+            })
+
+            retorno.mapa = mapa.data[0]
+
+            if(url=='/apitracking'){
+                let img = await getImagemSenior({
+                    CdEmpresa: ret.data[0].CdEmpresa, 
+                    NrDoctoFiscal: ret.data[0].CTRC,
+                    retTipo: 2    
+                })
+
+                for await (let itn of img.data){
+                    retorno.comprovantes.push( itn.base64 )
+                }
+
+                console.log('IMG:',img)
+
+                // loop comprovantes (=> retorno)
+
+            }
 
             /*
             

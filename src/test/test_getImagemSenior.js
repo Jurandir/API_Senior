@@ -2,7 +2,7 @@
 // params  : { Base, CdEmpresa, NrDoctoFiscal, ctrc, DsFilial ,retTipo }
 // retTipo : ( 1-Download, 2-Base64 )
 
-const getImagemSenior     = require('../helpers/getImagemSenior')
+const getImagemSenior     = require('../metodsDB/getImagemSenior')
 
 const CdEmpresa     = 2
 const DsFilial      = 'SPO'

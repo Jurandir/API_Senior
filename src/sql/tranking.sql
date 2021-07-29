@@ -4,6 +4,25 @@ SELECT
     ,aa.dsempresa           AS NomeTransportador            -- RAZÃO SOCIAL DO EMITENTE DO CTRC
 	,aa.dsapelido           AS DsFilial                     -- SIGLA DA EMPRESA/FILIAL ORIGEM
 	,a.nrdoctofiscal        AS CTRC                         -- NUMERO DO CTe
+    ,a.InTipoEmissao        AS  InTipoEmissao               -- TIPO DE EMISSÃO/CTRC
+    ,CASE 
+		WHEN a.InTipoEmissao =00 THEN 'NORMAL'
+		WHEN a.InTipoEmissao =01 THEN 'DEV. TOTAL'
+		WHEN a.InTipoEmissao =02 THEN 'REENTREGA ** COMPLEMENTAR TERMACO'
+		WHEN a.InTipoEmissao =03 THEN 'DEV. PARCIAL'
+		WHEN a.InTipoEmissao =04 THEN 'COMPLEMENTAR ** TERMACO'
+		WHEN a.InTipoEmissao =05 THEN 'COTAÇÃO DE FRETE'
+		WHEN a.InTipoEmissao =06 THEN 'ARMAZENAGEM ** COMPLEMENTAR TERMACO'
+		WHEN a.InTipoEmissao =07 THEN 'COMPLEMENTAR - PALETIZAÇÃO ** COMPLEMENTAR TERMACO'
+		WHEN a.InTipoEmissao =08 THEN 'DIÁRIA ** COMPLEMENTAR TERMACO'
+		WHEN a.InTipoEmissao =09 THEN 'REDESPACHO PRÓPRIO'
+		WHEN a.InTipoEmissao =10 THEN 'AGENDAMENTO ** COMPLEMENTAR TERMACO'
+		WHEN a.InTipoEmissao =11 THEN 'REDESPACHO'
+		WHEN a.InTipoEmissao =12 THEN 'SUB-CONTRATO'
+		WHEN a.InTipoEmissao =13 THEN 'REFATURAMENTO'
+		WHEN a.InTipoEmissao =14 THEN 'SUBSTITUTO'
+		WHEN a.InTipoEmissao =15 THEN 'ANULAÇÃO' ELSE 'OUTROS' 
+	 END                    AS DsTipoEmissao	            -- DESCRIÇÃO DO TIPO DE EMISSÃO/CTRC
 	,f.dsapelido            AS DsTipoFiscal                 -- TIPO FISCAL DO DOCUMENTO
 	,a.dtemissao            AS DtEmissaoCTRC                -- DATA DE EMISSÃO DO CTRC
 	,${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 

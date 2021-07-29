@@ -14,12 +14,12 @@ const stepTracker               = require('../controllers/appCliente/stepTracker
 const dadosCidadesAtendidas     = require('../controllers/appCliente/dadosCidadesAtendidas')
 const dadosCidadesAtendidasPOST = require('../controllers/appCliente/dadosCidadesAtendidasPOST')
 const produtosTransportados     = require('../controllers/appCliente/produtosTransportados')
+const posicaoCargaAPP           = require('../controllers/appCliente/posicaoCargaAPP')
 
 
 /*
 const senhaClienteEmail         = require('../controllers/appCliente/senhaClienteEmail')
 const posicaoCargaSTATUS        = require('../controllers/appCliente/posicaoCargaSTATUS')
-const posicaoCargaAPP           = require('../controllers/appCliente/posicaoCargaAPP')
 const listaDAE                  = require('../controllers/appCliente/listaDAE')
 const firebaseToken             = require('../controllers/appCliente/firebaseToken') 
 */
@@ -39,13 +39,13 @@ api.get('/steptracker'            , stepTracker )
 api.get('/cidadesatendidas'       , dadosCidadesAtendidas )
 api.post('/cidadesatendidaspost'  , dadosCidadesAtendidasPOST)
 api.get('/produtostransportados'  , produtosTransportados)
+api.get('/posicaocargaapp'        , validaToken, posicaoCargaAPP )
 
 
 
 /*
 router.use('/senhaclienteemail'      , senhaClienteEmail )
 router.get('/posicaoCargastatus'     , posicaoCargaSTATUS)
-router.get('/posicaocargaapp'        , validaToken, posicaoCargaAPP )
 router.get('/listadae'               , validaToken, listaDAE )
 
 router.post('/firebasetoken'         , firebaseToken)
