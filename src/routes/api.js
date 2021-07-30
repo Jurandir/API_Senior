@@ -2,6 +2,7 @@ const express   = require('express')
 const api       = express.Router()
 
 // API Cliente
+const login              = require('../auth/login')
 const validaToken        = require('../auth/verifyTokenCliente')
 const apiDados_GET       = require('../controllers/sic/apiDados_GET')
 const apiCliente_GET     = require('../controllers/sic/apiCliente_GET')
@@ -25,6 +26,7 @@ const firebaseToken             = require('../controllers/appCliente/firebaseTok
 */
 
 // API Cliente
+api.post('/login'       , login )
 api.get('/apiDados'     , apiDados_GET )
 api.get('/apiCliente'   , apiCliente_GET )
 api.post('/apiDados'    , apiDados_GET )
