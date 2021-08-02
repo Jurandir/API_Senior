@@ -1,4 +1,4 @@
-// 29-07-2021 17:10
+// 02-08-2021 11:30
 const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function posicaoCargaAPP( req, res ) {
@@ -80,10 +80,10 @@ async function posicaoCargaAPP( req, res ) {
     ,   CASE WHEN (h.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_RECEBEDOR
     ,   CASE WHEN (i.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_TOMADOR
     ,   CASE WHEN (i.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_PAGADOR
-	,   dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 
+	,   ${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 
 	                            AS PREVENTREGA            -- PREVISÃO DE ENTREGA
     ,   a.dtentrega             AS DATAENTREGA            -- DATA DE ENTREGA
-    FROM dbo.gtcconhe      a                                          -- Conhecimento
+    FROM ${Base}.dbo.gtcconhe      a                                          -- Conhecimento
     LEFT JOIN ${Base}.dbo.sisempre aa ON aa.cdempresa         = a.cdempresa   -- Filial Origem
     LEFT JOIN ${Base}.dbo.gtcconce bb ON bb.cdempresa         = a.cdempresa	  AND bb.nrseqcontrole = a.nrseqcontrole -- CTe Fiscal
     LEFT JOIN ${Base}.dbo.gtcnfcon b  ON b.cdempresa          = a.cdempresa	  AND b.nrseqcontrole = a.nrseqcontrole  -- Link CTRC x NF
@@ -104,10 +104,12 @@ async function posicaoCargaAPP( req, res ) {
     OFFSET (${pagina_nro} - 1) * ${pagina_tam} ROWS
     FETCH NEXT ${pagina_tam} ROWS ONLY `                
 
-    console.log('(posicaoCargaAPP) SQL:',s_select)
+    // console.log('(posicaoCargaAPP) SQL:',s_select)
 
     try {
         let data = await sqlQuery(s_select)
+
+        console.log('DADOS:',data)
   
         let { Erro } = data
         if (Erro) { 

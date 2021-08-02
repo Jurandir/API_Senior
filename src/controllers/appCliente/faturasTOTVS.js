@@ -20,6 +20,8 @@ async function faturasTOTVS(req, res) {
         page: pagina_nro,
         length: pagina_tam,
     }
+
+    console.log('faturasTOTVS - CNPJ:',userId)
     
     let a_dt
 

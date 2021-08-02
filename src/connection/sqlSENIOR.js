@@ -1,6 +1,7 @@
 const { poolPromise } = require('./dbSENIOR')
 
-async function sqlSENIOR( sSQL ) {      
+async function sqlSENIOR( sSQL ) {   
+    // console.log('(sqlSENIOR) SQL:',sSQL)   
     try {  
         let pool = await poolPromise 
         let result = await pool.request().query( sSQL )

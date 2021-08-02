@@ -26,11 +26,8 @@ const verifyToken = (req, res, next) => {
       if (err) {
           res.status(500).json({ success: false, message: 'Headers Authorization - Validação do token falhou.' , err: err })
 		  return 0
-      }     
-      req.token = {
-            CdEmpresa: decoded.CdEmpresa, 
-            DsApelido: decoded.DsApelido 
-       }
+      }    
+      req.userId = decoded.cnpj || '00000000000000'
       next()
     })
 }

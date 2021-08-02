@@ -33,8 +33,11 @@ async function apiCliente_GET( req, res ) {
     let params     = method == 'GET' ? req.query : req.body
     let params_new = {}
     let url        = `${req.url}`.toLowerCase()  // Testar se "/apitracking" para buscar o comprovante
+    let userId     = req.userId || '00000000000000'
 
     console.log('REQ',url)
+
+    
 
     if(method=='POST') {
         params_new = {
@@ -48,8 +51,20 @@ async function apiCliente_GET( req, res ) {
     if(method=='GET') {
         params_new = {
             Base:     `softran_termaco`,
+            CNPJ_cli: userId,
             NF_chave: params.chaveNFe,
         } 
+    }
+
+    let raiz_token = `${userId}`.substr(0,8)
+    let raiz_req   = `${params_new.CNPJ_cli}`.substr(0,8)
+
+    if(raiz_token!=raiz_req){
+        retorno = {}
+        retorno.success = false
+        retorno.message = 'Raiz do CNPJ do login não confere com o da pesquisa !!!'
+        res.json(retorno).status(400)
+        return 0         
     }
 
     try {
@@ -155,6 +170,7 @@ async function apiCliente_GET( req, res ) {
     } catch (err) { 
         retorno = {}
         retorno.message = err.message
+        retorno.rotine  = 'apiCliente_GET.js'
         retorno.params  =  params
         res.json(retorno).status(500) 
     }    

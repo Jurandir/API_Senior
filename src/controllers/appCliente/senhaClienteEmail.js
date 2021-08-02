@@ -1,64 +1,61 @@
-const { poolPromise } = require('../connection/dbTMS')
-const jwt = require('jsonwebtoken')
+// 02-08-2021 13:35
+const sqlQuery  = require('../../connection/sqlSENIOR')
+const jwt       = require('jsonwebtoken')
 
 async function senhaClienteEmail( req, res ) {
-    let cnpj
-    let email 
     let retorno = {
         sucesso: false,
         message: '',
         emails:[]
     }
-    if ( req.method == 'GET' ) {
-       cnpj = req.query.cnpj
+    let params = req.method == 'GET' ? req.query : req.body
+    let { Base, cnpj, email } = params
+
+    if(!Base){
+        Base = 'softran_termaco'
     }
 
-    if ( req.method == 'POST' ) {
-        cnpj = req.body.cnpj
-        email = req.body.email
-    }
-	
-    let s_select = `SELECT lower(CONCAT(EMAIL,';',EMAILSADICIONAIS)) EMAILS FROM CLI WHERE CGCCPF = '${cnpj}' `
+    let s_select = `SELECT lower(DsEMail) EMAILS FROM ${Base}.dbo.SISCli WHERE CdInscricao = '${cnpj}' `
         
-        
-    try {  
-        const pool = await poolPromise  
-        const result = await pool.request()  
-        .query( s_select ,function(err, profileset){  
-            if (err) { 
-                retorno.message = err 
-                res.send(retorno).status(500)  
-            } else {  
-                let send_data = profileset.recordset[0]
-                if(send_data){
-                   retorno.emails  = send_data.EMAILS.split(';').filter((f)=>f.length>0)
-                }   
-                retorno.sucesso = (retorno.emails.length>0)
-                retorno.message = retorno.sucesso ? 'Emais relacionados ao cliente.' : 'Não existe email cadastrado para recuperação, contactar a TERMACO !!!'
+    try { 
+        let profileset = await sqlQuery(s_select)
+
+        console.log('DADOS:',profileset)
+  
+        let { Erro } = profileset
+        if (Erro) { 
+          throw new Error(`DB ERRO - ${Erro} - Params = [ ${Base}, ${cnpj} ]`)
+        }
+
+        let send_data = profileset[0]
+        if(send_data){
+            retorno.emails  = send_data.EMAILS.split(';').filter((f)=>f.length>0)
+        }   
+
+        retorno.sucesso = (retorno.emails.length>0)
+        retorno.message = retorno.sucesso ? 'Emais relacionados ao cliente.' : 'Não existe email cadastrado para recuperação, contactar a TERMACO !!!'
                 
-                if(email){
-                    retorno.sucesso = false;
-                    retorno.sendTo = email
-                    if(retorno.emails.includes(email)){
-                        retorno.message = 'Serviço indisponível no momento, tente mais tarde !!!'
+        if(email){
+            retorno.sucesso = false;
+            retorno.sendTo = email
+            if(retorno.emails.includes(email)){
+                retorno.message = 'Serviço indisponível no momento, tente mais tarde !!!'
 
-                        let token = jwt.sign({ "cnpj" : cnpj, "sendTo": email }, process.env.SECRET, { expiresIn: '24h'})
-                        console.log('token:',token,cnpj,email)
+                let token = jwt.sign({ "cnpj" : cnpj, "sendTo": email }, process.env.SECRET, { expiresIn: '24h'})
+                console.log('token:',token,cnpj,email)
 
+                // (envia email com senha)
+            } else {
+                retorno.message = 'Email informado não está cadastrado para o cliente !!!'
+            }
+        }
+               
+        res.json(retorno).status(200)
 
-                        // (envia email com senha)
-                    } else {
-                        retorno.message = 'Email informado não está cadastrado para o cliente !!!'
-                    }
-                }
-                
-                res.json(retorno).status(200)
-
-                pool.close  
-            }  
-        })  
         } catch (err) {  
-            retorno.message = message 
+            console.log(err)
+            retorno.message = err.message
+            retorno.rotine  = 'senhaClienteEmail.js' 
             res.send(retorno).status(500)  
         } 
 }

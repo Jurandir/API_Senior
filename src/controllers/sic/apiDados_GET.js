@@ -12,6 +12,22 @@ async function apiDados_GET( req, res ) {
     if(!Base) {
         params.Base = `softran_termaco`
     }
+
+    // Pega CNPJ do token
+    if(!params.CNPJ_cli) {
+       params.CNPJ_cli = req.userId || '00000000000000'
+    }
+
+    let raiz_token = `${req.userId}`.substr(0,8)
+    let raiz_req   = `${params.CNPJ_cli}`.substr(0,8)
+
+    if(raiz_token!=raiz_req){
+        retorno = {}
+        retorno.success = false
+        retorno.message = 'Raiz do CNPJ do login não confere com o da pesquisa !!!'
+        res.json(retorno).status(400)
+        return 0         
+    }    
     
     try {
         let code = 200
