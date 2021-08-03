@@ -36,6 +36,8 @@ SELECT
 	,d.cdocorrencia         AS CdOcorrencia                 -- CODIGO DA OCORRENCIA
 	,d.dtmovimento          AS DtOcorrencia                 -- DATA DA OCORRENCIA
 	,e.dshistoricoentrega   AS DsOcorrencia                 -- DESCRIÇÃO DA OCORRENCIA
+	,p.CdSituacaoCarga      AS CdSituacaoCarga              -- CODIGO SITUAÇÃO DA CARGA
+	,p.DsSituacaoCarga      AS DsSituacaoCarga              -- SITUAÇÃO DA CARGA
 	,bb.CdChaveAcesso       AS NrChaveAcessoCTe             -- CHAVE DA CTe
 	,bb.insituacaosefaz     AS CdSituacaoSefaz              -- CODIGO DE SUTUAÇÃO NA SEFAZ
 	,bb.DsSituacaoSefaz     AS DsSituacaoSefaz              -- DESCRIÇÃO DA SITUAÇÃO NA SEFAZ
@@ -94,6 +96,7 @@ LEFT JOIN ${Base}.dbo.sisempre l  ON l.cdempresa          = a.cdempresa        -
 LEFT JOIN ${Base}.dbo.sisempre m  ON m.cdempresa          = a.cdempresadestino -- Filial Destino
 LEFT JOIN ${Base}.dbo.siscep   n  ON n.nrcep              = m.nrcep            -- CEP Filial Destino
 LEFT JOIN ${Base}.dbo.CCEColet o  ON o.CdEmpresa          = a.CdEmpresa    AND o.NrColeta = a.NrColeta  -- Coleta
+LEFT JOIN ${Base}.dbo.GTCSITCG p  ON p.CdSituacaoCarga    = a.CdSituacaoCarga  -- Situação Atual da Carga
 WHERE isnull(e.InExibehist, 0) = 0
       ${filtro}
 	-- AND b.nrnotafiscal=1517772

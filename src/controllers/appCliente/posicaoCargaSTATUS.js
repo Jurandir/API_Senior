@@ -49,7 +49,7 @@ async function posicaoCargaSTATUS( req, res ) {
   
         let { Erro } = data
         if (Erro) { 
-          throw new Error(`DB ERRO - ${Erro} - Params = [ ${wcnpj}, ${wdata_ini}, ${wdata_fin} ]`)
+          throw new Error(`DB ERRO - ${Erro} - Params = [ ${ctrc}, ${emp}, ${numero} ]`)
         }  
                
         res.json(retorno).status(200) 

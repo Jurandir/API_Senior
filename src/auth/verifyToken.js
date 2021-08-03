@@ -28,6 +28,7 @@ const verifyToken = (req, res, next) => {
 		  return 0
       }    
       req.userId = decoded.cnpj || '00000000000000'
+      req.token  = token
       next()
     })
 }

@@ -1,19 +1,27 @@
-const sqlQuery      = require('../connection/sqlQuery')
-const sqlExec       = require('../connection/sqlExec')
+// 03/08/2021
+
+const sqlQuery      = require('../../connection/sqlQuery')
+const sqlExec       = require('../../connection/sqlExec')
+const sqlSenior     = require('../../connection/sqlSENIOR')
 
 const firebaseToken = async (req, res) => { 
     const par_CNPJ  = req.body.cnpj
     const par_TOKEN = req.body.token
+    let Base     = req.body.Base
     let result   = {success: true, message: 'OK, Token já existe na base !!!'}
     let dados
     let s_sql
     let code = 200
 
+    if(!Base){
+        Base = 'softran_termaco'
+    }
+
     try {
         s_sql    = `SELECT * FROM CARGASSQL.dbo.CLI
                     WHERE CGCCPF = '${par_CNPJ}'
         `   
-        dados = await sqlQuery(s_sql)
+        dados = await sqlSenior(s_sql)
         if(dados.length==0){
             throw new Error(`Cliente não existente na base de dados !!!`)
         }

@@ -29,11 +29,14 @@ app.use(
 )
 
 // Rotas API
-// app.use('/api', api )  
+app.use('/api'   , api ) 
 
 // Rotas Sênior
 app.use('/senior', senior )  
-app.use('/api'   , api )  
+
+// Downloads
+app.use(express.static('public'))
+app.use('/downloads',express.static('public'))
 
 // On-Line
 app.use('/', (req, res)=>{

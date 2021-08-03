@@ -6,6 +6,7 @@ const login              = require('../auth/login')
 const validaToken        = require('../auth/verifyToken')
 const apiDados_GET       = require('../controllers/sic/apiDados_GET')
 const apiCliente_GET     = require('../controllers/sic/apiCliente_GET')
+const apiPosicao         = require('../controllers/sic/apiPosicao')
 
 // SIC
 const posicaoCargaSTATUS        = require('../controllers/appCliente/posicaoCargaSTATUS')
@@ -20,10 +21,10 @@ const dadosCidadesAtendidasPOST = require('../controllers/appCliente/dadosCidade
 const produtosTransportados     = require('../controllers/appCliente/produtosTransportados')
 const posicaoCargaAPP           = require('../controllers/appCliente/posicaoCargaAPP')
 const senhaClienteEmail         = require('../controllers/appCliente/senhaClienteEmail')
+const firebaseToken             = require('../controllers/appCliente/firebaseToken') 
 
 /*
 const listaDAE                  = require('../controllers/appCliente/listaDAE')
-const firebaseToken             = require('../controllers/appCliente/firebaseToken') 
 */
 
 // API Cliente
@@ -33,6 +34,7 @@ api.get('/apiCliente'   , validaToken, apiCliente_GET )
 api.post('/apiDados'    , validaToken, apiDados_GET )
 api.post('/apiCliente'  , validaToken, apiCliente_GET )
 api.post('/apiTracking' , validaToken, apiCliente_GET )
+api.post('/apiPosicao'  , validaToken, apiPosicao )
 
 // SIC
 api.get('/posicaoCargastatus'     , posicaoCargaSTATUS)
@@ -47,11 +49,10 @@ api.post('/cidadesatendidaspost'  , dadosCidadesAtendidasPOST)
 api.get('/produtostransportados'  , produtosTransportados)
 api.get('/posicaocargaapp'        , validaToken, posicaoCargaAPP )
 api.use('/senhaclienteemail'      , senhaClienteEmail )
+api.post('/firebasetoken'         , firebaseToken)
 
 /*
 router.get('/listadae'               , validaToken, listaDAE )
-
-router.post('/firebasetoken'         , firebaseToken)
 */
 
 module.exports = api
