@@ -1,15 +1,25 @@
 const express   = require('express')
 const api       = express.Router()
 
+// Acesso via AD
+const loginAD                 = require('../auth/loginAD')
+const verifyTokenAD           = require('../auth/verifyTokenAD')
+const dadosCliente            = require('../controllers/appCliente/dadosCliente')
+const placasVeiculo           = require('../controllers/appCliente/placasVeiculo')
+const cartaFrete              = require('../controllers/appCliente/cartaFrete')
+const cartaFretePlacas        = require('../controllers/appCliente/cartaFretePlacas')
+
 // API Cliente
 const login              = require('../auth/login')
 const validaToken        = require('../auth/verifyToken')
 const apiDados_GET       = require('../controllers/sic/apiDados_GET')
 const apiCliente_GET     = require('../controllers/sic/apiCliente_GET')
 const apiPosicao         = require('../controllers/sic/apiPosicao')
+const logout             = require('../auth/logout')
 
 // SIC
 const posicaoCargaSTATUS        = require('../controllers/appCliente/posicaoCargaSTATUS')
+const listDadosCTRC             = require('../controllers/appCliente/listDadosCTRC')
 
 // APP Portfolio ( ../controllers/appCliente/ )
 const dadosFiliais              = require('../controllers/appCliente/dadosFiliais')
@@ -30,14 +40,22 @@ const listaDAE                  = require('../controllers/appCliente/listaDAE')
 // API Cliente
 api.post('/login'       , login )
 api.get('/apiDados'     , validaToken, apiDados_GET )
-api.get('/apiCliente'   , validaToken, apiCliente_GET )
+api.use('/apiCliente'   , validaToken, apiCliente_GET )
 api.post('/apiDados'    , validaToken, apiDados_GET )
-api.post('/apiCliente'  , validaToken, apiCliente_GET )
 api.post('/apiTracking' , validaToken, apiCliente_GET )
 api.post('/apiPosicao'  , validaToken, apiPosicao )
+api.get('/logout'       , logout )
 
 // SIC
-api.get('/posicaoCargastatus'     , posicaoCargaSTATUS)
+api.get('/posicaoCargastatus'   , posicaoCargaSTATUS)
+api.get('/listDadosCTRC'        , validaToken,  listDadosCTRC  )
+
+// SIC AD
+api.post('/loginAD' , loginAD )
+api.use('/dadoscliente'           ,verifyTokenAD , dadosCliente)
+api.use('/placasVeiculo'          ,verifyTokenAD , placasVeiculo)
+api.use('/cartafrete'             , verifyTokenAD, cartaFrete )
+api.use('/cartafreteplacas'       , verifyTokenAD, cartaFretePlacas )
 
 // APP Portfolio
 api.get('/filiais'                , dadosFiliais )
