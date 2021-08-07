@@ -36,6 +36,7 @@ SELECT
 	,d.cdocorrencia         AS CdOcorrencia                 -- CODIGO DA OCORRENCIA
 	,d.dtmovimento          AS DtOcorrencia                 -- DATA DA OCORRENCIA
 	,e.dshistoricoentrega   AS DsOcorrencia                 -- DESCRIÇÃO DA OCORRENCIA
+	,d.DsContato            AS DsResponsavel                -- NOME DO CONTATO/RESPONSAVEL
 	,p.CdSituacaoCarga      AS CdSituacaoCarga              -- CODIGO SITUAÇÃO DA CARGA
 	,p.DsSituacaoCarga      AS DsSituacaoCarga              -- SITUAÇÃO DA CARGA
 	,bb.CdChaveAcesso       AS NrChaveAcessoCTe             -- CHAVE DA CTe
@@ -100,3 +101,5 @@ LEFT JOIN dbo.GTCSITCG p  ON p.CdSituacaoCarga    = a.CdSituacaoCarga  -- Situa�
 WHERE isnull(e.InExibehist, 0) = 0
 	-- AND b.nrnotafiscal=1517772
 	AND a.nrdoctofiscal = 4183
+  -- AND  a.CdEmpresa = 1 
+  -- AND a.NrSeqControle = 1 

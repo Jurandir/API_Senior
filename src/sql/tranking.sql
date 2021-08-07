@@ -36,6 +36,7 @@ SELECT
 	,d.cdocorrencia         AS CdOcorrencia                 -- CODIGO DA OCORRENCIA
 	,d.dtmovimento          AS DtOcorrencia                 -- DATA DA OCORRENCIA
 	,e.dshistoricoentrega   AS DsOcorrencia                 -- DESCRIÇÃO DA OCORRENCIA
+	,d.DsContato            AS DsResponsavel                -- NOME DO CONTATO/RESPONSAVEL
 	,p.CdSituacaoCarga      AS CdSituacaoCarga              -- CODIGO SITUAÇÃO DA CARGA
 	,p.DsSituacaoCarga      AS DsSituacaoCarga              -- SITUAÇÃO DA CARGA
 	,bb.CdChaveAcesso       AS NrChaveAcessoCTe             -- CHAVE DA CTe
