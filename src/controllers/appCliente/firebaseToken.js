@@ -1,4 +1,4 @@
-// 03/08/2021
+// 10/08/2021 09:00
 
 const sqlQuery      = require('../../connection/sqlQuery')
 const sqlExec       = require('../../connection/sqlExec')
@@ -18,8 +18,8 @@ const firebaseToken = async (req, res) => {
     }
 
     try {
-        s_sql    = `SELECT * FROM CARGASSQL.dbo.CLI
-                    WHERE CGCCPF = '${par_CNPJ}'
+        s_sql    = `SELECT * FROM ${Base}.dbo.SISCLI
+                    WHERE  CdInscricao = '${par_CNPJ}'
         `   
         dados = await sqlSenior(s_sql)
         if(dados.length==0){

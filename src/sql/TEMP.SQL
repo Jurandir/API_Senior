@@ -99,7 +99,7 @@ LEFT JOIN dbo.siscep   n  ON n.nrcep              = m.nrcep            -- CEP Fi
 LEFT JOIN dbo.CCEColet o  ON o.CdEmpresa          = a.CdEmpresa  AND o.NrColeta = a.NrColeta  -- Dados Coleta
 LEFT JOIN dbo.GTCSITCG p  ON p.CdSituacaoCarga    = a.CdSituacaoCarga  -- Situação Atual da Carga
 WHERE isnull(e.InExibehist, 0) = 0
-	-- AND b.nrnotafiscal=1517772
-	AND a.nrdoctofiscal = 4183
+	-- AND b.nrnotafiscal=1517772 -- NUMERO NF
+	AND a.nrdoctofiscal = 4183    -- CTRC / Conhecimento
   -- AND  a.CdEmpresa = 1 
   -- AND a.NrSeqControle = 1 
