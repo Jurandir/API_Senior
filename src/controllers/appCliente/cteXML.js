@@ -1,9 +1,10 @@
 // 12/08/2021 09:52
 
-const sqlQuery     = require('../../connection/sqlQuery')
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function cteXML( req, res ) {
     let userId_Token = req.userId
+    let raiz_cnpj = `${userId_Token}`.substr(0,8)
 
     let { Base, valoresParametros } = req.body
     
@@ -29,9 +30,9 @@ async function cteXML( req, res ) {
         ,   CNH.CdDestinatario
         ,   CNH.CdInscricao CdTomador 
         ,   XM1.DtIntegracao DtSefaz 
-        FROM dbo.GTCCONSF XM1
-        JOIN dbo.gtcconhe CNH ON CNH.CdEmpresa = XM1.CdEmpresa  AND CNH.NrSeqControle = XM1.NrSeqControle
-        JOIN dbo.sisempre EMP ON EMP.CdEmpresa = CNH.CdEmpresa
+        FROM ${Base}.dbo.GTCCONSF XM1
+        JOIN ${Base}.dbo.gtcconhe CNH ON CNH.CdEmpresa = XM1.CdEmpresa  AND CNH.NrSeqControle = XM1.NrSeqControle
+        JOIN ${Base}.dbo.sisempre EMP ON EMP.CdEmpresa = CNH.CdEmpresa
         WHERE 
              EMP.DsApelido = '${wempresa}'
          AND CNH.NrDoctoFiscal = ${wctrc}
@@ -46,8 +47,24 @@ async function cteXML( req, res ) {
         if (Erro) { 
           throw new Error(`DB ERRO - ${Erro} - Params = [ ${wempresa}, ${wserie}, ${wctrc} ]`)
         }  
+
+        let retorno = data
+
+        if(data.length>0){
+            // testar se Raiz do CNPJ compativel
+            let CdRemetente    = `${data[0].CdRemetente}`.substr(0,8)
+            let CdDestinatario = `${data[0].CdDestinatario}`.substr(0,8)
+            let CdTomador      = `${data[0].CdTomador}`.substr(0,8)
+            if( raiz_cnpj==CdRemetente || raiz_cnpj==CdDestinatario || raiz_cnpj==CdTomador ) {
+                retorno = data
+            } else {
+                retorno = [{message:'Raiz do CNPJ, negada para pesquisa !!! '}]
+            }
+        } else {
+            retorno = [{message:'Dados não localizados !!! '}]
+        }
                
-        res.json(data).status(200) 
+        res.json(retorno).status(200) 
   
     } catch (err) { 
         res.send({ "erro" : err.message, "rotina" : "cteXML", "sql" : wsql }).status(500) 

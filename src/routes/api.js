@@ -21,6 +21,8 @@ const logout             = require('../auth/logout')
 const posicaoCargaSTATUS        = require('../controllers/appCliente/posicaoCargaSTATUS')
 const listDadosCTRC             = require('../controllers/appCliente/listDadosCTRC')
 const cteXML                    = require('../controllers/appCliente/cteXML')
+const senhaCliente              = require('../controllers/appCliente/senhaCliente') 
+const dadosNF                   = require('../controllers/appCliente/dadosNF') 
 
 // APP Portfolio ( ../controllers/appCliente/ )
 const dadosFiliais              = require('../controllers/appCliente/dadosFiliais')
@@ -48,16 +50,19 @@ api.post('/apiPosicao'  , validaToken, apiPosicao )
 api.get('/logout'       , logout )
 
 // SIC
-api.get('/posicaoCargastatus'   , posicaoCargaSTATUS)
+api.get('/posicaoCargaStatus'   , posicaoCargaSTATUS)
 api.get('/listDadosCTRC'        , validaToken,  listDadosCTRC  )
 api.post('/ctexml'              , validaToken, cteXML )
+api.post('/dadosNF'             , validaToken, dadosNF )
+
 
 // SIC AD
 api.post('/loginAD'          , loginAD )
-api.use('/dadoscliente'      , verifyTokenAD , dadosCliente)
+api.use('/dadosCliente'      , verifyTokenAD , dadosCliente)
 api.use('/placasVeiculo'     , verifyTokenAD , placasVeiculo)
-api.use('/cartafrete'        , verifyTokenAD, cartaFrete )
+api.use('/cartaFrete'        , verifyTokenAD, cartaFrete )
 api.use('/cartafreteplacas'  , verifyTokenAD, cartaFretePlacas )
+api.post('/senhaCliente'     , verifyTokenAD, senhaCliente )
 
 // APP Portfolio
 api.get('/filiais'                , dadosFiliais )

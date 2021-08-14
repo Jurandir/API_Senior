@@ -1,4 +1,4 @@
-const sqlQuery     = require('../connection/sqlQuery')
+const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function dadosNF( req, res ) {
     var userId_Token = req.userId
