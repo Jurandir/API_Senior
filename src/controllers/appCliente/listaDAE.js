@@ -1,4 +1,4 @@
-const { poolPromise } = require('../connection/dbTMS')
+const { poolPromise } = require('../../connection/dbTMS')
 
 const url_dae = 'http://www2.termaco.com.br/sicnovo/DAE/PDF/' // FOR337833.pdf'
 
@@ -54,11 +54,9 @@ async function listaDAE( req, res ) {
                         ,DAE.VALORNF VALOR_NF
                         ,DAE.CHAVENFE
 						,CONCAT('${url_dae}',DAE.EMP_CODIGO,DAE.CODIGO,'.pdf') URL_DOWNLOAD
-                    FROM DAE
-                    LEFT JOIN CNH ON CNH.EMP_CODIGO = DAE.EMP_CODIGO_CNH
-                        AND CNH.SERIE = DAE.CNH_SERIE
-                        AND CNH.CTRC = DAE.CNH_CTRC
-                    LEFT JOIN CLI ON CLI.CGCCPF = CNH.CLI_CGCCPF_REMET
+                    FROM CARGASSQL.dbo.DAE
+                    LEFT JOIN CARGASSQL.dbo.CNH ON CNH.EMP_CODIGO = DAE.EMP_CODIGO_CNH AND CNH.SERIE = DAE.CNH_SERIE AND CNH.CTRC = DAE.CNH_CTRC
+                    LEFT JOIN CARGASSQL.dbo.CLI ON CLI.CGCCPF = CNH.CLI_CGCCPF_REMET
                     WHERE CLI_CGCCPF_CLIDEST IS NOT NULL
                       AND DAE.CLI_CGCCPF_CLIDEST = '${cnpj}'
     ` 

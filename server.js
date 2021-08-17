@@ -40,7 +40,7 @@ app.use('/downloads',express.static('public'))
 
 // On-Line
 app.use('/', (req, res)=>{
-    res.send(`<h1>API - On-Line.</h1><p>${moment().format()}</p>`)
+    res.send(`<h1>API - On-Line.</h1><p>${moment().format()}</p><p>endpoint não localizado: ${req._parsedUrl.pathname} </p>`)
 } )  
 
 // Serviço
