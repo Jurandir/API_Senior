@@ -23,7 +23,9 @@ const listDadosCTRC             = require('../controllers/appCliente/listDadosCT
 const cteXML                    = require('../controllers/appCliente/cteXML')
 const senhaCliente              = require('../controllers/appCliente/senhaCliente') 
 const dadosNF                   = require('../controllers/appCliente/dadosNF') 
-const listaDAE                  = require('../controllers/appCliente/listaDAE')  
+const listaDAE                  = require('../controllers/appCliente/listaDAE')
+const posicaoCarga              = require('../controllers/appCliente/posicaoCarga')  
+const posicaoCargaXLS           = require('../controllers/appCliente/posicaoCargaXLS')  
 
 // APP Portfolio ( ../controllers/appCliente/ )
 const dadosFiliais              = require('../controllers/appCliente/dadosFiliais')
@@ -55,8 +57,9 @@ api.get('/posicaoCargaStatus'   , posicaoCargaSTATUS)
 api.get('/listDadosCTRC'        , validaToken,  listDadosCTRC  )
 api.post('/ctexml'              , validaToken, cteXML )
 api.post('/dadosNF'             , validaToken, dadosNF )
-api.get('/listaDAE'              , validaToken, listaDAE )
-
+api.get('/listaDAE'             , validaToken, listaDAE )
+api.post('/posicaoCarga'        , validaToken, posicaoCarga)
+api.post('/posicaoCargaXLS'     , validaToken, posicaoCargaXLS)
 
 
 // SIC AD

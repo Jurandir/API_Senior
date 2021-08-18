@@ -1,14 +1,22 @@
-const sqlQuery     = require('../connection/sqlQuery')
+const sqlQuery     = require('../../connection/sqlSENIOR')
 const json2xlsx    = require('json2xls')
 const crypto       = require('crypto')
 const fs           = require('fs')
 
-const QTDE_LINHAS_XLS = 600
+const server          = process.env.SERVER || 'localhost'
+const port            = process.env.PORT   || '4999'
+
+const URL_DOWNLOAD    = `http://${server}:${port}/downloads`
+const QTDE_LINHAS_XLS = 800
 
 async function posicaoCargaXLS( req, res ) {
     let userId_Token = `${req.userId}`
     let wraiz = userId_Token.substr(0,8)
-    let { DadosOuXlsx, dataini, datafim } = req.body
+    let { Base, DadosOuXlsx, dataini, datafim } = req.body
+
+    if(!Base){ 
+        Base = 'softran_termaco'
+    }
     
     let dados = await dadosPesquisa(wraiz,dataini,datafim)
     let idx   = -1
@@ -28,16 +36,7 @@ async function posicaoCargaXLS( req, res ) {
             dados[idx].FINALDESCARGA  = mnf[0].FINALDESCARGA           
         }
 
-        let ime = await dadosIME(emp, ser, ctrc)
-        if(ime.length>0) {
-            dados[idx].CODIGOMEG    = ime[0].CODIGOMEG     
-            dados[idx].EMPCODIGOMEG = ime[0].EMPCODIGOMEG
-            dados[idx].RECEBEDOR    = ime[0].RECEBEDOR
-        } else {
-            dados[idx].CODIGOMEG    = null
-            dados[idx].EMPCODIGOMEG = null     
-            dados[idx].RECEBEDOR    = null
-        }
+        dados[idx].RECEBEDOR    = item.RECEBEDOR
 
         if(item.CGCCPFREMET==userId_Token){
             dados[idx].TIPO="ENTREGA"
@@ -49,9 +48,9 @@ async function posicaoCargaXLS( req, res ) {
 
         let megCod = dados[idx].CODIGOMEG 
         let megEmp = dados[idx].EMPCODIGOMEG
-        let meg    = await dadosMEG(megCod, megEmp)
-        dados[idx].DATAMEG     = meg[0].DATAMEG     
-        dados[idx].TIPOENTREGA = meg[0].TIPOENTREGA 
+
+        dados[idx].DATAMEG     = item.DATAMEG     
+        dados[idx].TIPOENTREGA = item.TIPOENTREGA 
         
         dados[idx].STATUS =  status(dados[idx])
 
@@ -74,7 +73,7 @@ async function posicaoCargaXLS( req, res ) {
 
         //let url = req.protocol + '://(' + req.get('host') + `)/downloads/${filename}`
         //let url = `http://siconline.termaco.com.br:5000/downloads/${filename}`
-        let url = `http://201.49.34.12:5000//downloads/${filename}`
+        let url = `${URL_DOWNLOAD}/${filename}`
    
         res.json({
             success: true,
@@ -108,53 +107,75 @@ async function posicaoCargaXLS( req, res ) {
     async function dadosPesquisa(wraiz,dataini,datafim) {
         let wsql = `
                 SELECT TOP ${QTDE_LINHAS_XLS} 
-                cnh.pedido AS PEDIDO
-                ,nfr.nf AS NF
-                ,nfr.serie AS SERIENF
-                ,nfr.pnf AS PESONF
-                ,cnh.emp_codigo AS EMPCODIGO
-                ,cnh.serie AS SERIECTRC
-                ,cnh.ctrc AS CTRC
-                ,cnh.data AS DATACTRC
-                ,cnh.dataembarque AS DATAEMBARQUE
-                ,cnh.totfrete AS TOTFRETE
-                ,cli_remet.nome AS NOMEREMET
-                ,cnh.cli_cgccpf_remet AS CGCCPFREMET
-                ,cid_remet.nome AS CIDADEREMET
-                ,cid_remet.uf AS UFREMETENTE
-                ,cli_dest.nome AS NOMEDEST
-                ,cnh.cli_cgccpf_dest AS CGCCPFDEST
-                ,cid_dest.nome AS CIDADEDEST
-                ,cid_dest.uf AS UFDESTINATARIO
-                ,cnh.datacoleta AS DATACOLETA
-                ,cnh.preventrega AS PREVENTREGA
-                ,cnh.dataentrega AS DATAENTREGA
-                ,fat.codigo AS FATURA
-                ,fat.valor AS FATVALOR
-                ,fat.datavenc AS FATVENC
-                ,cnh.datachegada AS DATACHEGADA
-                ,nfr.valor AS VALORNF
-            FROM cnh
-            LEFT JOIN nfr ON nfr.emp_codigo = cnh.emp_codigo
-                AND nfr.cnh_serie = cnh.serie
-                AND nfr.cnh_ctrc = cnh.ctrc
-            LEFT JOIN cli cli_remet ON cli_remet.cgccpf = cnh.cli_cgccpf_remet
-            LEFT JOIN cli cli_dest ON cli_dest.cgccpf = cnh.cli_cgccpf_dest
-            LEFT JOIN cli cli_pag ON cli_pag.cgccpf = cnh.cli_cgccpf_pag
-            LEFT JOIN cid cid_remet ON cid_remet.codigo = cli_remet.cid_codigo
-            LEFT JOIN cid cid_dest ON cid_dest.codigo = cli_dest.cid_codigo
-            LEFT JOIN fat ON fat.codigo = cnh.fat_codigo
-            WHERE cnh.data >= Convert(DATETIME, '${dataini}', 120)
-                AND cnh.data <= Convert(DATETIME, '${datafim}', 120)
-                AND cnh.STATUS = 'I'
-                AND cnh.serie = 'E'
-                AND (
-                    ( SUBSTRING(cnh.cli_cgccpf_remet,1,8) = ${wraiz}) OR 
-                    ( SUBSTRING(cnh.cli_cgccpf_dest,1,8) = ${wraiz} )  OR 
-                    ( SUBSTRING(cnh.cli_cgccpf_pag,1,8) = ${wraiz}  ) )
-            ORDER BY cnh.data
-                ,cnh.ctrc
-                ,cnh.dataentrega ` 
+                CNH.NrSeqControle     AS PEDIDO
+              , NFR.NrNotaFiscal      AS NF
+              , NFR.NrSerie           AS SERIENF
+              , NFR.QtPeso            AS PESONF
+              , EMP.DSAPELIDO         AS EMPCODIGO
+              , 'E'                   AS SERIECTRC
+              , CNH.NrDoctoFiscal     AS CTRC
+              , CNH.DtEmissao         AS DATACTRC
+              , (SELECT TOP 1 CAST( CONCAT( FORMAT(d.DtMovimento,'yyyy-MM-dd'), ' ', + FORMAT(d.HrMovimento,'HH:mm:ss')) as datetime ) DT
+                 FROM dbo.GTCMovEn d  WHERE  d.CdEmpresa  = CNH.CdEmpresa   AND d.NrSeqControle = CNH.NrSeqControle  AND d.CdOcorrencia = 101 )
+                                      AS DATAEMBARQUE
+              , CNH.VlLiquido         AS TOTFRETE
+              
+              , REMET.DsEntidade      AS NOMEREMET
+              , REMET.CdInscricao     AS CGCCPFREMET
+              , ORI.DsLocal           AS CIDADEREMET
+              , ORI.DsUF              AS UFREMETENTE              
+              , DESTI.DsEntidade      AS NOMEDEST
+              , DESTI.CdInscricao     AS CGCCPFDEST
+              , TAR.DsLocal           AS CIDADEDEST
+              , TAR.DsUF              AS UFDESTINATARIO 
+              , COLETA.DtCadastro     AS DATACOLETA
+              , ${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(CNH.DtEmissao, CNH.CdEmpresaDestino, CNH.CdPercurso, CNH.CdTransporte, CNH.CdRemetente, CNH.CdDestinatario, CNH.CdEmpresa, CNH.NrSeqControle)  
+                                      AS PREVENTREGA
+              , CNH.DtEntrega         AS DATAENTREGA
+              , (SELECT TOP 1 TIT.CdTitulo FROM ${Base}.dbo.GTCFATIT VIN LEFT JOIN ${Base}.dbo.GFATITU  TIT 
+                 ON TIT.CdFilial  = VIN.CdEmpresa AND TIT.NrFatura = VIN.CdFatura AND TIT.CdParcela = VIN.CdParcela
+                 WHERE TIT.InPagarReceber = 1 AND VIN.CdEmpresa = CNH.CdEmpresa AND VIN.NrSeqControle = CNH.NrSeqControle)
+                                     AS FATURA
+              , CNH.VlLiquido        AS FATVALOR
+              , (SELECT TOP 1 TIT.DtVencimento FROM ${Base}.dbo.GTCFATIT VIN LEFT JOIN ${Base}.dbo.GFATITU  TIT 
+                 ON TIT.CdFilial  = VIN.CdEmpresa AND TIT.NrFatura = VIN.CdFatura AND TIT.CdParcela = VIN.CdParcela
+                 WHERE TIT.InPagarReceber = 1 AND VIN.CdEmpresa = CNH.CdEmpresa AND VIN.NrSeqControle = CNH.NrSeqControle)
+                                     AS FATVENC
+              , (SELECT TOP 1 CAST( CONCAT( FORMAT(d.DtMovimento,'yyyy-MM-dd'), ' ', + FORMAT(d.HrMovimento,'HH:mm:ss')) as datetime ) DT
+                 FROM ${Base}.dbo.GTCMovEn d  WHERE  d.CdEmpresa  = CNH.CdEmpresa   AND d.NrSeqControle = CNH.NrSeqControle  AND d.CdOcorrencia = 98 )
+                                     AS DATACHEGADA
+              , NFR.VlNotaFiscal     AS VALORNF
+              ,'N'                   AS TIPOENTREGA
+              , (SELECT TOP 1 OUN.DsContato FROM ${Base}.dbo.GTCMovEn OUN WHERE OUN.CdOcorrencia = 1 AND  OUN.CdEmpresa = CNH.CdEmpresa AND  OUN.NrSeqControle = CNH.NrSeqControle) 
+                                     AS RECEBEDOR
+              , (SELECT TOP 1 OUN.DtMovimento FROM ${Base}.dbo.GTCMovEn OUN WHERE OUN.CdOcorrencia = 100 AND  OUN.CdEmpresa = CNH.CdEmpresa AND  OUN.NrSeqControle = CNH.NrSeqControle) 
+                                     AS DATAMEG
+              , CNH.CdEmpresa
+              , CNH.NrSeqControle
+              
+               FROM ${Base}.dbo.GTCConhe CNH
+               LEFT JOIN ${Base}.dbo.sisempre    EMP ON EMP.CdEmpresa     = CNH.CdEmpresa        -- Filial Origem
+               LEFT JOIN ${Base}.dbo.sisempre    FIL ON FIL.CdEmpresa     = CNH.CdEmpresaDestino -- Filial Destino
+               LEFT JOIN ${Base}.dbo.gtcconce    FIS ON FIS.CdEmpresa     = CNH.CdEmpresa   AND FIS.NrSeqControle = CNH.NrSeqControle  -- CTRC FISCAL
+               LEFT JOIN ${Base}.dbo.gtcnfcon    LNF ON LNF.CdEmpresa     = CNH.CdEmpresa   AND LNF.NrSeqControle = CNH.NrSeqControle  -- LINK CTRC X NF
+               LEFT JOIN ${Base}.dbo.gtcnf       NFR ON NFR.CdRemetente   = LNF.CdInscricao AND NFR.NrSerie       = LNF.NrSerie        AND NFR.NrNotaFiscal = LNF.NrNotaFiscal -- NF
+               LEFT JOIN ${Base}.dbo.siscli    REMET ON REMET.CdInscricao = CNH.CdRemetente      -- CLIENTE REMETENTE
+               LEFT JOIN ${Base}.dbo.siscli    DESTI ON DESTI.CdInscricao = CNH.CdDestinatario   -- CLIENTE DESTINATARIO
+               LEFT JOIN ${Base}.dbo.siscli    PAGAD ON PAGAD.CdInscricao = CNH.CdInscricao      -- CLIENTE PAGADOR
+               LEFT JOIN ${Base}.dbo.siscep      ORI ON ORI.CdCep         = REMET.NRCEP          -- LOCAL DE ORIGEM
+               LEFT JOIN ${Base}.dbo.siscep      TAR ON TAR.CdCep         = DESTI.NRCEP          -- LOCAL DESTINO
+               LEFT JOIN ${Base}.dbo.CCEColet COLETA ON COLETA.CdEmpresa  = CNH.CdEmpresa  AND COLETA.NrColeta = CNH.NrColeta  -- Dados da Coleta
+              
+               WHERE CNH.InTipoEmissao = 0 -- NORMAL
+                 AND CNH.DtEmissao >= Convert(DATETIME, '${dataini}', 120)  -- 
+                 AND CNH.DtEmissao <= Convert(DATETIME, '${datafim}', 120)  -- 
+                 AND (
+                     ( SUBSTRING(CNH.CdRemetente,1,8)    = '${wraiz}' ) OR -- 
+                     ( SUBSTRING(CNH.CdDestinatario,1,8) = '${wraiz}' ) OR 
+                     ( SUBSTRING(CNH.CdInscricao,1,8)    = '${wraiz}' ) )
+              ORDER BY CNH.DtEmissao
+                     , CNH.NrDoctoFiscal
+              ` 
 
         data = await sqlQuery(wsql)
         return data
@@ -163,20 +184,21 @@ async function posicaoCargaXLS( req, res ) {
     async function dadosMNF(emp, ser, ctrc) {
         let ret = [{ EMPRESA: null, MNFCODIGO: null, DATAMNF: null, CHEGADAMNF: null, INICIODESCARGA: null, FINALDESCARGA: null }]
         let wsql = `
-            SELECT TOP 1 
-                 mnf.emp_codigo       AS EMPRESA
-                ,mnf.codigo           AS MNFCODIGO
-                ,mnf.data             AS DATAMNF
-                ,mnf.chegada          AS CHEGADAMNF
-                ,mnf.dtiniciodescarga AS INICIODESCARGA
-                ,mnf.dtfinaldescarga  AS FINALDESCARGA
-            FROM trb
-            LEFT JOIN mnf ON trb.emp_codigo = mnf.emp_codigo
-                AND trb.mnf_codigo = mnf.codigo
-            WHERE trb.emp_codigo_cnh = '${emp}'
-                AND trb.cnh_serie = '${ser}'
-                AND trb.cnh_ctrc = '${ctrc}'
-            ORDER BY mnf.chegada`
+            SELECT TOP 1
+                    EMP.DsApelido AS EMPRESA
+                , MAN.NrManifesto AS MNFCODIGO
+                , (CASE WHEN MAN.DtEmissao     IS NOT NULL THEN CAST( CONCAT( FORMAT(MAN.DtEmissao    ,'yyyy-MM-dd'), ' ', + FORMAT(MAN.HrEmissao,'HH:mm:ss'))     as datetime ) ELSE NULL END ) AS DATAMNF
+                , (CASE WHEN MAN.DtChegada     IS NOT NULL THEN CAST( CONCAT( FORMAT(MAN.DtChegada    ,'yyyy-MM-dd'), ' ', + FORMAT(MAN.HrChegada,'HH:mm:ss'))     as datetime ) ELSE NULL END ) AS CHEGADAMNF
+                , (CASE WHEN MAN.DtDescargaIni IS NOT NULL THEN CAST( CONCAT( FORMAT(MAN.DtDescargaIni,'yyyy-MM-dd'), ' ', + FORMAT(MAN.HrDescargaIni,'HH:mm:ss')) as datetime ) ELSE NULL END ) AS INICIODESCARGA
+                , (CASE WHEN MAN.DtDescargaFim IS NOT NULL THEN CAST( CONCAT( FORMAT(MAN.DtDescargaFim,'yyyy-MM-dd'), ' ', + FORMAT(MAN.HrDescargaFim,'HH:mm:ss')) as datetime ) ELSE NULL END ) AS FINALDESCARGA
+            FROM ${Base}.dbo.GTCManCn MCO
+            JOIN ${Base}.dbo.GTCConhe CNH ON CNH.CdEmpresa = MCO.CdEmpresa AND CNH.NrSeqControle = MCO.NrSeqControle
+            JOIN ${Base}.dbo.SISEMPRE EMP ON EMP.CdEmpresa = CNH.CdEmpresa
+            JOIN ${Base}.dbo.GTCMan   MAN ON MAN.NrManifesto = MCO.NrManifesto
+            WHERE EMP.DsApelido = '${emp}' 
+            AND CNH.NrDoctoFiscal = ${ctrc}
+            ORDER BY 
+            MAN.DtEmissao DESC `
 
         data = await sqlQuery(wsql)
         if(data.length>0){
@@ -186,13 +208,20 @@ async function posicaoCargaXLS( req, res ) {
     }
 
     async function dadosOCORRENCIA(emp, ser, ctrc) {
-        let wsql = `select 
-                       CONCAT('[ ',convert(varchar, oun.dataoco ,105),' ',convert(varchar, oun.dataoco ,108),' - ',oco.nome,' ]') OCORRENCIA
-                    from oco
-                    left join oun on oun.oco_codigo=oco.codigo
-                    where
-                       oun.chave='${emp}${ser}${ctrc}' and oco.codigo <> '99'
-                    order by oun.dataoco `
+        let wsql = `
+                SELECT 
+                    CONCAT('[ ',convert(varchar, OUN.DtMovimento ,105),' ',convert(varchar, OUN.HrMovimento ,108),' - ',OCO.DsHistoricoEntrega,' ]') OCORRENCIA
+                FROM ${Base}.dbo.gtcmoven OUN
+                JOIN ${Base}.dbo.gtcconhe CNH     ON CNH.CdEmpresa = OUN.cdempresa AND CNH.NrSeqControle = OUN.NrSeqControle
+                JOIN ${Base}.dbo.sisempre EMP     ON EMP.cdempresa          = OUN.CdEmpresa   
+                JOIN ${Base}.dbo.gtchisen OCO     ON OCO.CdHistoricoEntrega = OUN.CdOcorrencia
+                WHERE 
+                    isnull(OCO.InExibeHist, 0) = 0
+                AND EMP.DsApelido = '${emp}'
+                AND CNH.NrDoctoFiscal = ${ctrc}
+                ORDER BY
+                    OUN.DtMovimento
+                ,OUN.HrMovimento `
         let data = await sqlQuery(wsql)
 
         let ocorr = data.map((i)=>{
@@ -203,34 +232,6 @@ async function posicaoCargaXLS( req, res ) {
 
         return ocorrencias  
     }
-
-    async function dadosIME(emp, ser, ctrc) {
-        let wsql = `select 
-                         ime.meg_codigo AS CODIGOMEG, 
-                         ime.emp_codigo AS EMPCODIGOMEG,
-                         ime.recebedor  AS RECEBEDOR
-                    from ime where ime.cnh_ctrc='${ctrc}' 
-                     and ime.cnh_serie='${ser}' 
-                     and ime.emp_codigo_cnh='${emp}' `
-        data = await sqlQuery(wsql)
-        return data  
-    }
-
-    async function dadosMEG(megCod, megEmp) {
-        let ret = [{ DATAMEG: null, TIPOENTREGA: null }]
-        let wsql = `select 
-                        data         AS DATAMEG, 
-                        tipoentrega  AS TIPOENTREGA
-                    from meg where CODIGO = '${megCod}' 
-                     and emp_codigo = '${megEmp}' `
-        if(megCod) {            
-            data = await sqlQuery(wsql)
-        } else {
-            data = ret
-        }
-        return data  
-    }
-
 
     function status (dados) {
         let STATUS = ''

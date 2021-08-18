@@ -20,13 +20,13 @@ endpoint	                    Verbo	Descrição			                            Req
 */api/placasveiculo	            GET	    DADOS DO VEICULO			                    PLACAS				    DADOS CADASTRAIS DO VEICULO				
 */api/listDadosCTRC             GET     GERA DADOS CTRC PARA PLANILHA                   CNPJ/PERIODO
 */api/senhaCliente              POST    ATUALIZA A SENHA DO CLIENTE
-/api/listadae	                GET	    LISTA DE DAE´S DO CLIENTE			            PERIODO,STATUS			LISTA DE DAE´S COM SEUS DADOS E LINK PARA DOWNLOAD DO PDF				
-/api/posicaoCargaXLS	        POST	OBTER LISTA EXCEL COM POSIÇÃO DE CARGA			PERIODO,CNPJ			LINK PARA DOWNLOAD DE AQUIVO XLS				
-/api/dadosctrc	                POST	DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
-/api/documentoctrc	            GET	    DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
-/api/dadosnf	                POST	DADOS DA NF			                            CNPJ + NF				DADOS DA NF				
+*/api/listadae	                GET	    LISTA DE DAE´S DO CLIENTE			            PERIODO,STATUS			LISTA DE DAE´S COM SEUS DADOS E LINK PARA DOWNLOAD DO PDF				
+*/api/posicaoCargaXLS	        POST	OBTER LISTA EXCEL COM POSIÇÃO DE CARGA			PERIODO,CNPJ			LINK PARA DOWNLOAD DE AQUIVO XLS				
+*/api/dadosnf	                POST	DADOS DA NF			                            CNPJ + NF				DADOS DA NF				
 /api/dadoslotenf	            POST	DADOS DE LISTA DE NFS			                CNPJ + (LISTA DE NFS)	LISTA DE NOTAS FISCAIS RELACIONADAS				
 /api/listanfctrc	            POST	NOTAS POR CTRC			                        CTRC				    LISTA DE NOTAS DE UM CONHECIMENTO "CTRC"				
+/api/dadosctrc	                POST	DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
+/api/documentoctrc	            GET	    DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
 /api/tabelaFretePeso	        GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
 /api/tabelapercentualproduto	GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
 /api/tabelaFaixaPeso	        GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				

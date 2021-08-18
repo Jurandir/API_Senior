@@ -17,7 +17,7 @@ const login = async (req, res) => {
           CLI.DsEntidade NOME, CLI.CdInscricao CNPJ
         FROM ${Base}.dbo.SISWEBUSU USU
         JOIN ${Base}.dbo.SISCli CLI ON CLI.CdInscricao = USU.CdInscricao
-        WHERE USU.DsLogin='${user}' AND USU.DsSenha ='${pwd}'
+        WHERE (USU.DsLogin='${user}' OR USU.CdInscricao='${user}') AND USU.DsSenha ='${pwd}'
         `
         
         let data = await sqlQuery(sql)  
