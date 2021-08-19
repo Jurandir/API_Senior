@@ -21,14 +21,20 @@ endpoint	                    Verbo	Descrição			                            Req
 */api/listDadosCTRC             GET     GERA DADOS CTRC PARA PLANILHA                   CNPJ/PERIODO
 */api/senhaCliente              POST    ATUALIZA A SENHA DO CLIENTE
 */api/listadae	                GET	    LISTA DE DAE´S DO CLIENTE			            PERIODO,STATUS			LISTA DE DAE´S COM SEUS DADOS E LINK PARA DOWNLOAD DO PDF				
+*/api/posicaoCarga  	        POST	OBTER POSIÇÃO DE CARGA NO PERIODO        		PERIODO,CNPJ			DADOS CTRC
 */api/posicaoCargaXLS	        POST	OBTER LISTA EXCEL COM POSIÇÃO DE CARGA			PERIODO,CNPJ			LINK PARA DOWNLOAD DE AQUIVO XLS				
 */api/dadosnf	                POST	DADOS DA NF			                            CNPJ + NF				DADOS DA NF				
-/api/dadoslotenf	            POST	DADOS DE LISTA DE NFS			                CNPJ + (LISTA DE NFS)	LISTA DE NOTAS FISCAIS RELACIONADAS				
-/api/listanfctrc	            POST	NOTAS POR CTRC			                        CTRC				    LISTA DE NOTAS DE UM CONHECIMENTO "CTRC"				
-/api/dadosctrc	                POST	DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
-/api/documentoctrc	            GET	    DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
+*/api/dadosctrc	                POST	DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
+*/api/documentoctrc	            GET	    DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
+*/api/dadoslotenf	            POST	DADOS DE LISTA DE NFS			                CNPJ + (LISTA DE NFS)	LISTA DE NOTAS FISCAIS RELACIONADAS				
+*/api/listanfctrc	            POST	NOTAS POR CTRC			                        CTRC				    LISTA DE NOTAS DE UM CONHECIMENTO "CTRC"				
+*/api/faturaERP                 GET     PESQUISA TOTVS
+*/api/faturaERPdetalhe          GET     PESQUISA TOTVS
+/api/downloadAgileProcess
 /api/tabelaFretePeso	        GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
 /api/tabelapercentualproduto	GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
 /api/tabelaFaixaPeso	        GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
 /api/tabelaColetaEntrega	    GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
 /api/tabelacliente	            GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    LISTA PARAMETROS DA TABELA CLIENTE				
+
+-- downloadAgileProcess

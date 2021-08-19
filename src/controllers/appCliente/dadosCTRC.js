@@ -1,25 +1,24 @@
-// 18-08-2021 17:38
-
+// 19/08/2021 09:14
 const sqlQuery     = require('../../connection/sqlSENIOR')
 
-async function posicaoCarga( req, res ) {
+async function dadosCTRC( req, res ) {
     let userId_Token = req.userId
 
-    let { Base, valoresParametros } = req.body
-    if (valoresParametros) {
-        wcnpj     = userId_Token
-        wdata_ini = valoresParametros[0]
-        wdata_fin = valoresParametros[1]
+    let { Base, empresa, serie, documento } = req.body // wcnpj
+    if ( (empresa) && (serie) && (documento) ) {
+        empresa     = empresa
+        serie       = serie
+        documento   = documento
     } else {
-        res.send({ "erro" : "body sem parâmetros", "rotina" : "posicaoCarga", "sql" : "Sem Parâmetros" }).status(500) 
-    }    
-
+        res.send({ "erro" : "body sem parâmetros", "rotina" : "dadosCTRC", "sql" : "Sem Parâmetros" }).status(500) 
+    }  
+    
     if(!Base){ 
         Base = 'softran_termaco'
     }
 
-    let raiz_user = `${wcnpj}`.substr(0,8)
-
+    let raiz_user = `${userId_Token}`.substr(0,8)
+    
     let wsql = `
         SELECT 
                  CNH.DtEmissao                                 AS DATA
@@ -59,23 +58,25 @@ async function posicaoCarga( req, res ) {
         WHERE ( SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '${raiz_user}' OR 
                 SUBSTRING( CNH.cdremetente    ,1 ,8 ) = '${raiz_user}'  OR 
                 SUBSTRING( CNH.cdinscricao    ,1 ,8 ) = '${raiz_user}') 
-            AND CNH.DtEmissao BETWEEN '${wdata_ini}' AND '${wdata_fin}' 
+            AND EMP.DsApelido     = '${empresa}'
+            AND CNH.NrDoctoFiscal = ${documento}
         ORDER BY
             CNH.DtEmissao, CNH.NrDoctoFiscal    
     `
+    			
     try {
         data = await sqlQuery(wsql)
   
         let { Erro } = data
         if (Erro) { 
-          throw new Error(`DB ERRO - ${Erro} - Params = [ ${wcnpj}, ${wdata_ini}, ${wdata_fin} ]`)
+          throw new Error(`DB ERRO - ${Erro} - Params = [ ${Base}, ${empresa}, ${serie}, ${documento} ]`)
         }  
                
         res.json(data).status(200) 
   
     } catch (err) { 
-        res.send({ "erro" : err.message, "rotina" : "posicaoCarga", "sql" : wsql }).status(500) 
+        res.send({ "erro" : err.message, "rotina" : "dadosCTRC", "sql" : wsql }).status(500) 
     }    
 }
 
-module.exports = posicaoCarga
+module.exports = dadosCTRC

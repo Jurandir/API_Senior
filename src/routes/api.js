@@ -22,10 +22,17 @@ const posicaoCargaSTATUS        = require('../controllers/appCliente/posicaoCarg
 const listDadosCTRC             = require('../controllers/appCliente/listDadosCTRC')
 const cteXML                    = require('../controllers/appCliente/cteXML')
 const senhaCliente              = require('../controllers/appCliente/senhaCliente') 
-const dadosNF                   = require('../controllers/appCliente/dadosNF') 
+const dadosNF                   = require('../controllers/appCliente/dadosNF')
+const dadosCTRC                 = require('../controllers/appCliente/dadosCTRC')
 const listaDAE                  = require('../controllers/appCliente/listaDAE')
 const posicaoCarga              = require('../controllers/appCliente/posicaoCarga')  
 const posicaoCargaXLS           = require('../controllers/appCliente/posicaoCargaXLS')  
+const documentoCTRC             = require('../controllers/appCliente/documentoCTRC')  
+const dadosLoteNF               = require('../controllers/appCliente/dadosLoteNF')
+const listaNFctrc               = require('../controllers/appCliente/listaNFctrc')
+const faturaERP                 = require('../controllers/appCliente/faturaERP')
+const faturaERPdetalhe          = require('../controllers/appCliente/faturaERPdetalhe')
+
 
 // APP Portfolio ( ../controllers/appCliente/ )
 const dadosFiliais              = require('../controllers/appCliente/dadosFiliais')
@@ -37,7 +44,10 @@ const dadosCidadesAtendidasPOST = require('../controllers/appCliente/dadosCidade
 const produtosTransportados     = require('../controllers/appCliente/produtosTransportados')
 const posicaoCargaAPP           = require('../controllers/appCliente/posicaoCargaAPP')
 const senhaClienteEmail         = require('../controllers/appCliente/senhaClienteEmail')
-const firebaseToken             = require('../controllers/appCliente/firebaseToken') 
+const firebaseToken             = require('../controllers/appCliente/firebaseToken')
+
+// API Serviços para os Robôs
+const preparaDownload     = require('../controllers/services/preparaDownload')
 
 /*
 const listaDAE                  = require('../controllers/appCliente/listaDAE')
@@ -54,12 +64,18 @@ api.get('/logout'       , logout )
 
 // SIC
 api.get('/posicaoCargaStatus'   , posicaoCargaSTATUS)
-api.get('/listDadosCTRC'        , validaToken,  listDadosCTRC  )
+api.get('/listDadosCTRC'        , validaToken, listDadosCTRC  )
 api.post('/ctexml'              , validaToken, cteXML )
 api.post('/dadosNF'             , validaToken, dadosNF )
+api.post('/dadosctrc'           , validaToken, dadosCTRC)
 api.get('/listaDAE'             , validaToken, listaDAE )
 api.post('/posicaoCarga'        , validaToken, posicaoCarga)
 api.post('/posicaoCargaXLS'     , validaToken, posicaoCargaXLS)
+api.get('/documentoctrc'        , validaToken, documentoCTRC)
+api.post('/dadoslotenf'         , validaToken, dadosLoteNF)
+api.post('/listanfctrc'         , validaToken, listaNFctrc)
+api.use('/faturaerp'            , validaToken, faturaERP )
+api.use('/faturaerpdetalhe'     , validaToken, faturaERPdetalhe )
 
 
 // SIC AD
@@ -81,6 +97,9 @@ api.get('/produtostransportados'  , produtosTransportados)
 api.get('/posicaocargaapp'        , validaToken, posicaoCargaAPP )
 api.use('/senhaclienteemail'      , senhaClienteEmail )
 api.post('/firebasetoken'         , firebaseToken)
+
+// API Serviços para ( ConfirmaFacil, iTrack, Orion )
+api.get('/preparaDownload'   , preparaDownload)
 
 /*
 router.get('/listadae'               , validaToken, listaDAE )
