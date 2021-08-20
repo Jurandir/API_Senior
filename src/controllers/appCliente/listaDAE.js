@@ -1,5 +1,7 @@
 const { poolPromise } = require('../../connection/dbTMS')
 
+const NAO_IMPLEMENTADO = true
+
 const url_dae = 'http://www2.termaco.com.br/sicnovo/DAE/PDF/' // FOR337833.pdf'
 
 async function listaDAE( req, res ) {
@@ -14,6 +16,14 @@ async function listaDAE( req, res ) {
 
     let {dt_inicial,dt_final,baixado,pagina_nro,pagina_tam} = req.query
     let cnpj     = req.userId
+
+    if(NAO_IMPLEMENTADO){
+        resposta.success = false
+        resposta.data.push(req.query)
+        resposta.message = 'DAE: rotina não impementada para sistema SÊNIOR.'
+        res.send(resposta).status(400)  
+        return 0 
+    }
 
     if(!cnpj || cnpj==undefined ) {
         resposta.message = 'Problemas com a autenticação !!!'

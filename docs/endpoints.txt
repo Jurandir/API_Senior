@@ -1,40 +1,36 @@
-endpoint	                    Verbo	Descrição			                            Request (ENTRADA)		Response (SAÍDA)				
-*/api/filiais	                GET	    LISTA DE FILIAIS			                    NULL,CODIGO,CIDADE		LISTA DE DADOS COMPLETOS DE FILIAIS				
-*/api/produtostransportados	    GET	    LISTA DE PRODUTOS TRANSPORTADOS PELA TERMACO	NULL				    LISTA COMPLETA DE TIPOS DE PRODUTOS ACEITOS PARA TRANSPORTE				
-*/api/listaFiliaisCliente	    GET	    RELAÇÃO DAS FILIAIS CADASTRADAS DO CLIENTE		CNPJ				    LISTA COM DADOS COMPLETOS DAS FILIAIS DO CLIENTE				
-*/api/senhaclienteemail	        GET	    RELAÇÃO DE EMAILS DO CLIENTE			        CNPJ				    LISTA COMPLETA DE EMAILS DO CLIENTE PARA ENVIO DE SENHA DE ACESSO				
-*/api/senhaclienteemail	        POST	SOLICITA SUBSTITUIÇÃO DE SENHA DO CLIENTE		CNPJ + EMAIL_VALIDO		LINK DE ACESSO PARA REGISTRAR NOVA SENHA				
-*/api/firebasetoken	            POST	REGISTRO DE TOKEN FIREBASE DO CLIENTE			CNPJ + TOKEN FIREBASE	GRAVA EM BASE TERMACO O TOKEN DO CLIENTE PARA USO DE MENSAGENS APP PARA O CLIENTE				
-*/api/posicaocargaapp	        GET	    RELAÇÃO DE CARGAS DO CLIENTE			        CNPJ,PERIODO,CTRC,NF	LISTA E SISTUAÇÕES DAS CARGAS COM BASE NOS PARAMETROS				
-*/api/posicaocargaSTATUS	    GET	    DATAS E STATUS ATUAL DA CARGA			        CTRC				    DATAS DOS EVENTOS E STATUS ATUAL DO CONHECIMENTO "CTRC"				
-*/api/steptracker	            GET	    DATAS DO PASSO A PASSO DOS EVENTOS			    CNPJ,NF,CTRC			DATAS DOS EVENTOS DO TRANSPOTE/VIAGEM				
-*/api/cidadesatentidas	        GET	    CIDADES ATENDIDAS			                    UF,CIDADE			    LISTA DE CIDADES ATENDIDAS PELA TERMACO, BASE TRECHOS VALIDOS				
-*/api/cidadesatentidasPOST	    POST	RESPOSTA DO BOT PARA CIDADES ATENDIDAS			UF + CIDADE				RESPOSTA PARA O BOT PORTIFOLIO EM CIDADES ATENDIDAS (VERDADEIRO/FALSO)				
-*/api/login	                    POST	LOGIN PARA ACESSO EXTERNO DO CLIENTE TERMACO	CNPJ + SENHA			TOKEN PARA USO NOS DEMAIS ACESSOS				
-*/api/cteXML	                POST	XML DO CTE			                            CTRC				    XML DO CTE				
-*/api/apiCliente	            GET	    DETALHAMENTO POSIÇÃO DE CARGA SIC			    CHAVE_NFE				DADOS E TRACKING / STATUS / CARGA				
-*/api/apiPosicao 	            GET	    DETALHAMENTO POSIÇÃO DE CARGA SIC			    *       				DADOS E TRACKING / STATUS / CARGA				
-*/api/dadoscliente	            GET	    DADOS DO CLIENTE			                    CNPJ				    DADOS CADASTRAIS DO CLIENTE				
-*/api/cartafrete                GET	    DADOS DA CARTA ORDEM			                CODIGO				    DADOS CADASTRAIS DA CARTA ORDEM				
-*/api/cartafreteplacas	        GET	    ULTIMAS CARTAS ORDEM DO VEICULO			        PLACAS				    LISTA 5 ULTIMAS CARTAS ORDENS LIGADAS AO VEICULO				
-*/api/placasveiculo	            GET	    DADOS DO VEICULO			                    PLACAS				    DADOS CADASTRAIS DO VEICULO				
-*/api/listDadosCTRC             GET     GERA DADOS CTRC PARA PLANILHA                   CNPJ/PERIODO
-*/api/senhaCliente              POST    ATUALIZA A SENHA DO CLIENTE
-*/api/listadae	                GET	    LISTA DE DAE´S DO CLIENTE			            PERIODO,STATUS			LISTA DE DAE´S COM SEUS DADOS E LINK PARA DOWNLOAD DO PDF				
-*/api/posicaoCarga  	        POST	OBTER POSIÇÃO DE CARGA NO PERIODO        		PERIODO,CNPJ			DADOS CTRC
-*/api/posicaoCargaXLS	        POST	OBTER LISTA EXCEL COM POSIÇÃO DE CARGA			PERIODO,CNPJ			LINK PARA DOWNLOAD DE AQUIVO XLS				
-*/api/dadosnf	                POST	DADOS DA NF			                            CNPJ + NF				DADOS DA NF				
-*/api/dadosctrc	                POST	DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
-*/api/documentoctrc	            GET	    DADOS DO CTRC COM STATUS DO DAE			        CTRC				    DADOS CTRC + STATUS DO DAE				
-*/api/dadoslotenf	            POST	DADOS DE LISTA DE NFS			                CNPJ + (LISTA DE NFS)	LISTA DE NOTAS FISCAIS RELACIONADAS				
-*/api/listanfctrc	            POST	NOTAS POR CTRC			                        CTRC				    LISTA DE NOTAS DE UM CONHECIMENTO "CTRC"				
-*/api/faturaERP                 GET     PESQUISA TOTVS
-*/api/faturaERPdetalhe          GET     PESQUISA TOTVS
-/api/downloadAgileProcess
-/api/tabelaFretePeso	        GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
-/api/tabelapercentualproduto	GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
-/api/tabelaFaixaPeso	        GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
-/api/tabelaColetaEntrega	    GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    PARAMETROS DA TABELA DO CLIENTE				
-/api/tabelacliente	            GET	    DADOS DA TABELA DO CLIENTE			            CNPJ				    LISTA PARAMETROS DA TABELA CLIENTE				
+endpoint	                    Verbo	 Descrição			                            Request (ENTRADA)		Response (SAÍDA)				
+*/api/filiais	                GET	     LISTA DE FILIAIS			                    NULL,CODIGO,CIDADE		LISTA DE DADOS COMPLETOS DE FILIAIS				
+*/api/produtostransportados	    GET	     LISTA DE PRODUTOS TRANSPORTADOS PELA TERMACO	NULL				    LISTA COMPLETA DE TIPOS DE PRODUTOS ACEITOS PARA TRANSPORTE				
+*/api/listaFiliaisCliente	    GET	     RELAÇÃO DAS FILIAIS CADASTRADAS DO CLIENTE		CNPJ				    LISTA COM DADOS COMPLETOS DAS FILIAIS DO CLIENTE				
+*/api/senhaclienteemail	        GET	     RELAÇÃO DE EMAILS DO CLIENTE			        CNPJ				    LISTA COMPLETA DE EMAILS DO CLIENTE PARA ENVIO DE SENHA DE ACESSO				
+*/api/senhaclienteemail	        POST	 SOLICITA SUBSTITUIÇÃO DE SENHA DO CLIENTE		CNPJ + EMAIL_VALIDO		LINK DE ACESSO PARA REGISTRAR NOVA SENHA				
+*/api/firebasetoken	            POST	 REGISTRO DE TOKEN FIREBASE DO CLIENTE			CNPJ + TOKEN FIREBASE	GRAVA EM BASE TERMACO O TOKEN DO CLIENTE PARA USO DE MENSAGENS APP PARA O CLIENTE				
+*/api/posicaocargaapp	        GET	     RELAÇÃO DE CARGAS DO CLIENTE			        CNPJ,PERIODO,CTRC,NF	LISTA E SISTUAÇÕES DAS CARGAS COM BASE NOS PARAMETROS				
+*/api/posicaocargaSTATUS	    GET	     DATAS E STATUS ATUAL DA CARGA			        CTRC				    DATAS DOS EVENTOS E STATUS ATUAL DO CONHECIMENTO "CTRC"				
+*/api/steptracker	            GET	     DATAS DO PASSO A PASSO DOS EVENTOS			    CNPJ,NF,CTRC			DATAS DOS EVENTOS DO TRANSPOTE/VIAGEM				
+*/api/cidadesatentidas	        GET	     CIDADES ATENDIDAS			                    UF,CIDADE			    LISTA DE CIDADES ATENDIDAS PELA TERMACO, BASE TRECHOS VALIDOS				
+*/api/cidadesatentidasPOST	    POST	 RESPOSTA DO BOT PARA CIDADES ATENDIDAS			UF + CIDADE				RESPOSTA PARA O BOT PORTIFOLIO EM CIDADES ATENDIDAS (VERDADEIRO/FALSO)				
+*/api/login	                    POST	 LOGIN PARA ACESSO EXTERNO DO CLIENTE TERMACO	CNPJ + SENHA			TOKEN PARA USO NOS DEMAIS ACESSOS				
+*/api/cteXML	                POST	 XML DO CTE			                            CTRC				    XML DO CTE				
+*/api/apiCliente	            GET	     DETALHAMENTO POSIÇÃO DE CARGA SIC			    CHAVE_NFE				DADOS E TRACKING / STATUS / CARGA				
+*/api/apiPosicao 	            GET	     DETALHAMENTO POSIÇÃO DE CARGA SIC			    *       				DADOS E TRACKING / STATUS / CARGA				
+*/api/dadoscliente	            GET	     DADOS DO CLIENTE			                    CNPJ				    DADOS CADASTRAIS DO CLIENTE				
+*/api/cartafrete                GET	     DADOS DA CARTA ORDEM			                CODIGO				    DADOS CADASTRAIS DA CARTA ORDEM				
+*/api/cartafreteplacas	        GET	     ULTIMAS CARTAS ORDEM DO VEICULO			    PLACAS				    LISTA 5 ULTIMAS CARTAS ORDENS LIGADAS AO VEICULO				
+*/api/placasveiculo	            GET	     DADOS DO VEICULO			                    PLACAS				    DADOS CADASTRAIS DO VEICULO				
+*/api/listDadosCTRC             GET      GERA DADOS CTRC PARA PLANILHA                  CNPJ/PERIODO
+*/api/senhaCliente              POST     ATUALIZA A SENHA DO CLIENTE
+*/api/listadae	                GET	     LISTA DE DAE´S DO CLIENTE			            PERIODO,STATUS			LISTA DE DAE´S COM SEUS DADOS E LINK PARA DOWNLOAD DO PDF				
+/api/dae                        POST/GET DETALHES DO DAE
+*/api/posicaoCarga  	        POST	 OBTER POSIÇÃO DE CARGA NO PERIODO        		PERIODO,CNPJ			DADOS CTRC
+*/api/posicaoCargaXLS	        POST	 OBTER LISTA EXCEL COM POSIÇÃO DE CARGA			PERIODO,CNPJ			LINK PARA DOWNLOAD DE AQUIVO XLS				
+*/api/dadosnf	                POST	 DADOS DA NF			                        CNPJ + NF				DADOS DA NF				
+*/api/dadosctrc	                POST	 DADOS DO CTRC COM STATUS DO DAE			    CTRC				    DADOS CTRC + STATUS DO DAE				
+*/api/documentoctrc	            GET	     DADOS DO CTRC COM STATUS DO DAE			    CTRC				    DADOS CTRC + STATUS DO DAE				
+*/api/dadoslotenf	            POST	 DADOS DE LISTA DE NFS			                CNPJ + (LISTA DE NFS)	LISTA DE NOTAS FISCAIS RELACIONADAS				
+*/api/listanfctrc	            POST	 NOTAS POR CTRC			                        CTRC				    LISTA DE NOTAS DE UM CONHECIMENTO "CTRC"				
+*/api/faturaERP                 GET      PESQUISA TOTVS
+*/api/faturaERPdetalhe          GET      PESQUISA TOTVS
+*/api/downloadAgileProcess      NEW      MONTADA NOVA SOLUÇÃO /API/preparaDownload
 
--- downloadAgileProcess
+-- faturacargas

@@ -1,20 +1,12 @@
-/api/dae                       = ('../consultas/DAE')
-/api/tabelaCliente             = ('../consultas/tabelaCliente')
-/api/tabelaFretePeso           = ('../consultas/tabelaFretePeso')
-/api/tabelaPercentualProduto   = ('../consultas/tabelaPercentualProduto')
-/api/tabelaFaixaPeso           = ('../consultas/tabelaFaixaPeso')
-/api/tabelaColetaEntrega       = ('../consultas/tabelaColetaEntrega')
 /api/novosSCCD                 = ('../controllers/novosSCCD')
 /api/baixaSCCD                 = ('../controllers/baixaSCCD')
 /api/SCCDsuccess               = ('../controllers/SCCDsuccess')
 /api/listaSCCD_ALB             = ('../controllers/listaSCCD_ALB')
-/api/listaDAE                  = ('../consultas/listaDAE')
 /api/getFotoID                 = ('../controllers/getFotoID')
 /api/checkImgSCCD              = ('../controllers/checkImgSCCD')
 /api/receiveDataDebugAPP       = ('../controllers/receiveDataDebugAPP')
 /api/fileNameCalcSCCD          = ('../controllers/fileNameCalcSCCD')
-/api/downloadAgileProcess      = ('../controllers/downloadAgileProcess')
 /api/faturacargas              = ('../consultas/faturaCargas')
 
 
--- posicaoCarga
+-- faturacargas
