@@ -4,7 +4,6 @@
 /api/tabelaPercentualProduto   = ('../consultas/tabelaPercentualProduto')
 /api/tabelaFaixaPeso           = ('../consultas/tabelaFaixaPeso')
 /api/tabelaColetaEntrega       = ('../consultas/tabelaColetaEntrega')
-/api/posicaoCarga              = ('../controllers/posicaoCarga')
 /api/novosSCCD                 = ('../controllers/novosSCCD')
 /api/baixaSCCD                 = ('../controllers/baixaSCCD')
 /api/SCCDsuccess               = ('../controllers/SCCDsuccess')
@@ -18,4 +17,4 @@
 /api/faturacargas              = ('../consultas/faturaCargas')
 
 
--- faturaERP
+-- posicaoCarga
