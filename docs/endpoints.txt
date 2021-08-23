@@ -33,4 +33,4 @@ endpoint	                    Verbo	 Descrição			                            Re
 */api/faturaERPdetalhe          GET      PESQUISA TOTVS
 */api/downloadAgileProcess      NEW      MONTADA NOVA SOLUÇÃO /API/preparaDownload
 
--- faturacargas
+-- faturacargas http://192.168.0.154/edocs/#
