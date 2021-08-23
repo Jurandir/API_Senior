@@ -127,12 +127,14 @@ async function apiCliente_GET( req, res ) {
             })
 
             ret.data.forEach(itn=>{
-                retorno.ocorrencias.push({
-                    codigoInterno: itn.CdOcorrencia, 
-                    codigoProceda:itn.CdOcorrencia, 
-                    descricaoOcorrencia: itn.DsOcorrencia,  
-                    dataRegistro: itn.DtOcorrencia
-                })
+                if(itn.DsOcorrencia) {
+                    retorno.ocorrencias.push({
+                        codigoInterno: itn.CdOcorrencia, 
+                        codigoProceda:itn.CdOcorrencia, 
+                        descricaoOcorrencia: itn.DsOcorrencia,  
+                        dataRegistro: itn.DtOcorrencia
+                    })
+                }
     
             })
 
