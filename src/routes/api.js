@@ -50,6 +50,9 @@ const firebaseToken             = require('../controllers/appCliente/firebaseTok
 // API Serviços para os Robôs
 const preparaDownload     = require('../controllers/services/preparaDownload')
 
+// API Serviços eDocs/Senior
+const restPDFeDocs        = require('../controllers/services/restPDFeDocs')
+
 /*
 const listaDAE                  = require('../controllers/appCliente/listaDAE')
 */
@@ -102,6 +105,9 @@ api.post('/firebasetoken'         , firebaseToken)
 
 // API Serviços para ( ConfirmaFacil, iTrack, Orion )
 api.get('/preparaDownload'   , preparaDownload)
+
+// API Serviços eDocs/Senior
+api.use('/restPDFeDocs'    ,restPDFeDocs)
 
 /*
 router.get('/listadae'               , validaToken, listaDAE )

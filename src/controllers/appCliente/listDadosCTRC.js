@@ -152,16 +152,16 @@ async function listDadosCTRC( req, res ) {
 
     let s_select = sql_base
 
-	console.log('PARAMS:',dt_inicial,dt_final,DadosOuXlsx,ctrc,pagina_nro,pagina_tam)
+	// console.log('PARAMS:',dt_inicial,dt_final,DadosOuXlsx,ctrc,pagina_nro,pagina_tam)
     // console.log('(listDadosCTRC)  API => SQL:',s_select)
         
     try {  
         
-        console.log('SQL:',s_select)
+        // console.log('SQL:',s_select)
 
         const result = await sqlQuery(s_select)
 
-        console.log('result:',result)
+        // console.log('result:',result)
 
             if (result.Erro) {
                 
