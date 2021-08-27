@@ -7,6 +7,7 @@ const endpoint  = '/SDE/Download'
 const srv             = process.env.IP_EXTERNO || 'localhost'
 const port            = process.env.PORT       || '4999'
 const URL_DOWNLOAD    = `http://${srv}:${port}/downloads`
+const URL_IMAGENS     = `http://${srv}:${port}/images`
 
 const parser = new xml2js.Parser({ attrkey: "ATTR" });
 
@@ -58,7 +59,9 @@ const restPDFeDocs = async ( req, res ) =>{
         let ret = await axios.post( url, xmlBody, config )
 
         parser.parseString(ret.data, function(error, result) {
+
             if(error === null) {
+                console.log('result: 1')
                 let success = (result['s:Envelope']['s:Body'][0].BaixarPdfResponse[0].BaixarPdfResult[0].Sucesso[0] == 'true')
                 let message = !success ? result['s:Envelope']['s:Body'][0].BaixarPdfResponse[0].BaixarPdfResult[0].Mensagem[0] : 'Sucesso. OK.'
                 let data = success ? result['s:Envelope']['s:Body'][0].BaixarPdfResponse[0].BaixarPdfResult[0].Pdfs[0].PdfRetorno[0].Conteudo : []            
@@ -68,13 +71,21 @@ const restPDFeDocs = async ( req, res ) =>{
                     success: success,
                     message: message,
                 }
+
                 if(B64_Lnk_Down=='B') {
                     ok.Base64 = data
                 } else {
-                    let pdf      = Buffer.from(data[0], 'base64');
-                    ok.download  = URL_DOWNLOAD+filename
-                    fs.writeFileSync(file, pdf, 'binary');
+                    if(data.length>0) {
+                        let pdf      = Buffer.from(data[0], 'base64');
+                        ok.download  = URL_DOWNLOAD+filename
+                        fs.writeFileSync(file, pdf, 'binary');
+                    } else {
+                        filename     = 'pagina-de-erro-404-nao-encontrada.jpg'
+                        ok.download  = URL_IMAGENS+filename
+                        file         = `./public/images/${filename}`
+                    }
                 }
+
                 if(B64_Lnk_Down=='D') {
                     res.download(file)
                 } else {               
@@ -83,6 +94,7 @@ const restPDFeDocs = async ( req, res ) =>{
             }
             else {
                 error.success = false
+                error.ERRO = true
                 res.json(error).status(500) 
             }
         })

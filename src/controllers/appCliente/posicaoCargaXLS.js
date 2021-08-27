@@ -20,6 +20,12 @@ async function posicaoCargaXLS( req, res ) {
     
     let dados = await dadosPesquisa(wraiz,dataini,datafim)
     let idx   = -1
+    
+    if(!dados || dados.length==0){
+        
+        res.send({ "erro" : "Problemas com a solicitação !!!", "rotina" : "posicaoCargaXLS" }).status(500)
+        return 0 
+    }
 
     for await (let item of dados){
         let emp  = item.EMPCODIGO

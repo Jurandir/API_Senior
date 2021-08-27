@@ -52,6 +52,7 @@ const preparaDownload     = require('../controllers/services/preparaDownload')
 
 // API Serviços eDocs/Senior
 const restPDFeDocs        = require('../controllers/services/restPDFeDocs')
+const comprovantesZIP     = require('../controllers/services/comprovantesZIP')
 
 /*
 const listaDAE                  = require('../controllers/appCliente/listaDAE')
@@ -108,6 +109,7 @@ api.get('/preparaDownload'   , preparaDownload)
 
 // API Serviços eDocs/Senior
 api.use('/restPDFeDocs'    ,restPDFeDocs)
+api.use('/comprovantesZIP' ,comprovantesZIP)
 
 /*
 router.get('/listadae'               , validaToken, listaDAE )
