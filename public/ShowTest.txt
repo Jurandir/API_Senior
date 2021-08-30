@@ -1,0 +1,259 @@
+----------------------------------------------------
+headers:
+{
+    "host": "localhost:4999",
+    "user-agent": "insomnia/2021.5.0",
+    "content-type": "application/json",
+    "accept": "*/*",
+    "content-length": "63"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "host": "localhost:4999",
+    "user-agent": "insomnia/2021.5.0",
+    "content-type": "application/json",
+    "accept": "*/*",
+    "content-length": "63"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "host": "localhost:4999",
+    "user-agent": "insomnia/2021.5.0",
+    "content-type": "application/json",
+    "accept": "*/*",
+    "content-length": "63"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "host": "localhost:4999",
+    "user-agent": "insomnia/2021.5.0",
+    "content-type": "application/json",
+    "accept": "*/*",
+    "content-length": "63"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "host": "localhost:4999",
+    "user-agent": "insomnia/2021.5.0",
+    "content-type": "application/json",
+    "accept": "*/*",
+    "content-length": "844"
+}
+POST body:
+[
+    {
+        "embarque": {
+            "numero": "0346806",
+            "serie": "1",
+            "chave": "31210412744404000500550010003468061103078498"
+        },
+        "embarcador": {
+            "cnpj": "12744404000500"
+        },
+        "destinatario": {
+            "nome": "CENCOSUD BRASIL COMERCIAL LTDA",
+            "cnpj": "12744404000500"
+        },
+        "transportadora": {
+            "nome": "TERMACO - ETM",
+            "cnpj": "11552312002097"
+        },
+        "ocorrencia": {
+            "tipoEntrega": 999,
+            "descricaoTipoEntrega": "COMPROVANTE DE ENTREGA",
+            "dtOcorrencia": "12-05-2021",
+            "hrOcorrencia": "14:46:43",
+            "comentario": "ETME45616",
+            "fotos": [
+                "http://201.49.34.12:5000/comprovantes/ETME45616"
+            ]
+        }
+    }
+]
+----------------------------------------------------
+headers:
+{
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": "axios/0.21.1",
+    "content-length": "54",
+    "host": "localhost:4999",
+    "connection": "close"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": "axios/0.21.1",
+    "content-length": "54",
+    "host": "localhost:4999",
+    "connection": "close"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": "axios/0.21.1",
+    "content-length": "54",
+    "host": "localhost:4999",
+    "connection": "close"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "host": "localhost:4999",
+    "connection": "keep-alive",
+    "sec-ch-ua": "\"Chromium\";v=\"92\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"92\"",
+    "sec-ch-ua-mobile": "?0",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br",
+    "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+    "cookie": "hblid=lkY2Ckms1RbelgTc3m39N0SakKW46rjB; olfsk=olfsk11761561034668144",
+    "sec-gpc": "1"
+}
+GET body:
+{}
+----------------------------------------------------
+headers:
+{
+    "host": "localhost:4999",
+    "connection": "keep-alive",
+    "cache-control": "max-age=0",
+    "sec-ch-ua": "\"Chromium\";v=\"92\", \" Not A;Brand\";v=\"99\", \"Google Chrome\";v=\"92\"",
+    "sec-ch-ua-mobile": "?0",
+    "upgrade-insecure-requests": "1",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36",
+    "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9",
+    "sec-fetch-site": "none",
+    "sec-fetch-mode": "navigate",
+    "sec-fetch-user": "?1",
+    "sec-fetch-dest": "document",
+    "accept-encoding": "gzip, deflate, br",
+    "accept-language": "pt-BR,pt;q=0.9,en-US;q=0.8,en;q=0.7",
+    "cookie": "hblid=lkY2Ckms1RbelgTc3m39N0SakKW46rjB; olfsk=olfsk11761561034668144",
+    "sec-gpc": "1"
+}
+GET body:
+{}
+----------------------------------------------------
+headers:
+{
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": "axios/0.21.1",
+    "content-length": "54",
+    "host": "localhost:4999",
+    "connection": "close"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": "axios/0.21.1",
+    "content-length": "54",
+    "host": "localhost:4999",
+    "connection": "close"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": "axios/0.21.1",
+    "content-length": "54",
+    "host": "localhost:4999",
+    "connection": "close"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": "axios/0.21.1",
+    "content-length": "54",
+    "host": "localhost:4999",
+    "connection": "close"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}
+----------------------------------------------------
+headers:
+{
+    "accept": "application/json, text/plain, */*",
+    "content-type": "application/json",
+    "user-agent": "axios/0.21.1",
+    "content-length": "54",
+    "host": "localhost:4999",
+    "connection": "close"
+}
+POST body:
+{
+    "email": "ti@termaco.com.br",
+    "senha": "$Termaco.sac21"
+}

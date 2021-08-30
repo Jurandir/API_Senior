@@ -8,6 +8,7 @@ require('dotenv').config()
 
 const api          = require('./src/routes/api')
 const senior       = require('./src/routes/senior')
+const test         = require('./src/routes/test')
 
 // parse application/json
 app.use(express.json({limit:'4mb'}))
@@ -33,6 +34,9 @@ app.use('/api'   , api )
 
 // Rotas Sênior
 app.use('/senior', senior )  
+
+// Rotas Testes
+app.use('/test'  , test )  
 
 // Downloads
 app.use(express.static('public'))
