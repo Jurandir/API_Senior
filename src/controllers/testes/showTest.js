@@ -13,7 +13,7 @@ async function showTest( req, res ) {
     if(url=='/embarque') {
        resposta = test_embarque()
     } else {
-        resposta = { codigo:500, status:500 }
+        resposta = { codigo:500, status:500, url: url }
     }
 
 	await sendLog('----------------------------------------------------')
