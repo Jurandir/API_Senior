@@ -19,7 +19,7 @@ async function preparaDownload( req, res ) {
     }
 
     if (fs.existsSync(arq)) {
-        data = { success: true, message: 'Pesquisa. OK.', url: `${hostSrv}${fileName}.png`, file: `${fileName}.png`  }
+        data = [{ success: true, message: 'Pesquisa. OK.', url: `${hostSrv}${fileName}.png`, file: `${fileName}.png`  }]
         res.json(data).status(200)  // OK
         return
     }
@@ -39,12 +39,17 @@ async function preparaDownload( req, res ) {
             }
             res.json(dados).status(201)  // Criado
         } else {
-            res.json(ret).status(400)  // Não Localizado
+			let naoOK = []
+			naoOK.push(ret)
+            res.json(naoOK).status(400)  // Não Localizado
         }   
     } catch(err) {
 
         data.message = err.message
-        res.json(data).status(500)  // Erro
+    	let naoOK = []
+		naoOK.push(data)
+		
+        res.json(naoOK).status(500)  // Erro
         
     }
 
