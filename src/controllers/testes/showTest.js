@@ -1,6 +1,7 @@
-const fs            = require('fs')
-const test_login    = require('./response/login')
-const test_embarque = require('./response/embarque')
+const fs                     = require('fs')
+const test_login             = require('./response/login')
+const test_embarque          = require('./response/embarque')
+const test_BaixaOcorrencia   = require('./response/baixaOcorrencia')
 
 async function showTest( req, res ) {
 
@@ -12,6 +13,9 @@ async function showTest( req, res ) {
     } else 
     if(url=='/embarque') {
        resposta = test_embarque()
+    }
+    if(url=='/baixaocorrencia') {
+       resposta = test_BaixaOcorrencia(req.body.chave)
     } else {
         resposta = { codigo:500, status:500, url: url }
     }

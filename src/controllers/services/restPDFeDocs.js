@@ -1,7 +1,7 @@
 const fs        = require('fs')
 const axios     = require('axios')
 const xml2js    = require('xml2js')
-const server    = 'http://192.168.0.154:8989'
+const server    = 'http://192.168.0.34:8989'
 const endpoint  = '/SDE/Download'
 
 const srv             = process.env.IP_EXTERNO || 'localhost'
@@ -57,6 +57,8 @@ const restPDFeDocs = async ( req, res ) =>{
     try {
 
         let ret = await axios.post( url, xmlBody, config )
+		
+		// console.log(ret.data)
 
         parser.parseString(ret.data, function(error, result) {
 
