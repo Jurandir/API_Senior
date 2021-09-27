@@ -3,7 +3,7 @@ const crypto               = require('crypto')
 const zip                  = require('express-zip')
 const getImagemSenior      = require('../../metodsDB/getImagemSenior')
 
-const server          = process.env.SERVER || 'localhost'
+const server          = process.env.IP_EXTERNO || 'localhost'
 const port            = process.env.PORT   || '4999'
 
 const URL_DOWNLOAD    = `http://${server}:${port}/downloads`

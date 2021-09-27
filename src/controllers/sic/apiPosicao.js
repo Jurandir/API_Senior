@@ -1,7 +1,7 @@
 const loadAPI         = require('../../helpers/loadAPI')
 const endpoint1       = '/api/apiCliente'
 const getImagemSenior = require('../../metodsDB/getImagemSenior')
-const server          = process.env.SERVER || 'localhost'
+const server          = process.env.IP_EXTERNO || 'localhost'
 const port            = process.env.PORT   || '4999'
 
 // Teste 02

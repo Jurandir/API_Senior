@@ -3,7 +3,7 @@ const json2xlsx    = require('json2xls')
 const crypto       = require('crypto')
 const fs           = require('fs')
 
-const server          = process.env.SERVER || 'localhost'
+const server          = process.env.IP_EXTERNO || 'localhost'
 const port            = process.env.PORT   || '4999'
 
 const URL_DOWNLOAD    = `http://${server}:${port}/downloads`

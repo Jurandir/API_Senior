@@ -6,7 +6,7 @@ const hostSrv              = `http://${server}:${port}/downloads/images/`
 
 async function preparaDownload( req, res ) {
     let params      = req.query
-    let { ctrc  }   = params
+    let { ctrc, retTipo  }   = params
     let fileName    = `Img_${ctrc}`
     let path        ='./public/images'
     let arq         = `${path}/${fileName}.png`

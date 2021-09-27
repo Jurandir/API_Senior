@@ -21,6 +21,8 @@ async function getImagemSenior( params ){
     if(!retTipo){
       retTipo = 2
     } 
+	
+	console.log('retTipo',retTipo)
 
     if(!filesTypes){
       filesTypes = [`'.png'`,`'.jpg'`]
