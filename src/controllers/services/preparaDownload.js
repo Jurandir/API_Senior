@@ -25,6 +25,7 @@ async function preparaDownload( req, res ) {
     }
 
     try {
+
         ret = await getImagemSenior(params)
 
         if(ret.success) {
@@ -34,7 +35,8 @@ async function preparaDownload( req, res ) {
                         "success": true,
                         "message": "Pesquisa. OK.",
                         "url": `${hostSrv}${itn.fileName}`,
-                        "file": itn.fileName
+                        "file": itn.fileName,
+                        "base64": itn.base64
                 })
             }
             res.json(dados).status(201)  // Criado

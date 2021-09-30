@@ -108,6 +108,7 @@ api.post('/firebasetoken'         , firebaseToken)
 api.get('/preparaDownload'   , preparaDownload)
 
 // API Serviços eDocs/Senior
+api.use('/downloadCTRC'    ,validaToken ,restPDFeDocs)
 api.use('/restPDFeDocs'    ,restPDFeDocs)
 api.use('/comprovantesZIP' ,comprovantesZIP)
 

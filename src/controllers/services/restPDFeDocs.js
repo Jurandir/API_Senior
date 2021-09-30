@@ -1,6 +1,8 @@
-const fs        = require('fs')
-const axios     = require('axios')
-const xml2js    = require('xml2js')
+const fs           = require('fs')
+const axios        = require('axios')
+const xml2js       = require('xml2js')
+const getChaveCTRC = require('../../metodsDB/getChaveCTRC')
+
 const server    = 'http://192.168.0.34:8989'
 const endpoint  = '/SDE/Download'
 
@@ -13,8 +15,18 @@ const parser = new xml2js.Parser({ attrkey: "ATTR" });
 
 const restPDFeDocs = async ( req, res ) =>{
     let params = req.method == 'GET' ? req.query : req.body
-    let { usuario, senha, tipoDocumento, chave, B64_Lnk_Down } = params
+    let { usuario, senha, tipoDocumento, chave, B64_Lnk_Down, ctrc } = params
     let url = server + endpoint
+
+    if(ctrc) {
+        let newChave = await getChaveCTRC(ctrc)
+        if(newChave.success) {
+            chave = newChave.data[0].CdChaveAcesso  
+        } else {
+            res.json(newChave).status(400)  
+            return
+        }
+    } 
     
     B64_Lnk_Down = (!B64_Lnk_Down) ? 'B' : `${B64_Lnk_Down}`.toUpperCase()
 

@@ -12,8 +12,6 @@ async function getImagemSenior( params ){
       rows: 0
     }
 
-    // console.log('params:',params)
-
     if(!Base){
       Base = 'softran_termaco'
     } 
@@ -46,8 +44,6 @@ async function getImagemSenior( params ){
 
     let extTypes = '('+filesTypes.join()+')'
 
-    // console.log('extTypes:',extTypes)
-
     let sql = `
     SELECT a.CdEmpresa
     ,      d.DsApelido     AS DsFilial
@@ -67,11 +63,10 @@ async function getImagemSenior( params ){
     try {
       let data = await sqlQuery(sql)
 
-      // console.log('DATA:',sql,data)
-
       retorno.rows    = data.length
       retorno.success = retorno.rows > 0  
       retorno.message = retorno.success ? 'Sucesso. Ok.' : 'Dados não localizados'
+      retorno.data    = []
       
       for await (let element of data ) {
         let ret = retTipo == 1 ? downloadSeniorIMG(element) : base64SeniorIMG(element)
