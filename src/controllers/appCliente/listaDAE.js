@@ -50,7 +50,7 @@ async function listaDAE( req, res ) {
     ,    CNH.CdRemetente CNPJ_REMETENTE
     ,    CLI.DsEntidade REMETENTE
     ,    DAE.DATATU DT_UPDATE
-    ,    CONCAT(DAE.EMP_CODIGO_CNH,DAE.CNH_SERIE,DAE.CNH_CTRC) CTRC 
+    ,    CONCAT(DAE.EMP_CODIGO_CNH,'E',DAE.CNH_CTRC) CTRC 
     ,    DAE.NF NOTAFISCAL
     ,    DAE.SERIENF SERIE_NF
     ,    DAE.BANCO     

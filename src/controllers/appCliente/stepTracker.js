@@ -10,7 +10,7 @@ async function stepTracker( req, res ) {
         rows: 0
     }
     let {Base, tipo, cnpj, documento } = req.query
-    let s_where,s_emp,s_ctrc,s_serie,s_documento,s_data
+    let s_where,s_emp,s_ctrc,s_serie,s_documento,s_data,s_tipo
     let i_numero = 0
 
     if(!documento || documento==undefined ) {
@@ -69,25 +69,26 @@ async function stepTracker( req, res ) {
                     ,MAX(CASE WHEN D.CDOCORRENCIA = 101 THEN D.DTMOVIMENTO ELSE NULL END) AS EMBARQUE
                     ,MAX(CASE WHEN D.CDOCORRENCIA = 98  THEN D.DTMOVIMENTO ELSE NULL END) AS CHEGADA
                     ,MAX(CASE WHEN D.CDOCORRENCIA = 100 THEN D.DTMOVIMENTO ELSE NULL END) AS SAIDA
-                    ,NULL                                                                 AS DAE_EMISSAO
-                    ,NULL                                                                 AS DAE_BAIXA
+                    ,MAX(DAE.DATAEMISSAO)                                                 AS DAE_EMISSAO
+                    ,MAX(DAE.DATABAIXA)                                                   AS DAE_BAIXA
                     ,MAX(A.DTENTREGA)                                                     AS ENTREGA
                     ,MAX(${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(A.DTEMISSAO, A.CDEMPRESADESTINO, A.CDPERCURSO, A.CDTRANSPORTE, A.CDREMETENTE, A.CDDESTINATARIO, A.CDEMPRESA, A.NRSEQCONTROLE))
                                                                                           AS PREVISAO
                     ,NULL                                                                 AS PREVISAO_ORIGINAL
                 FROM ${Base}.dbo.GTCCONHE      A
-                LEFT JOIN ${Base}.dbo.SISEMPRE AA ON AA.CDEMPRESA  = A.CDEMPRESA 
-                LEFT JOIN ${Base}.dbo.GTCCONCE BB ON BB.CDEMPRESA  = A.CDEMPRESA   AND BB.NRSEQCONTROLE = A.NRSEQCONTROLE
-                LEFT JOIN ${Base}.dbo.GTCNFCON B  ON B.CDEMPRESA   = A.CDEMPRESA   AND B.NRSEQCONTROLE = A.NRSEQCONTROLE
-                LEFT JOIN ${Base}.dbo.GTCNF    C  ON C.CDREMETENTE = B.CDINSCRICAO AND C.NRSERIE = B.NRSERIE AND C.NRNOTAFISCAL = B.NRNOTAFISCAL
-                LEFT JOIN ${Base}.dbo.GTCMOVEN D  ON D.CDEMPRESA   = A.CDEMPRESA   AND D.NRSEQCONTROLE = A.NRSEQCONTROLE
-                LEFT JOIN ${Base}.dbo.CCECOLET O  ON O.CDEMPRESA   = A.CDEMPRESA   AND O.NRCOLETA = A.NRCOLETA
+                LEFT JOIN ${Base}.dbo.SISEMPRE AA ON AA.CDEMPRESA       = A.CDEMPRESA 
+                LEFT JOIN ${Base}.dbo.DAE     DAE ON DAE.EMP_CODIGO_CNH = AA.DsApelido  AND DAE.CNH_CTRC = A.NrDoctoFiscal  
+                LEFT JOIN ${Base}.dbo.GTCCONCE BB ON BB.CDEMPRESA       = A.CDEMPRESA   AND BB.NRSEQCONTROLE = A.NRSEQCONTROLE
+                LEFT JOIN ${Base}.dbo.GTCNFCON B  ON B.CDEMPRESA        = A.CDEMPRESA   AND B.NRSEQCONTROLE = A.NRSEQCONTROLE
+                LEFT JOIN ${Base}.dbo.GTCNF    C  ON C.CDREMETENTE      = B.CDINSCRICAO AND C.NRSERIE = B.NRSERIE AND C.NRNOTAFISCAL = B.NRNOTAFISCAL
+                LEFT JOIN ${Base}.dbo.GTCMOVEN D  ON D.CDEMPRESA        = A.CDEMPRESA   AND D.NRSEQCONTROLE = A.NRSEQCONTROLE
+                LEFT JOIN ${Base}.dbo.CCECOLET O  ON O.CDEMPRESA        = A.CDEMPRESA   AND O.NRCOLETA = A.NRCOLETA
                 WHERE
                     ${s_where}
                 GROUP BY 
                     ${s_documento}`
         
-        console.log('stepTracker: s_select',s_select)
+        // console.log('stepTracker: s_select',s_select)
 
         try {
             let data = await sqlQuery(s_select)
