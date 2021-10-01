@@ -1,8 +1,8 @@
-const { poolPromise } = require('../../connection/dbTMS')
-
-const NAO_IMPLEMENTADO = true
+const { poolPromise } = require('../../connection/dbSENIOR')
 
 const url_dae = 'http://www2.termaco.com.br/sicnovo/DAE/PDF/' // FOR337833.pdf'
+
+// -- TESTE (donarosabijoux@donarosabijoux.com - 10212341000265 / 404 )
 
 async function listaDAE( req, res ) {
     let resposta = {
@@ -16,14 +16,6 @@ async function listaDAE( req, res ) {
 
     let {dt_inicial,dt_final,baixado,pagina_nro,pagina_tam} = req.query
     let cnpj     = req.userId
-
-    if(NAO_IMPLEMENTADO){
-        resposta.success = false
-        resposta.data.push(req.query)
-        resposta.message = 'DAE: rotina não impementada para sistema SÊNIOR.'
-        res.send(resposta).status(400)  
-        return 0 
-    }
 
     if(!cnpj || cnpj==undefined ) {
         resposta.message = 'Problemas com a autenticação !!!'
@@ -42,33 +34,35 @@ async function listaDAE( req, res ) {
     resposta.page   = pagina_nro
     resposta.length = pagina_tam
  
-    let sql_base = ` SELECT 
-                         DAE.CODIGO ID_DAE
-                        ,DAE.EMP_CODIGO FILIAL
-                        ,DAE.CODDAE CODIGO_DAE
-                        ,DAE.VENCIMENTO
-                        ,DAE.VALOR VALOR_DAE
-                        ,DAE.CODRECEITA COD_RECEITA
-                        ,DAE.STATUS STATUS_DAE 
-                        ,DAE.DATAEMISSAO EMISSAO_DAE
-                        ,DAE.DATABAIXA BAIXA_DAE
-                        ,DAE.OBS       
-                        ,DAE.CLI_CGCCPF_CLIDEST CNPJ_DESTINO
-                        ,CNH.CLI_CGCCPF_REMET CNPJ_REMETENTE
-                        ,CLI.NOME REMETENTE
-                        ,DAE.DATATU DT_UPDATE
-                        ,CONCAT(DAE.EMP_CODIGO_CNH,DAE.CNH_SERIE,DAE.CNH_CTRC) CTRC 
-                        ,DAE.NF NOTAFISCAL
-                        ,DAE.SERIENF SERIE_NF
-                        ,DAE.BANCO     
-                        ,DAE.VALORNF VALOR_NF
-                        ,DAE.CHAVENFE
-						,CONCAT('${url_dae}',DAE.EMP_CODIGO,DAE.CODIGO,'.pdf') URL_DOWNLOAD
-                    FROM CARGASSQL.dbo.DAE
-                    LEFT JOIN CARGASSQL.dbo.CNH ON CNH.EMP_CODIGO = DAE.EMP_CODIGO_CNH AND CNH.SERIE = DAE.CNH_SERIE AND CNH.CTRC = DAE.CNH_CTRC
-                    LEFT JOIN CARGASSQL.dbo.CLI ON CLI.CGCCPF = CNH.CLI_CGCCPF_REMET
-                    WHERE CLI_CGCCPF_CLIDEST IS NOT NULL
-                      AND DAE.CLI_CGCCPF_CLIDEST = '${cnpj}'
+    let sql_base = `
+    SELECT 
+         DAE.CODIGO ID_DAE
+    ,    DAE.EMP_CODIGO FILIAL
+    ,    DAE.CODDAE CODIGO_DAE
+    ,    DAE.VENCIMENTO
+    ,    DAE.VALOR VALOR_DAE
+    ,    DAE.CODRECEITA COD_RECEITA
+    ,    DAE.STATUS STATUS_DAE 
+    ,    DAE.DATAEMISSAO EMISSAO_DAE
+    ,    DAE.DATABAIXA BAIXA_DAE
+    ,    DAE.OBS       
+    ,    DAE.CLI_CGCCPF_CLIDEST CNPJ_DESTINO
+    ,    CNH.CdRemetente CNPJ_REMETENTE
+    ,    CLI.DsEntidade REMETENTE
+    ,    DAE.DATATU DT_UPDATE
+    ,    CONCAT(DAE.EMP_CODIGO_CNH,DAE.CNH_SERIE,DAE.CNH_CTRC) CTRC 
+    ,    DAE.NF NOTAFISCAL
+    ,    DAE.SERIENF SERIE_NF
+    ,    DAE.BANCO     
+    ,    DAE.VALORNF VALOR_NF
+    ,    DAE.CHAVENFE
+    ,    CONCAT('${url_dae}',DAE.EMP_CODIGO,DAE.CODIGO,'.pdf') URL_DOWNLOAD
+    FROM softran_termaco.dbo.DAE
+    LEFT JOIN softran_termaco.dbo.sisempre FIL ON FIL.DSAPELIDO    = DAE.EMP_CODIGO_CNH   -- Filial Origem
+    LEFT JOIN softran_termaco.dbo.gtcconhe CNH ON CNH.CdEmpresa    = FIL.CdEmpresa AND CNH.NrDoctoFiscal = DAE.CNH_CTRC
+    LEFT JOIN softran_termaco.dbo.siscli   CLI ON CLI.CdInscricao  = CNH.CdRemetente
+    WHERE DAE.CLI_CGCCPF_CLIDEST IS NOT NULL
+        AND DAE.CLI_CGCCPF_CLIDEST = '${cnpj}'
     ` 
     var s_baixado = ''
     var s_dataini = ''

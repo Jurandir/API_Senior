@@ -1,6 +1,4 @@
-const { poolPromise } = require('../../connection/dbTMS')
-
-const NAO_IMPLEMENTADO = true
+const { poolPromise } = require('../../connection/dbSENIOR')
 
 async function faturaCargas( req, res ) {
     let params = req.method == 'GET' ? req.query : req.body 
@@ -10,29 +8,20 @@ async function faturaCargas( req, res ) {
         message: '',
         data: []
     }
-
-    if(NAO_IMPLEMENTADO){
-        resposta.success = false
-        resposta.data.push(params)
-        resposta.message = 'DAE: rotina não impementada para sistema SÊNIOR.'
-        res.send(resposta).status(400)  
-        return 0 
-    }
  
     var s_select = ` 
-     SELECT 
-	      dae.emp_codigo ,dae.emp_codigo_cnh as cnh_emp ,dae.cnh_serie  ,dae.cnh_ctrc 
-	      ,dae.codigo	 ,dae.cli_cgccpf_clidest        ,cli.nome	    ,dae.valor
-	      ,dae.status	 ,dae.dataemissao               ,dae.databaixa  ,dae.datatu
-          ,dae.serienf   ,dae.banco                     ,dae.codreceita ,dae.nf
-          ,dae.obs       ,dae.valornf                   ,dae.coddae     ,dae.vencimento
-          ,dae.chavenfe
-     FROM dae
-        LEFT JOIN cnh ON cnh.emp_codigo = dae.emp_codigo_cnh
-	    AND cnh.serie = dae.cnh_serie
-	    AND cnh.ctrc = dae.cnh_ctrc
-        LEFT JOIN cli ON cli.cgccpf = cnh.cli_cgccpf_remet
-     WHERE cli_cgccpf_clidest IS NOT NULL
+    SELECT 
+        dae.emp_codigo ,dae.emp_codigo_cnh as cnh_emp ,dae.cnh_serie  ,dae.cnh_ctrc 
+    ,   dae.codigo	 ,dae.cli_cgccpf_clidest        ,CLI.DsEntidade nome ,dae.valor
+    ,   dae.status	 ,dae.dataemissao               ,dae.databaixa  ,dae.datatu
+    ,   dae.serienf   ,dae.banco                     ,dae.codreceita ,dae.nf
+    ,   dae.obs       ,dae.valornf                   ,dae.coddae     ,dae.vencimento
+    ,   dae.chavenfe
+    FROM softran_termaco.dbo.DAE
+    LEFT JOIN softran_termaco.dbo.sisempre FIL ON FIL.DSAPELIDO    = DAE.EMP_CODIGO_CNH   -- Filial Origem
+    LEFT JOIN softran_termaco.dbo.gtcconhe CNH ON CNH.CdEmpresa    = FIL.CdEmpresa AND CNH.NrDoctoFiscal = DAE.CNH_CTRC
+    LEFT JOIN softran_termaco.dbo.siscli   CLI ON CLI.CdInscricao  = CNH.CdRemetente
+    WHERE DAE.CLI_CGCCPF_CLIDEST IS NOT NULL
     ` 
     var s_cnpj    = ''
     var s_baixado = ''
