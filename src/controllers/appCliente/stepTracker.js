@@ -100,7 +100,7 @@ async function stepTracker( req, res ) {
             
             retorno.data = data
             if(!data || data.length==0){
-                retorno.message = `Dados não encontrada na Base (${Base})`
+                retorno.message = `Dados não encontrado na Base TERMACO ()`
                 retorno.rows    = 0
             } else {
                 retorno.success = true

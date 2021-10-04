@@ -4,12 +4,17 @@ const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function iTrack( req, res ) {
     let params = (req.method=='GET') ? req.query : req.body
-    let { danfe } = params
+    let { danfe,idcarga } = params
     let retorno = {capa:[],itens:[]}
+    let where = `WHERE NF.CHAVE = '${danfe}'`
+    
+    if(idcarga){
+        where = `WHERE NF.IDCARGA = '${idcarga}'`
+    }
     
     let wsql = `SELECT NF.*
                 FROM SIC.dbo.ITRACK_DANFE NF
-                WHERE NF.CHAVE = '${danfe}'`
+                ${where}`
 				
     try {
         data = await sqlQuery(wsql)
