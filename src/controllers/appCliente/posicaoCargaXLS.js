@@ -12,7 +12,7 @@ const QTDE_LINHAS_XLS = 800
 async function posicaoCargaXLS( req, res ) {
     let userId_Token = `${req.userId}`
     let wraiz = userId_Token.substr(0,8)
-    let { Base, DadosOuXlsx, dataini, datafim } = req.body
+    let { Base, DadosOuXlsx, dataini, datafim , XLSX_base64 } = req.body
 
     if(!Base){ 
         Base = 'softran_termaco'
@@ -66,14 +66,23 @@ async function posicaoCargaXLS( req, res ) {
     }
 
     let xlsx 
-    let filename 
+    let filename
+    let base64
     
     if(DadosOuXlsx!=='D') {
         let newDados = dadosXLS(dados)        
-        xlsx = json2xlsx(newDados);
+        xlsx = json2xlsx(newDados)
+
         filename = crypto.randomBytes(20).toString('hex')+'.xlsx'
         fs.writeFileSync(`./public/downloads/${filename}`, xlsx, 'binary');
+        
+        if(XLSX_base64) {
+           let buff = fs.readFileSync(`./public/downloads/${filename}`)
+           base64 = buff.toString('base64')
+        }
+
     }
+ 
 
     try {
 
@@ -88,6 +97,7 @@ async function posicaoCargaXLS( req, res ) {
             user: userId_Token,
             download: DadosOuXlsx=='D' ? undefined : url,
             data: DadosOuXlsx=='D' ? dados : undefined,
+            base64: base64,
             maxLines : QTDE_LINHAS_XLS
         }).status(200) 
   

@@ -20,18 +20,23 @@ async function listDadosCTRC( req, res ) {
         success: false,
         message: 'Dados não localizados !!!',
         data: [],
+        base64: undefined,
         rows: 0,
         page: 0,
         length: 0,
     }
     
-    let {Base,dt_inicial,dt_final,DadosOuXlsx,ctrc,pagina_nro,pagina_tam} = req.query
+    let {Base,dt_inicial,dt_final,DadosOuXlsx,ctrc, XLSX_base64, pagina_nro,pagina_tam} = req.query
     let cnpj         = userId_Token
     let s_where      = ''
 	let	i_ctrc       = 0
 	let	s_emp        = ''
 	let	s_ctrc_serie = ''
     let s_where2     = ''
+
+    if(XLSX_base64){
+        XLSX_base64 = (XLSX_base64 == 'true') || (XLSX_base64 == true)
+    }
 
     if(!cnpj || cnpj==undefined ) {
         resposta.message = 'Problemas com a autenticação !!!'
@@ -179,7 +184,7 @@ async function listDadosCTRC( req, res ) {
                 resposta.success  = (resposta.rows>0)
                 resposta.message  = resposta.success ? 'Sucesso. Ok.' : 'Sem dados !!!'
 
-                if(DadosOuXlsx!=='D') {
+                if(DadosOuXlsx!=='D' && resposta.rows > 0) {
                     let newDados = dadosXLS(dados)        
                     xlsx = json2xlsx(newDados);
                     filename = crypto.randomBytes(20).toString('hex')+'.xlsx'
@@ -190,7 +195,13 @@ async function listDadosCTRC( req, res ) {
                     resposta.dataini  = dt_inicial
                     resposta.datafim  = dt_final
                     resposta.user     = userId_Token
-                    resposta.maxLines = QTDE_LINHAS_XLS   
+                    resposta.maxLines = QTDE_LINHAS_XLS  
+                    
+                    if(XLSX_base64) {
+                        let buff = fs.readFileSync(`./public/downloads/${filename}`)
+                        resposta.base64 = buff.toString('base64')
+                     }
+                    
                 }
 
                 res.json(resposta).status(200)
