@@ -1,4 +1,5 @@
-// 19/08/2021 09:14
+// 19/08/2021 09:14 - DAE - 06/10/2021
+
 const sqlQuery     = require('../../connection/sqlSENIOR')
 
 async function dadosCTRC( req, res ) {
@@ -33,14 +34,17 @@ async function dadosCTRC( req, res ) {
         ,        CNH.NrDoctoFiscal                             AS NUMERO_CTRC
         ,        FIS.CdChaveAcesso                             AS CHAVECTE
         ,        EMP.NRCGCCPF                                  AS EMITENTE
-        ,        'S/N'                                         AS DAE_CODIGO
-        ,        NULL                                          AS DAE_CODRECEITA
-        ,        NULL                                          AS DAE_CONTRIBUINTE
-        ,        NULL                                          AS DAE_EMISSAO
-        ,        NULL                                          AS DAE_VENCIMENTO
-        ,        NULL                                          AS DAE_BAIXA
-        ,        NULL                                          AS DAE_VALOR
-        ,        NULL                                          AS DAE_IMPRESSO
+        ,        CASE WHEN DAE.CODIGO IS NULL 
+                      THEN 'S/N' 
+                      ELSE CONCAT(DAE.EMP_CODIGO,DAE.CODIGO) 
+                 END                                           AS DAE_CODIGO
+        ,        DAE.CODRECEITA                                AS DAE_CODRECEITA
+        ,        DAE.CLI_CGCCPF_CLIDEST                        AS DAE_CONTRIBUINTE
+        ,        DAE.DATAEMISSAO                               AS DAE_EMISSAO
+        ,        DAE.VENCIMENTO                                AS DAE_VENCIMENTO
+        ,        DAE.DATABAIXA                                 AS DAE_BAIXA
+        ,        DAE.VALOR                                     AS DAE_VALOR
+        ,        CONCAT(DAE.EMP_CODIGO,DAE.CODIGO)             AS DAE_IMPRESSO
         ,        ( CASE WHEN SUBSTRING( CNH.cdremetente    ,1 ,8 ) = '11509676' THEN 'REMETENTE' 
                         WHEN SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '11509676' THEN 'DESTINATÁRIO'
                         WHEN SUBSTRING( CNH.cdinscricao    ,1 ,8 ) = '11509676' THEN 'PAGADOR'
@@ -55,6 +59,7 @@ async function dadosCTRC( req, res ) {
             LEFT JOIN ${Base}.dbo.siscli   REM ON REM.cdinscricao = CNH.cdremetente       -- Clientes Remetente
             LEFT JOIN ${Base}.dbo.siscli   TAR ON TAR.cdinscricao = CNH.cddestinatario    -- Clientes Destinatários
             LEFT JOIN ${Base}.dbo.siscli   PAG ON PAG.cdinscricao = CNH.cdinscricao       -- Clientes Pagador
+            LEFT JOIN ${Base}.dbo.DAE      DAE ON DAE.EMP_CODIGO_CNH =EMP.DSAPELIDO AND DAE.CNH_CTRC = CNH.NrDoctoFiscal
         WHERE ( SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '${raiz_user}' OR 
                 SUBSTRING( CNH.cdremetente    ,1 ,8 ) = '${raiz_user}'  OR 
                 SUBSTRING( CNH.cdinscricao    ,1 ,8 ) = '${raiz_user}') 

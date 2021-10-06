@@ -1,0 +1,45 @@
+DAE - Documento de Arrecadação Estadual
+
+Verbo: GET
+EndPoint: /api/DAEpdfBase64
+Authorization: Bearer <token>
+parâmetro : dae = ( "EMPRESA" + "CODIGO DAE" )
+Exemplo: http://localhost:4999/api/DAEpdfBase64?dae=SPO422
+
+response:
+ base64
+
+Como obter o "CODIGO DAE":
+
+Opção 01:
+EndPoint: /api/DAE
+Authorization: Bearer <token>
+
+parâmetros :
+Base: softran_termaco -- FIXO
+cnpj: 73694739000114  -- CNPJ CLIENTE CONTRIBUINTE
+baixado: S            -- S = Pago , N = Em Aberto
+dataini: 2021-01-01   -- Dt Inicio
+datafin: 2021-12-31   -- Dt Final
+
+Response:
+    "emp_codigo": "FOR",  -- "EMPRESA"
+    "codigo": 422,        -- "CODIGO DAE"
+
+Opção 02:
+Verbo: POST
+EndPoint: /api/dadosCTRC
+Authorization: Bearer <token>
+
+parâmetros :
+{
+"Base":      "softran_termaco", -- FIXO
+"empresa":   "SPO",             -- FILIAL TERMACO
+"serie":     "E",               -- FIXO
+"documento": 3426390            -- NUMERO DO CTRC
+}
+
+Response:
+ "DAE_IMPRESSO": "FOR422",
+ 
+

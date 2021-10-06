@@ -33,6 +33,8 @@ const dadosLoteNF               = require('../controllers/appCliente/dadosLoteNF
 const listaNFctrc               = require('../controllers/appCliente/listaNFctrc')
 const faturaERP                 = require('../controllers/appCliente/faturaERP')
 const faturaERPdetalhe          = require('../controllers/appCliente/faturaERPdetalhe')
+const DAEpdfBase64              = require('../controllers/appCliente/DAEpdfBase64')
+
 
 
 // APP Portfolio ( ../controllers/appCliente/ )
@@ -75,6 +77,7 @@ api.post('/dadosNF'             , validaToken, dadosNF )
 api.post('/dadosctrc'           , validaToken, dadosCTRC)
 api.get('/listaDAE'             , validaToken, listaDAE )
 api.use('/dae'                  , validaToken, DAE )
+api.use('/DAEpdfBase64'         , validaToken, DAEpdfBase64 )
 api.post('/posicaoCarga'        , validaToken, posicaoCarga)
 api.post('/posicaoCargaXLS'     , validaToken, posicaoCargaXLS)
 api.get('/documentoctrc'        , validaToken, documentoCTRC)
