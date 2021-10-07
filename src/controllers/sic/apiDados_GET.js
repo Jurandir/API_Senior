@@ -50,7 +50,7 @@ async function apiDados_GET( req, res ) {
     } catch (err) { 
         retorno.message = err.message
         retorno.rows    =  -1
-        retorno.rotine  = 'apiCliente_GET.js'
+        retorno.rotine  = 'apiDados_GET.js'
         retorno.params  =  params
         res.json(retorno).status(500) 
     }    

@@ -33,8 +33,10 @@ SELECT
 	,b.nrserie              AS SerieNF                      -- SERIE DA NOTA FISCAL
     ,c.DtEmissao            AS DtEmissaoNF                  -- DATA DE EMISSÃO DA NOTA FISCAL
 	,c.NrChaveAcessoNFe     AS NrChaveAcessoNFe             -- DANFE / CHAVE DA NFe
-	,d.cdocorrencia         AS CdOcorrencia                 -- CODIGO DA OCORRENCIA
-	,d.dtmovimento          AS DtOcorrencia                 -- DATA DA OCORRENCIA
+	,(CASE WHEN w.DEPARA_ID IS NULL THEN d.cdocorrencia ELSE w.CD_CLIENTE END)
+	                        AS CdOcorrencia                 -- CODIGO DA OCORRENCIA
+	,CAST(CONCAT(FORMAT(d.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(d.HRMovimento,'HH:mm:ss')) as datetime)
+	                        AS DtOcorrencia                 -- DATA DA OCORRENCIA
 	,e.dshistoricoentrega   AS DsOcorrencia                 -- DESCRIÇÃO DA OCORRENCIA
 	,d.DsContato            AS DsResponsavel                -- NOME DO CONTATO/RESPONSAVEL
 	,p.CdSituacaoCarga      AS CdSituacaoCarga              -- CODIGO SITUAÇÃO DA CARGA
@@ -98,6 +100,8 @@ LEFT JOIN ${Base}.dbo.sisempre m  ON m.cdempresa          = a.cdempresadestino -
 LEFT JOIN ${Base}.dbo.siscep   n  ON n.nrcep              = m.nrcep            -- CEP Filial Destino
 LEFT JOIN ${Base}.dbo.CCEColet o  ON o.CdEmpresa          = a.CdEmpresa    AND o.NrColeta = a.NrColeta  -- Coleta
 LEFT JOIN ${Base}.dbo.GTCSITCG p  ON p.CdSituacaoCarga    = a.CdSituacaoCarga  -- Situação Atual da Carga
+LEFT JOIN SIC..API_DEPARA      w  ON w.TIPO_ID = 1 AND w.CD_SENIOR = d.cdocorrencia AND w.RAIZ = ${raiz_token}  -- DE PARA OCORRENCIAS DOS CLIENTES
+
 WHERE isnull(e.InExibehist, 0) = 0
       ${filtro}
 	-- AND b.nrnotafiscal=1517772

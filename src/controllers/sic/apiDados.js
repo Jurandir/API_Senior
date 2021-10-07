@@ -19,10 +19,14 @@ const DT_EMISSAO_NF      = 'c.DtEmissao'
 const DT_EMISSAO_CTRC    = 'a.dtemissao'
 
 async function apiDados( params ) {
-    let { Base, CNPJ_cli, NF_num, NF_ser, FIL_sigla, CTRC_num, NF_chave, CTRC_chave, NF_dtinicial, NF_dtfinal, CTRC_dtinicial, CTRC_dtfinal  } = params
+    let { Base, CNPJ_cli, NF_num, NF_ser, FIL_sigla, CTRC_num, NF_chave, CTRC_chave, NF_dtinicial, NF_dtfinal, CTRC_dtinicial, CTRC_dtfinal, raiz_token  } = params
     let sqlBase = fs.readFileSync(sqlFileName, "utf8")
     let retorno = {success: false, message: '', data: [] , rows: 0 }
     let par_where = ''
+
+    if(!raiz_token) {
+        raiz_token =  `${CNPJ_cli}`.substr(0,8)
+    }
 
     if(!Base) {
         Base = `softran_modelo`
