@@ -1,13 +1,29 @@
 const fs           = require('fs')
-const localdir     = process.env.NETWORK_DAE || ''
+const loadAPI      = require('../../helpers/loadAPI')
+const localDAE     = process.env.DAE_LOCAL
+const localdir     = localDAE=='DIRETORIO' ?  process.env.DIRETORIO_DAE : 
+                     localDAE=='NETWORK'   ?  process.env.NETWORK_DAE   : 
+                     localDAE=='API'       ?  process.env.API_DAE       : 'ERRO'
 
 async function DAEpdfBase64( req, res ) {
     let params = req.method == 'GET' ? req.query : req.body 
     let  { dae } = params
+    let token    = req.token
     let resposta = {
         success: false,
         message: 'DAE não localizado !!!',
         base64: undefined
+    }
+    
+    if(localDAE=='API') {
+        try {
+            let api = await loadAPI('POST','',localdir,req.body,token)
+            res.json(api).status(200)
+        } catch(err) {
+            resposta.message = err.message
+            res.json(resposta).status(400)
+        } 
+        return 0 
     }
 
     try {  
