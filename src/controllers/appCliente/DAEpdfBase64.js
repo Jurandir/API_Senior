@@ -1,4 +1,5 @@
 const fs           = require('fs')
+const axios        = require('axios')
 const loadAPI      = require('../../helpers/loadAPI')
 const localDAE     = process.env.DAE_LOCAL
 const localdir     = localDAE=='DIRETORIO' ?  process.env.DIRETORIO_DAE : 
@@ -17,10 +18,23 @@ async function DAEpdfBase64( req, res ) {
     
     if(localDAE=='API') {
         try {
-            let api = await loadAPI('POST','',localdir,req.body,token)
-            res.json(api).status(200)
+
+            let config = {
+                headers: { "Content-Type": 'application/json',"authorization" : `Bearer ${token}` },
+            }
+            let api = await axios.get( `${localdir}?dae=${dae}`, config )
+            
+            resposta.success = api.data.success
+            resposta.message = api.data.message
+            resposta.base64  = api.data.base64
+            
+            let code = api.data.success ? '200' : '400'
+
+            res.json(resposta).status(code)
+            return 0
+
         } catch(err) {
-            resposta.message = err.message
+            resposta.message = `API Interna = ${err.message}`
             res.json(resposta).status(400)
         } 
         return 0 

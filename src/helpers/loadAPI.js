@@ -11,7 +11,7 @@ const loadAPI = async (method,endpoint,server,params,token) => {
         config.headers.authorization = `Bearer ${token}`
     }
 
-    // console.log('loadAPI:',method,endpoint,server,params,token)
+    console.log('loadAPI:',method,endpoint,server,params,token)
 
     try {       
         if (method=='POST') {
