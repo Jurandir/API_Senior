@@ -119,12 +119,13 @@ async function apiCliente_GET( req, res ) {
             retorno.documento                  =`${retorno.filial}E${retorno.numero}`
             retorno.conhecimento               =`${retorno.filial}-E-${retorno.numero}`
             retorno.cnpj_remetente             =  ret.data[0].NrCNPJCPFRemetente
-            retorno.ocorrencias.push({
-                codigoInterno:0, 
-                codigoProceda:0, 
-                descricaoOcorrencia: 'PROCESSO DE TRANSPORTE INICIADO',  
-                dataRegistro: ret.data[0].DtEmissaoCTRC
-            })
+
+            //retorno.ocorrencias.push({
+            //    codigoInterno:0, 
+            //    codigoProceda:0, 
+            //    descricaoOcorrencia: 'PROCESSO DE TRANSPORTE INICIADO',  
+            //    dataRegistro: ret.data[0].DtEmissaoCTRC
+            //})
 
             ret.data.forEach(itn=>{
                 if(itn.DsOcorrencia) {
