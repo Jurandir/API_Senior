@@ -7,13 +7,19 @@ async function showTest( req, res ) {
 
     let url = `${req.url}`.toLowerCase()
     let resposta 
+	
+	console.log('URL:',url,(url=='/embarque'))
 
     if(url=='/login') {
        resposta = test_login()
     } else 
     if(url=='/embarque') {
+       console.log('EMBARQUE OK')
        resposta = test_embarque()
-    }
+    } else 
+    if(url=='/test/embarque') {
+       resposta = test_embarque()
+    } else
     if(url=='/baixaocorrencia') {
        resposta = test_BaixaOcorrencia(req.body.chave)
     } else {
