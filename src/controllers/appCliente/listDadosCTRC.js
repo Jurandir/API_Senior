@@ -112,7 +112,11 @@ async function listDadosCTRC( req, res ) {
                 ,    CNH.VlBaseCalculo                      as "Base Calc ICMS"
                 ,    CNH.VlITR                              as "Valor TRT"
                 ,    CNH.VlTotalPrestacao                   as "Total do Frete"
-                ,    CNH.NrNotaFiscal                       as "ListaNF"               -- STRING COM RELAÇÃO DAS NFS
+                -- ,    CNH.NrNotaFiscal                       as "ListaNF"               -- STRING COM RELAÇÃO DAS NFS
+                ,   (select TRIM(STUFF((select concat(' ',b.NrNotaFiscal) 
+                       from ${Base}.dbo.gtcnfcon b 
+                      where b.cdempresa = CNH.cdempresa  and b.nrseqcontrole = CNH.nrseqcontrole 
+                        FOR xml PATH ('')), 1, 1, '')))     as "ListaNF"
                 ,    CONCAT(COL.DsLocal,' - ',COL.DsUF)     as "Local de Coleta"
                 ,    CONCAT(ENT.DsLocal,' - ',ENT.DsUF)     as "Local de Entrega"
                 ,    ENT.DsUF                               as "Destinatário UF"
