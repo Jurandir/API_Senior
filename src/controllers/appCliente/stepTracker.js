@@ -60,21 +60,22 @@ async function stepTracker( req, res ) {
         
     let s_select = `
                 SELECT
-                    '${s_tipo}'                                                           AS TIPO
-                    ,${s_documento}                                                       AS DOCUMENTO
-                    ,MAX(${s_data})                                                       AS DATA
-                    ,0                                                                    AS CTRC_TIPO
-                    ,MAX(A.DTEMISSAO)                                                     AS CTRC_EMISSAO
-                    ,MAX(O.DTCADASTRO)                                                    AS COLETA
-                    ,MAX(CASE WHEN D.CDOCORRENCIA = 101 THEN D.DTMOVIMENTO ELSE NULL END) AS EMBARQUE
-                    ,MAX(CASE WHEN D.CDOCORRENCIA = 98  THEN D.DTMOVIMENTO ELSE NULL END) AS CHEGADA
-                    ,MAX(CASE WHEN D.CDOCORRENCIA = 100 THEN D.DTMOVIMENTO ELSE NULL END) AS SAIDA
-                    ,MAX(DAE.DATAEMISSAO)                                                 AS DAE_EMISSAO
-                    ,MAX(DAE.DATABAIXA)                                                   AS DAE_BAIXA
-                    ,MAX(A.DTENTREGA)                                                     AS ENTREGA
+                    '${s_tipo}'                                                            AS TIPO
+                    ,${s_documento}                                                        AS DOCUMENTO
+                    ,MAX(${s_data})                                                        AS DATA
+                    ,0                                                                     AS CTRC_TIPO
+                    ,MAX(A.DTEMISSAO)                                                      AS CTRC_EMISSAO
+                    ,MAX(O.DTCADASTRO)                                                     AS COLETA
+                    ,MAX(CASE WHEN D.CDOCORRENCIA = 101 THEN D.DTMOVIMENTO ELSE NULL END)  AS EMBARQUE
+                    ,MAX(CASE WHEN D.CDOCORRENCIA = 98  THEN D.DTMOVIMENTO ELSE NULL END)  AS CHEGADA
+                    ,MAX(CASE WHEN D.CDOCORRENCIA = 100 THEN D.DTMOVIMENTO ELSE NULL END)  AS SAIDA
+                    ,MAX(DAE.DATAEMISSAO)                                                  AS DAE_EMISSAO
+                    ,MAX(DAE.DATABAIXA)                                                    AS DAE_BAIXA
+                    ,MAX(A.DTENTREGA)                                                      AS ENTREGA
                     ,MAX(${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(A.DTEMISSAO, A.CDEMPRESADESTINO, A.CDPERCURSO, A.CDTRANSPORTE, A.CDREMETENTE, A.CDDESTINATARIO, A.CDEMPRESA, A.NRSEQCONTROLE))
-                                                                                          AS PREVISAO
-                    ,NULL                                                                 AS PREVISAO_ORIGINAL
+                                                                                           AS PREVISAO
+                    ,NULL                                                                  AS PREVISAO_ORIGINAL
+                    ,MAX(CASE WHEN D.CDOCORRENCIA = 91 THEN D.DtAgendamento ELSE NULL END) AS AGENDAMENTO
                 FROM ${Base}.dbo.GTCCONHE      A
                 LEFT JOIN ${Base}.dbo.SISEMPRE AA ON AA.CDEMPRESA       = A.CDEMPRESA 
                 LEFT JOIN ${Base}.dbo.DAE     DAE ON DAE.EMP_CODIGO_CNH = AA.DsApelido  AND DAE.CNH_CTRC = A.NrDoctoFiscal  
