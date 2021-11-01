@@ -132,7 +132,7 @@ async function posicaoCargaXLS( req, res ) {
               , CNH.NrDoctoFiscal     AS CTRC
               , CNH.DtEmissao         AS DATACTRC
               , (SELECT TOP 1 CAST( CONCAT( FORMAT(d.DtMovimento,'yyyy-MM-dd'), ' ', + FORMAT(d.HrMovimento,'HH:mm:ss')) as datetime ) DT
-                 FROM dbo.GTCMovEn d  WHERE  d.CdEmpresa  = CNH.CdEmpresa   AND d.NrSeqControle = CNH.NrSeqControle  AND d.CdOcorrencia = 101 )
+                 FROM ${Base}.dbo.GTCMovEn d  WHERE  d.CdEmpresa  = CNH.CdEmpresa   AND d.NrSeqControle = CNH.NrSeqControle  AND d.CdOcorrencia = 101 )
                                       AS DATAEMBARQUE
               , CNH.VlLiquido         AS TOTFRETE
               
@@ -182,7 +182,7 @@ async function posicaoCargaXLS( req, res ) {
                LEFT JOIN ${Base}.dbo.siscep      TAR ON TAR.CdCep         = DESTI.NRCEP          -- LOCAL DESTINO
                LEFT JOIN ${Base}.dbo.CCEColet COLETA ON COLETA.CdEmpresa  = CNH.CdEmpresa  AND COLETA.NrColeta = CNH.NrColeta  -- Dados da Coleta
               
-               WHERE CNH.InTipoEmissao = 0 -- NORMAL
+               WHERE CNH.InTipoEmissao IN (0,11,12) -- NORMAL,REDESPACHO,SUB-CONTRATO
                  AND CNH.DtEmissao >= Convert(DATETIME, '${dataini}', 120)  -- 
                  AND CNH.DtEmissao <= Convert(DATETIME, '${datafim}', 120)  -- 
                  AND (
