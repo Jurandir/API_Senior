@@ -13,13 +13,6 @@ async function getImagemSenior( params ){
       rows: 0
     }
 
-    const dataBIN = (linkOrigem) => {
-      let binary = fs.readFileSync(linkOrigem).toString('binary');
-      let arq    = linkOrigem.split('\\').pop()
-      let tp     = '.'+linkOrigem.split('.').pop()
-      return { fileName: arq , binary : binary, type: tp }
-  }
-
     if(!Base){
       Base = 'softran_termaco'
     } 
@@ -58,7 +51,6 @@ async function getImagemSenior( params ){
     ,      c.DsArquivo
     ,      c.DsTipoArquivo
     ,      c.DsNomeArquivo
-    ,      null DsCaminhoArquivo
     FROM 
       ${Base}.dbo.GTCMVEDG c,
 	  (    SELECT DISTINCT 
@@ -84,56 +76,8 @@ async function getImagemSenior( params ){
       c.CdEmpresa = REL.CdEmpresa AND c.NrSeqControle = REL.NrSeqControle            -- Comprovante de Entrega baixado pelo RMS
       AND c.DsTipoArquivo in ${extTypes}
     `
-
-    let sqlGED = `
-    SELECT REL.* 
-    ,      0 CdSequencia
-    ,      null DsArquivo
-    ,      null DsTipoArquivo
-    ,      null DsNomeArquivo
-    ,      c.DsCaminhoArquivo
-    FROM 
-      ${Base}.dbo.GEDMOV c,
-	  (    SELECT DISTINCT 
-	         a.CdEmpresa
-    ,      d.DsApelido     AS DsFilial
-    ,      REL.NrDoctoFiscal
-    ,      REL.NrSeqControle
-	
-      FROM ${Base}.dbo.gtcconhe    a                                                  -- Conhecimento
-      JOIN ${Base}.dbo.gtcnfcon    LNK ON LNK.CdEmpresa     = a.CdEmpresa   AND
-                                          LNK.NrSeqControle = a.NrSeqControle
-      JOIN ${Base}.dbo.gtcnfcon    LRE ON LRE.CdInscricao   = LNK.CdInscricao AND 
-                                          LRE.NrSerie       = LNK.NrSerie     AND 
-			         	                          LRE.NrNotaFiscal  = LNK.NrNotaFiscal 
-      JOIN ${Base}.dbo.gtcconhe    REL ON REL.CdEmpresa     = LRE.CdEmpresa   AND
-                                          REL.NrSeqControle = LRE.NrSeqControle
-      LEFT JOIN ${Base}.dbo.sisempre d ON d.cdempresa       = a.cdempresa            -- Filial Origem
-	  
-      ${s_where}
-	  
-      ) REL
-    WHERE  
-      c.CdEmpresa = REL.CdEmpresa AND c.NrSeqControle = REL.NrSeqControle            -- Comprovante de Entrega baixado pelo RMS
-    `
-
     try {
-      let data    = await sqlQuery(sql)
-      let dataGED = await sqlQuery(sqlGED)
-      let wSeq    = data.length
-
-      if(dataGED.length>0){
-        for await (let itn of dataGED ) {
-          wSeq++
-          let wDataBIN        = dataBIN(itn.DsCaminhoArquivo)
-          itn.CdSequencia     = wSeq
-          itn.DsArquivo       = wDataBIN.binary
-          itn.DsTipoArquivo   = wDataBIN.type
-          itn.DsNomeArquivo   = wDataBIN.fileName
-          console.log('FILE:',itn.DsNomeArquivo)
-          data.push(itn)
-        }
-      }
+      let data = await sqlQuery(sql)
 
       retorno.rows    = data.length
       retorno.success = retorno.rows > 0  
