@@ -5,15 +5,16 @@ const fs = require('fs')
 
 const dataBIN = (linkOrigem) => {
     let binary = fs.readFileSync(linkOrigem).toString('binary');
-    let arq    = linkOrigem.split('\\').pop()
+    let arq    = linkOrigem.split('/').pop()
     let tp     = '.'+linkOrigem.split('.').pop()
     return { fileName: arq , binary : binary, type: tp }
 }
 
 let linkOrigem = '\\\\192.168.0.34\\GED\\23-11-2021\\35211011552312000710570010034665731326577406.png'
 let linkFile = '//192.168.0.34/GED/22-10-2021/35210911552312000710570010034402501944036689.png'
+let newTeste = '//192.168.0.34/GED/19-10-2021/35210911552312000710570010034206901760150268.png'
 
-let binario = dataBIN(linkOrigem)
+let binario = dataBIN(newTeste)
 
 let buff        = Buffer.from( binario.binary ,'binary')
 fs.writeFileSync(binario.fileName, buff)
