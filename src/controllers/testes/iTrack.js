@@ -21,7 +21,7 @@ async function iTrack( req, res ) {
         retorno.capa = data
         let id = data[0].ID
 
-        wsql = `SELECT * FROM SIC.dbo.ITRACK_OCORRENCIA WHERE ITRACK_DANFE_ID = '${id}'`
+        wsql = `SELECT * FROM SIC.dbo.ITRACK_OCORRENCIA WHERE ITRACK_DANFE_ID = '${id}' ORDER BY ID`
         data = await sqlQuery(wsql)
         retorno.itens = data
   

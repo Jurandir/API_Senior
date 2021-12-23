@@ -1,4 +1,4 @@
-// 21-07-2021
+// 23/12/2021 - Ajustado (DT_ENTREGA & DT_COLETA)
 
 const sqlQuery     = require('../../connection/sqlSENIOR')
 
@@ -65,13 +65,13 @@ async function stepTracker( req, res ) {
                     ,MAX(${s_data})                                                        AS DATA
                     ,0                                                                     AS CTRC_TIPO
                     ,MAX(A.DTEMISSAO)                                                      AS CTRC_EMISSAO
-                    ,MAX(O.DTCADASTRO)                                                     AS COLETA
+                    ,MAX(O.DTBAIXA)                                                        AS COLETA
                     ,MAX(CASE WHEN D.CDOCORRENCIA = 101 THEN D.DTMOVIMENTO ELSE NULL END)  AS EMBARQUE
                     ,MAX(CASE WHEN D.CDOCORRENCIA = 98  THEN D.DTMOVIMENTO ELSE NULL END)  AS CHEGADA
                     ,MAX(CASE WHEN D.CDOCORRENCIA = 100 THEN D.DTMOVIMENTO ELSE NULL END)  AS SAIDA
                     ,MAX(DAE.DATAEMISSAO)                                                  AS DAE_EMISSAO
                     ,MAX(DAE.DATABAIXA)                                                    AS DAE_BAIXA
-                    ,MAX(A.DTENTREGA)                                                      AS ENTREGA
+                    ,MAX(CASE WHEN D.CDOCORRENCIA IN (1,24,105) THEN D.DTMOVIMENTO ELSE NULL END)  AS ENTREGA
                     ,MAX(${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(A.DTEMISSAO, A.CDEMPRESADESTINO, A.CDPERCURSO, A.CDTRANSPORTE, A.CDREMETENTE, A.CDDESTINATARIO, A.CDEMPRESA, A.NRSEQCONTROLE))
                                                                                            AS PREVISAO
                     ,NULL                                                                  AS PREVISAO_ORIGINAL

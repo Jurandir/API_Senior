@@ -147,7 +147,13 @@ async function posicaoCargaXLS( req, res ) {
               , COLETA.DtCadastro     AS DATACOLETA
               , ${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(CNH.DtEmissao, CNH.CdEmpresaDestino, CNH.CdPercurso, CNH.CdTransporte, CNH.CdRemetente, CNH.CdDestinatario, CNH.CdEmpresa, CNH.NrSeqControle)  
                                       AS PREVENTREGA
-              , CNH.DtEntrega         AS DATAENTREGA
+              --, CNH.DtEntrega         AS DATAENTREGA
+              ,(SELECT MAX(CAST(CONCAT(FORMAT(MOV.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(MOV.HrMovimento,'HH:mm:ss')) as datetime)) 
+                  FROM softran_termaco.dbo.GTCMOVEN MOV
+                 WHERE MOV.CDOCORRENCIA IN (1,24,105)
+                   AND MOV.CdEmpresa = CNH.cdempresa
+                   AND MOV.NrSeqControle = CNH.nrseqcontrole )       AS DATAENTREGA        
+  
               , (SELECT TOP 1 TIT.CdTitulo FROM ${Base}.dbo.GTCFATIT VIN LEFT JOIN ${Base}.dbo.GFATITU  TIT 
                  ON TIT.CdFilial  = VIN.CdEmpresa AND TIT.NrFatura = VIN.CdFatura AND TIT.CdParcela = VIN.CdParcela
                  WHERE TIT.InPagarReceber = 1 AND VIN.CdEmpresa = CNH.CdEmpresa AND VIN.NrSeqControle = CNH.NrSeqControle)

@@ -23,7 +23,12 @@ async function dadosCTRC( req, res ) {
     let wsql = `
         SELECT 
                  CNH.DtEmissao                                 AS DATA
-        ,        CNH.DtEntrega                                 AS DATAENTREGA
+        -- ,        CNH.DtEntrega                                 AS DATAENTREGA
+        ,(SELECT MAX(CAST(CONCAT(FORMAT(MOV.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(MOV.HrMovimento,'HH:mm:ss')) as datetime)) 
+            FROM softran_termaco.dbo.GTCMOVEN MOV
+           WHERE MOV.CDOCORRENCIA IN (1,24,105)
+             AND MOV.CdEmpresa = CNH.cdempresa
+             AND MOV.NrSeqControle = CNH.nrseqcontrole )       AS DATAENTREGA        
         ,        CONCAT(EMP.DSAPELIDO,'-E-',CNH.NrDoctoFiscal) AS CONHECIMENTO
         ,        CNH.InTipoEmissao                             AS CTRC_TIPO
         ,        REM.DsEntidade                                AS REMETENTE
@@ -45,9 +50,9 @@ async function dadosCTRC( req, res ) {
         ,        DAE.DATABAIXA                                 AS DAE_BAIXA
         ,        DAE.VALOR                                     AS DAE_VALOR
         ,        CONCAT(DAE.EMP_CODIGO,DAE.CODIGO)             AS DAE_IMPRESSO
-        ,        ( CASE WHEN SUBSTRING( CNH.cdremetente    ,1 ,8 ) = '11509676' THEN 'REMETENTE' 
-                        WHEN SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '11509676' THEN 'DESTINATÁRIO'
-                        WHEN SUBSTRING( CNH.cdinscricao    ,1 ,8 ) = '11509676' THEN 'PAGADOR'
+        ,        ( CASE WHEN SUBSTRING( CNH.cdremetente    ,1 ,8 ) = '${raiz_user}' THEN 'REMETENTE' 
+                        WHEN SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '${raiz_user}' THEN 'DESTINATÁRIO'
+                        WHEN SUBSTRING( CNH.cdinscricao    ,1 ,8 ) = '${raiz_user}' THEN 'PAGADOR'
                         ELSE 'OUTROS'
                  END )                                         AS TIPO_CLIENTE
         FROM ${Base}.dbo.gtcconhe          CNH                                       -- Conhecimento

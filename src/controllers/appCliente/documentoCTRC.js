@@ -26,7 +26,12 @@ async function documentoCTRC( req, res ) {
     let wsql = `
         SELECT 
                  CNH.DtEmissao                                 AS DATA
-        ,        CNH.DtEntrega                                 AS DATAENTREGA
+        --,        CNH.DtEntrega                                 AS DATAENTREGA
+        ,(SELECT MAX(CAST(CONCAT(FORMAT(MOV.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(MOV.HrMovimento,'HH:mm:ss')) as datetime)) 
+            FROM softran_termaco.dbo.GTCMOVEN MOV
+           WHERE MOV.CDOCORRENCIA IN (1,24,105)
+             AND MOV.CdEmpresa = CNH.cdempresa
+             AND MOV.NrSeqControle = CNH.nrseqcontrole )       AS DATAENTREGA        
         ,        CONCAT(EMP.DSAPELIDO,'-E-',CNH.NrDoctoFiscal) AS CONHECIMENTO
         ,        CNH.InTipoEmissao                             AS CTRC_TIPO
         ,        REM.DsEntidade                                AS REMETENTE

@@ -28,7 +28,13 @@ SELECT
 	,${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 
 	                        AS DtPrevisaoEntrega            -- PREVISÃO DE ENTREGA
 	,o.DtCadastro           AS DtColeta                     -- DATA DA COLETA
-	,a.dtentrega            AS DtEntrega                    -- DATA DE ENTREGA
+	--,a.dtentrega            AS DtEntrega                    -- DATA DE ENTREGA
+    ,(SELECT MAX(CAST(CONCAT(FORMAT(MOV.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(MOV.HrMovimento,'HH:mm:ss')) as datetime)) 
+        FROM softran_termaco.dbo.GTCMOVEN MOV
+       WHERE MOV.CDOCORRENCIA IN (1,24,105)
+         AND MOV.CdEmpresa = A.cdempresa
+         AND MOV.NrSeqControle = A.nrseqcontrole )       
+		                    AS DtEntrega	
 	,b.nrnotafiscal         AS NrNotaFiscal                 -- NUMERO DA NOTA FISCAL
 	,b.nrserie              AS SerieNF                      -- SERIE DA NOTA FISCAL
     ,c.DtEmissao            AS DtEmissaoNF                  -- DATA DE EMISSÃO DA NOTA FISCAL

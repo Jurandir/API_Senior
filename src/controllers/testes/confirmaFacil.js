@@ -15,7 +15,7 @@ async function confirmaFacil( req, res ) {
         let id   = data[0].ID
         let ctrc = data[0].CTRC
 
-        wsql = `SELECT * FROM SIC.dbo.CONFIRMAFACILOCORRENCIA WHERE CONFIRMAFACIL_ID = ${id}`
+        wsql = `SELECT * FROM SIC.dbo.CONFIRMAFACILOCORRENCIA WHERE CONFIRMAFACIL_ID = ${id} ORDER BY ID`
         data = await sqlQuery(wsql)
         retorno.itens = data
 

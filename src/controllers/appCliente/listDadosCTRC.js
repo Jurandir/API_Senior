@@ -81,7 +81,12 @@ async function listDadosCTRC( req, res ) {
                 ,     CNH.nrdoctofiscal                     as "CTRC"
                 ,     MAN.NrManifesto                       as "Manifesto"
                 ,     CNH.DtEmissao                         as "Data Emissão"
-                ,     CNH.DtEntrega                         as "Data Entrega"
+                --,     CNH.DtEntrega                         as "Data Entrega"
+                ,(SELECT MAX(CAST(CONCAT(FORMAT(MOV.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(MOV.HrMovimento,'HH:mm:ss')) as datetime)) 
+                    FROM softran_termaco.dbo.GTCMOVEN MOV
+                   WHERE MOV.CDOCORRENCIA IN (1,24,105)
+                     AND MOV.CdEmpresa = CNH.cdempresa
+                     AND MOV.NrSeqControle = CNH.nrseqcontrole ) as "Data Entrega"
                 ,     COL.DtCadastro                        as "Data Coleta"
                 ,     MAN.DtSaida                           as "Data Embarque"    -- DATAHORA EMBARQUE - SAIDA DO DEPOSITO - FILIAL ORIGEM
                 ,     MAN.DtChegada                         as "Data Chegada"     -- DATAHORA CHEGADA  - CHEGADA NA FILIAL DESTINO

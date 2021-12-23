@@ -29,7 +29,13 @@ async function getMapaEntrega( params ) {
         ,    (CASE WHEN B.CdRedespacho IS NULL THEN 'N' ELSE 'R' END)                      AS tipo
         ,    C.NrPlaca                                                                     AS veiculo
         ,    C.NrCPFMotorista                                                              AS motorista
-        ,    A.DtEntrega                                                                   AS entrega
+        --,    A.DtEntrega                                                                   AS entrega
+        ,(SELECT MAX(CAST(CONCAT(FORMAT(MOV.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(MOV.HrMovimento,'HH:mm:ss')) as datetime)) 
+            FROM softran_termaco.dbo.GTCMOVEN MOV
+           WHERE MOV.CDOCORRENCIA IN (1,24,105)
+             AND MOV.CdEmpresa = A.cdempresa
+             AND MOV.NrSeqControle = A.nrseqcontrole )       AS entrega
+
              FROM ${Base}.dbo.GTCCONHE A  -- CONHECIMENTO
         LEFT JOIN ${Base}.dbo.CCEROMIT B ON B.CdEmpresaColetaEntrega = A.CdEmpresa AND B.NrSeqControle = A.NrSeqControle	 -- ITENS DO ROMANEIO COLETA/ENTREGA
         LEFT JOIN ${Base}.dbo.CCEROMAN C ON C.CdEmpresa = B.CdEmpresa AND C.CdRota        = B.CdRota    AND C.CdRomaneio = B.CdRomaneio -- ROMANEIO COLETA/ENTREGA

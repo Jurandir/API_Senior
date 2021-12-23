@@ -82,7 +82,13 @@ async function posicaoCargaAPP( req, res ) {
     ,   CASE WHEN (i.NrCGCCPF = '${cnpj}') THEN 1 ELSE 0 END FLAG_PAGADOR
 	,   ${Base}.dbo.SP_CalculaDtPrevisaoEntregaPercurso(a.DtEmissao, a.CdEmpresaDestino, a.CdPercurso, a.CdTransporte, a.CdRemetente, a.CdDestinatario, a.cdempresa, a.nrseqcontrole) 
 	                            AS PREVENTREGA            -- PREVISÃO DE ENTREGA
-    ,   a.dtentrega             AS DATAENTREGA            -- DATA DE ENTREGA
+    --,   a.dtentrega             AS DATAENTREGA            -- DATA DE ENTREGA
+    ,(SELECT MAX(CAST(CONCAT(FORMAT(MOV.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(MOV.HrMovimento,'HH:mm:ss')) as datetime)) 
+        FROM softran_termaco.dbo.GTCMOVEN MOV
+       WHERE MOV.CDOCORRENCIA IN (1,24,105)
+         AND MOV.CdEmpresa = a.cdempresa
+         AND MOV.NrSeqControle = a.nrseqcontrole )       AS DATAENTREGA        
+
     FROM ${Base}.dbo.gtcconhe      a                                          -- Conhecimento
     LEFT JOIN ${Base}.dbo.sisempre aa ON aa.cdempresa         = a.cdempresa   -- Filial Origem
     LEFT JOIN ${Base}.dbo.gtcconce bb ON bb.cdempresa         = a.cdempresa	  AND bb.nrseqcontrole = a.nrseqcontrole -- CTe Fiscal
