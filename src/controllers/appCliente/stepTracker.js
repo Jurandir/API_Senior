@@ -84,7 +84,9 @@ async function stepTracker( req, res ) {
                 LEFT JOIN ${Base}.dbo.GTCNF    C  ON C.CDREMETENTE      = B.CDINSCRICAO AND C.NRSERIE = B.NRSERIE AND C.NRNOTAFISCAL = B.NRNOTAFISCAL
                 LEFT JOIN ${Base}.dbo.GTCMOVEN D  ON D.CDEMPRESA        = A.CDEMPRESA   AND D.NRSEQCONTROLE = A.NRSEQCONTROLE
                 LEFT JOIN ${Base}.dbo.CCECOLET O  ON O.CDEMPRESA        = A.CDEMPRESA   AND O.NRCOLETA = A.NRCOLETA
-                WHERE
+                WHERE BB.insituacaosefaz = 100
+                  AND ( A.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( A.InTipoEmissao = 05 and A.InTpCTE = 00) )
+                  AND
                     ${s_where}
                 GROUP BY 
                     ${s_documento}`
