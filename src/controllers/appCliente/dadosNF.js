@@ -62,6 +62,10 @@ async function dadosNF( req, res ) {
                             AND ( SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '${raiz_user}'
                                 OR SUBSTRING( CNH.cdremetente   ,1 ,8 ) = '${raiz_user}'
                                 OR SUBSTRING( CNH.cdinscricao   ,1 ,8 ) = '${raiz_user}') -- 
+                      -- Ajuste 30/12/2021
+                            AND ( CNH.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( CNH.InTipoEmissao = 05 and CNH.InTpCTE = 00) )
+                            AND FIS.insituacaosefaz = 100            
+                    
                     ORDER BY ( 
                             CASE 
                                 WHEN SUBSTRING( CNH.cdremetente    ,1 ,8 ) = '${raiz_user}' THEN 0 -- ${raiz_user}

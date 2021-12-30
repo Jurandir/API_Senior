@@ -158,6 +158,11 @@ async function listDadosCTRC( req, res ) {
                     (SUBSTRING(CNH.cdremetente,1,8)      = '${wraiz}' OR 
                      SUBSTRING(CNH.cddestinatario,1,8)   = '${wraiz}' OR 
                      SUBSTRING(CNH.cdinscricao,1,8)      = '${wraiz}'    )
+                     
+                     -- Ajuste 30/12/2021
+                     AND ( CNH.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( CNH.InTipoEmissao = 05 and CNH.InTpCTE = 00) )
+                     AND CNF.insituacaosefaz = 100            
+         
                      ${s_where}                     
                      ${s_where2}
                 ORDER BY CNH.DtEmissao

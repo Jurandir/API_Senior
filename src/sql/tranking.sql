@@ -109,6 +109,8 @@ LEFT JOIN ${Base}.dbo.GTCSITCG p  ON p.CdSituacaoCarga    = a.CdSituacaoCarga  -
 LEFT JOIN SIC..API_DEPARA      w  ON w.TIPO_ID = 1 AND w.CD_SENIOR = d.cdocorrencia AND w.RAIZ = ${raiz_token}  -- DE PARA OCORRENCIAS DOS CLIENTES
 
 WHERE isnull(e.InExibehist, 0) = 0
-      ${filtro}
-	-- AND b.nrnotafiscal=1517772
-	-- AND a.nrdoctofiscal = 4183
+   -- Ajuste 30/12/2021
+  AND ( a.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( a.InTipoEmissao = 05 and a.InTpCTE = 00) )
+  AND bb.insituacaosefaz = 100            
+
+  ${filtro}
