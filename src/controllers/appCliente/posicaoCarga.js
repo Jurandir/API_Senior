@@ -21,7 +21,7 @@ async function posicaoCarga( req, res ) {
     let raiz_user = `${wcnpj}`.substr(0,8)
 
     let wsql = `
-        SELECT 
+        SELECT DISTINCT
                  CNH.DtEmissao                                 AS DATA
         --,        CNH.DtEntrega                                 AS DATAENTREGA
         ,(SELECT MAX(CAST(CONCAT(FORMAT(MOV.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(MOV.HrMovimento,'HH:mm:ss')) as datetime))
@@ -39,14 +39,14 @@ async function posicaoCarga( req, res ) {
         ,        CNH.NrDoctoFiscal                             AS NUMERO_CTRC
         ,        FIS.CdChaveAcesso                             AS CHAVECTE
         ,        EMP.NRCGCCPF                                  AS EMITENTE
-        ,        'S/N'                                         AS DAE_CODIGO
-        ,        NULL                                          AS DAE_CODRECEITA
-        ,        NULL                                          AS DAE_CONTRIBUINTE
-        ,        NULL                                          AS DAE_EMISSAO
-        ,        NULL                                          AS DAE_VENCIMENTO
-        ,        NULL                                          AS DAE_BAIXA
-        ,        NULL                                          AS DAE_VALOR
-        ,        NULL                                          AS DAE_IMPRESSO
+        ,        ISNULL(dae.coddae,'S/N')                      AS DAE_CODIGO
+        ,        dae.codreceita                                AS DAE_CODRECEITA
+        ,        dae.cli_cgccpf_clidest                        AS DAE_CONTRIBUINTE
+        ,        dae.datatu                                    AS DAE_EMISSAO
+        ,        dae.vencimento                                AS DAE_VENCIMENTO
+        ,        dae.databaixa                                 AS DAE_BAIXA
+        ,        dae.valor                                     AS DAE_VALOR
+        ,        dae.codigo                                    AS DAE_IMPRESSO
         ,        ( CASE WHEN SUBSTRING( CNH.cdremetente    ,1 ,8 ) = '11509676' THEN 'REMETENTE' 
                         WHEN SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '11509676' THEN 'DESTINATÁRIO'
                         WHEN SUBSTRING( CNH.cdinscricao    ,1 ,8 ) = '11509676' THEN 'PAGADOR'
@@ -61,7 +61,9 @@ async function posicaoCarga( req, res ) {
             LEFT JOIN ${Base}.dbo.siscli   REM ON REM.cdinscricao = CNH.cdremetente       -- Clientes Remetente
             LEFT JOIN ${Base}.dbo.siscli   TAR ON TAR.cdinscricao = CNH.cddestinatario    -- Clientes Destinatários
             LEFT JOIN ${Base}.dbo.siscli   PAG ON PAG.cdinscricao = CNH.cdinscricao       -- Clientes Pagador
-        WHERE ( SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '${raiz_user}' OR 
+            LEFT JOIN ${Base}.dbo.DAE      DAE ON DAE.EMP_CODIGO_CNH = EMP.DSAPELIDO AND  
+                                                  DAE.CNH_CTRC       = CNH.NrDoctoFiscal    -- DAE
+        WHERE ( SUBSTRING( CNH.cddestinatario ,1 ,8 ) = '${raiz_user}'  OR 
                 SUBSTRING( CNH.cdremetente    ,1 ,8 ) = '${raiz_user}'  OR 
                 SUBSTRING( CNH.cdinscricao    ,1 ,8 ) = '${raiz_user}') 
             AND CNH.DtEmissao BETWEEN '${wdata_ini}' AND '${wdata_fin}'

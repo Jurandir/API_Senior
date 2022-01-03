@@ -28,6 +28,7 @@ async function dadosLoteNF( req, res ) {
         ,	NFR.QtVolume                                  AS VOLUME
         ,	NFR.NrChaveAcessoNFe                          AS CHAVENFE
         ,	NFR.CdRemetente                               AS EMITENTE_NFE
+        ,   NFR.cddestinatario                            AS DESTINATARIO_NFE
         FROM ${Base}.dbo.gtcconhe      CNH                                      -- Conhecimento
         LEFT JOIN ${Base}.dbo.sisempre EMP ON EMP.cdempresa    = CNH.cdempresa   -- Filial Origem
         LEFT JOIN ${Base}.dbo.gtcconce FIS ON FIS.cdempresa   = CNH.cdempresa	AND FIS.nrseqcontrole = CNH.nrseqcontrole -- CTe Fiscal
