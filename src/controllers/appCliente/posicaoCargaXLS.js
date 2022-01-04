@@ -17,13 +17,16 @@ async function posicaoCargaXLS( req, res ) {
     if(!Base){ 
         Base = 'softran_termaco'
     }
+    if(!XLSX_base64) {
+        XLSX_base64 = false
+    }
     
     let dados = await dadosPesquisa(wraiz,dataini,datafim)
     let idx   = -1
     
     if(!dados || dados.length==0){
         
-        res.send({ "erro" : "Problemas com a solicitação !!!", "rotina" : "posicaoCargaXLS" }).status(500)
+        res.send({ "erro" : "Problemas com a solicitação !!!", "rotina" : "posicaoCargaXLS", "success": false }).status(500)
         return 0 
     }
 
@@ -102,7 +105,7 @@ async function posicaoCargaXLS( req, res ) {
         }).status(200) 
   
     } catch (err) { 
-        res.send({ "erro" : err.message, "rotina" : "posicaoCargaXLS" }).status(500) 
+        res.send({ "erro" : err.message, "rotina" : "posicaoCargaXLS", "success": false }).status(500) 
     }    
 
     return 0
