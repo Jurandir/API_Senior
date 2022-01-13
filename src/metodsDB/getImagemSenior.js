@@ -60,7 +60,7 @@ async function getImagemSenior( params ){
     ,      c.DsNomeArquivo
     ,      null DsCaminhoArquivo
     FROM 
-      ${Base}.dbo.GTCMVEDG c,
+      ${Base}.dbo.GTCMVEDG c (NOLOCK),
 	  (    SELECT DISTINCT 
 	         a.CdEmpresa
     ,      d.DsApelido     AS DsFilial
@@ -93,7 +93,7 @@ async function getImagemSenior( params ){
     ,      null DsNomeArquivo
     ,      REPLACE(c.DsCaminhoArquivo,'\\','/') DsCaminhoArquivo
     FROM 
-      ${Base}.dbo.GEDMOV c,
+      ${Base}.dbo.GEDMOV c (NOLOCK),
 	  (    SELECT DISTINCT 
 	         a.CdEmpresa
     ,      d.DsApelido     AS DsFilial
