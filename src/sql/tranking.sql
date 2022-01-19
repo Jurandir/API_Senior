@@ -109,7 +109,7 @@ LEFT JOIN ${Base}.dbo.siscep   n  ON n.nrcep              = m.nrcep            -
 LEFT JOIN ${Base}.dbo.CCEColet o  ON o.CdEmpresa          = a.CdEmpresa    AND o.NrColeta = a.NrColeta  -- Coleta
 LEFT JOIN ${Base}.dbo.GTCSITCG p  ON p.CdSituacaoCarga    = a.CdSituacaoCarga  -- Situação Atual da Carga
 -- LEFT JOIN SIC..API_DEPARA      w  ON w.TIPO_ID = 1 AND w.CD_SENIOR = d.cdocorrencia AND w.RAIZ = ${raiz_token}  -- DE PARA OCORRENCIAS DOS CLIENTES
-LEFT JOIN ${Base}.dbo.GTCVHist x  ON x.CdInscricao = a.CdInscricao and x.CdHistoricoEntrega = d.cdocorrencia
+LEFT JOIN ${Base}.dbo.GTCVHist x  ON x.CdInscricao = '${CNPJ_cli}' and x.CdHistoricoEntrega = d.cdocorrencia
 
 WHERE ( isnull(e.InExibehist, 0) = 0 OR isnull(x.InGeraOcorrencia, 0) = 1 )
    -- Ajuste 30/12/2021

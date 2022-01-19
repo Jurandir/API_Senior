@@ -5,7 +5,7 @@ const sqlFileName   = path.join(__dirname, '../../sql/tranking.sql')
 const sqlQuery      = require('../../connection/sqlSENIOR')
 
 const CNPJ_TRANSPORTADOR = 'aa.nrcgccpf'
-const CNPJ_REMENTENTE    = 'g.dsentidade'
+const CNPJ_REMENTENTE    = 'a.CdRemetente'
 const CNPJ_DESTINATARIO  = 'h.NrCGCCPF'
 const CNPJ_PAGADOR       = 'i.NrCGCCPF'
 const NUM_NF             = 'b.nrnotafiscal'
