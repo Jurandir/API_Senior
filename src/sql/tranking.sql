@@ -39,8 +39,10 @@ SELECT
 	,b.nrserie              AS SerieNF                      -- SERIE DA NOTA FISCAL
     ,c.DtEmissao            AS DtEmissaoNF                  -- DATA DE EMISSÃO DA NOTA FISCAL
 	,c.NrChaveAcessoNFe     AS NrChaveAcessoNFe             -- DANFE / CHAVE DA NFe
-	,(CASE WHEN w.DEPARA_ID IS NULL THEN d.cdocorrencia ELSE w.CD_CLIENTE END)
-	                        AS CdOcorrencia                 -- CODIGO DA OCORRENCIA
+	,d.cdocorrencia         AS CdOcorrenciaSenior           -- CODIGO DA OCORRENCIA USADA PELA TERMACO
+	--,(CASE WHEN w.DEPARA_ID IS NULL THEN d.cdocorrencia ELSE w.CD_CLIENTE END)
+	,(CASE WHEN x.CdHistoricoRemetente IS NULL THEN d.cdocorrencia ELSE x.CdHistoricoRemetente END)
+	                        AS CdOcorrencia                 -- CODIGO DA OCORRENCIA USADA PELO CLIENTE
 	,CAST(CONCAT(FORMAT(d.DtMovimento,'yyyy-MM-dd'),' ', FORMAT(d.HRMovimento,'HH:mm:ss')) as datetime)
 	                        AS DtOcorrencia                 -- DATA DA OCORRENCIA
 	,e.dshistoricoentrega   AS DsOcorrencia                 -- DESCRIÇÃO DA OCORRENCIA
@@ -106,9 +108,10 @@ LEFT JOIN ${Base}.dbo.sisempre m  ON m.cdempresa          = a.cdempresadestino -
 LEFT JOIN ${Base}.dbo.siscep   n  ON n.nrcep              = m.nrcep            -- CEP Filial Destino
 LEFT JOIN ${Base}.dbo.CCEColet o  ON o.CdEmpresa          = a.CdEmpresa    AND o.NrColeta = a.NrColeta  -- Coleta
 LEFT JOIN ${Base}.dbo.GTCSITCG p  ON p.CdSituacaoCarga    = a.CdSituacaoCarga  -- Situação Atual da Carga
-LEFT JOIN SIC..API_DEPARA      w  ON w.TIPO_ID = 1 AND w.CD_SENIOR = d.cdocorrencia AND w.RAIZ = ${raiz_token}  -- DE PARA OCORRENCIAS DOS CLIENTES
+-- LEFT JOIN SIC..API_DEPARA      w  ON w.TIPO_ID = 1 AND w.CD_SENIOR = d.cdocorrencia AND w.RAIZ = ${raiz_token}  -- DE PARA OCORRENCIAS DOS CLIENTES
+LEFT JOIN ${Base}.dbo.GTCVHist x  ON x.CdInscricao = a.CdInscricao and x.CdHistoricoEntrega = d.cdocorrencia
 
-WHERE isnull(e.InExibehist, 0) = 0
+WHERE ( isnull(e.InExibehist, 0) = 0 OR isnull(x.InGeraOcorrencia, 0) = 1 )
    -- Ajuste 30/12/2021
   AND ( a.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( a.InTipoEmissao = 05 and a.InTpCTE = 00) )
   AND bb.insituacaosefaz = 100            
