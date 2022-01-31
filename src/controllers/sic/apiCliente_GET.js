@@ -5,7 +5,7 @@ const getImagemSenior = require('../../metodsDB/getImagemSenior')
 
 async function apiCliente_GET( req, res ) {
     let retorno = {
-        numero                   : 0,
+        numero           : 0,
         filial           : '',
         serie            : 'E',
         dataEmissao      : null, 
@@ -157,7 +157,7 @@ async function apiCliente_GET( req, res ) {
                     retorno.comprovantes.push( itn.base64 )
                 }
 
-                console.log('IMG:',img)
+                // console.log('IMG:',img)
 
                 // loop comprovantes (=> retorno)
 
