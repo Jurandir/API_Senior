@@ -200,7 +200,7 @@ async function posicaoCargaXLS( req, res ) {
                      ( SUBSTRING(CNH.CdInscricao,1,8)    = '${wraiz}' ) )
                 
                 -- Ajuste 30/12/2021
-                 AND ( CNH.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( CNH.InTipoEmissao = 05 and CNH.InTpCTE = 00) )
+                 AND ( CNH.InTipoEmissao in (00,01,02,03,09,11,12,13,14) or ( CNH.InTipoEmissao = 05 and CNH.InTpCTE = 00) )
                  AND FIS.insituacaosefaz = 100                       
 
               ORDER BY CNH.DtEmissao

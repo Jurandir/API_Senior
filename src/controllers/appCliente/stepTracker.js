@@ -86,7 +86,7 @@ async function stepTracker( req, res ) {
                 LEFT JOIN ${Base}.dbo.CCECOLET O  ON O.CDEMPRESA        = A.CDEMPRESA   AND O.NRCOLETA = A.NRCOLETA
                 WHERE 
                       BB.insituacaosefaz = 100
-                  AND ( A.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( A.InTipoEmissao = 05 and A.InTpCTE = 00) )
+                  AND ( A.InTipoEmissao in (00,01,02,03,09,11,12,13,14) or ( A.InTipoEmissao = 05 and A.InTpCTE = 00) )
                   AND
                     ${s_where}
                 GROUP BY 

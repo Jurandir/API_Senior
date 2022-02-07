@@ -108,7 +108,7 @@ async function posicaoCargaAPP( req, res ) {
      AND (h.NrCGCCPF = '${cnpj}' OR g.NrCGCCPF   = '${cnpj}' OR i.NrCGCCPF = '${cnpj}' )
      
      -- Ajuste 30/12/2021
-     AND ( a.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( a.InTipoEmissao = 05 and a.InTpCTE = 00) )
+     AND ( a.InTipoEmissao in (00,01,02,03,09,11,12,13,14) or ( a.InTipoEmissao = 05 and a.InTpCTE = 00) )
      AND bb.insituacaosefaz = 100       
 
     ORDER BY a.dtemissao

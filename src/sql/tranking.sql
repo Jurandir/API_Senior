@@ -113,7 +113,7 @@ LEFT JOIN ${Base}.dbo.GTCVHist x  ON x.CdInscricao = '${CNPJ_cli}' and x.CdHisto
 
 WHERE ( isnull(e.InExibehist, 0) = 0 OR isnull(x.InGeraOcorrencia, 0) = 1 )
    -- Ajuste 30/12/2021
-  AND ( a.InTipoEmissao in (00,01,02,03,09,11,12,14) or ( a.InTipoEmissao = 05 and a.InTpCTE = 00) )
+  AND ( a.InTipoEmissao in (00,01,02,03,09,11,12,13,14) or ( a.InTipoEmissao = 05 and a.InTpCTE = 00) )
   AND bb.insituacaosefaz = 100            
 
   ${filtro}
