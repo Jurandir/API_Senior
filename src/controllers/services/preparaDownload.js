@@ -1,8 +1,10 @@
 const fs                   = require('fs')
 const getImagemSenior      = require('../../metodsDB/getImagemSenior')
-const server               = process.env.IP_EXTERNO || '201.49.34.12'
+const server               = process.env.IP_EXTERNO || '201.49.34.12' // 200.217.161.8
 const port                 = process.env.PORT   || '4999'
-const hostSrv              = `http://${server}:${port}/downloads/images/`
+//const hostSrv              = `http://${server}:${port}/downloads/images/`
+const hostSrv              = `https://ws.termaco.com.br/downloads/images/`    // Ajuste para acessar via HTTPS
+
 
 async function preparaDownload( req, res ) {
     let params      = req.query
