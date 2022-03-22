@@ -11,7 +11,7 @@ const server          = process.env.IP_EXTERNO || 'localhost'
 const port            = process.env.PORT   || '4999'
 
 const URL_DOWNLOAD    = `http://${server}:${port}/downloads`
-const QTDE_LINHAS_XLS = 800
+const QTDE_LINHAS_XLS = 1000
 
 async function listDadosCTRC( req, res ) {
     let userId_Token = `${req.userId}`

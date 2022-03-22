@@ -7,7 +7,7 @@ const server          = process.env.IP_EXTERNO || 'localhost'
 const port            = process.env.PORT   || '4999'
 
 const URL_DOWNLOAD    = `http://${server}:${port}/downloads`
-const QTDE_LINHAS_XLS = 800
+const QTDE_LINHAS_XLS = 1000
 
 async function posicaoCargaXLS( req, res ) {
     let userId_Token = `${req.userId}`
@@ -191,7 +191,7 @@ async function posicaoCargaXLS( req, res ) {
                LEFT JOIN ${Base}.dbo.siscep      TAR ON TAR.CdCep         = DESTI.NRCEP          -- LOCAL DESTINO
                LEFT JOIN ${Base}.dbo.CCEColet COLETA ON COLETA.CdEmpresa  = CNH.CdEmpresa  AND COLETA.NrColeta = CNH.NrColeta  -- Dados da Coleta
               
-               WHERE CNH.InTipoEmissao IN (0,11,12) -- NORMAL,REDESPACHO,SUB-CONTRATO
+               WHERE 1=1
                  AND CNH.DtEmissao >= Convert(DATETIME, '${dataini}', 120)  -- 
                  AND CNH.DtEmissao <= Convert(DATETIME, '${datafim}', 120)  -- 
                  AND (
