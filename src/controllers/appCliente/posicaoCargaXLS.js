@@ -175,6 +175,8 @@ async function posicaoCargaXLS( req, res ) {
                                      AS RECEBEDOR
               , (SELECT TOP 1 OUN.DtMovimento FROM ${Base}.dbo.GTCMovEn OUN WHERE OUN.CdOcorrencia = 100 AND  OUN.CdEmpresa = CNH.CdEmpresa AND  OUN.NrSeqControle = CNH.NrSeqControle) 
                                      AS DATAMEG
+              , FIS.CdChaveCTe                   
+              , FIS.CdChaveAcesso                      
               , CNH.CdEmpresa
               , CNH.NrSeqControle
               

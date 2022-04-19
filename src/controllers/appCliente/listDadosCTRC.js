@@ -140,8 +140,9 @@ async function listDadosCTRC( req, res ) {
                 ,     (SELECT TOP 1 ENT.DsContato FROM ${Base}.dbo.GTCMOVEN ENT 
                     WHERE ENT.CdEmpresa = CNH.CdEmpresa AND ENT.NrSeqControle = CNH.NrSeqControle 
                     AND ENT.CdOcorrencia=1)           as "Recebedor Entrega"
-                ,     CNF.CdChaveCTe                       as "Chave CT-e"
-                ,CNH.CdEmpresa
+                    ,     CNF.CdChaveCTe                       as "Chave CT-e"
+                    ,     CNF.CdChaveAcesso                    as "Acesso CT-e"
+                    ,CNH.CdEmpresa
                 ,CNH.NrSeqControle
                 FROM      ${Base}.dbo.gtcconhe CNH
                      JOIN ${Base}.dbo.sisempre EMP  ON EMP.CdEmpresa      = CNH.CdEmpresa
