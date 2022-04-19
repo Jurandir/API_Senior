@@ -1,0 +1,96 @@
+{
+    "numero": 3649102,
+    "filial": "SPO",
+    "serie": "E",
+    "dataEmissao": "2022-03-21T00:00:00.000Z",
+    "prevEntrega": "2022-03-31T00:00:00.000Z",
+    "tipoPesoM3": "VOL",
+    "pesoM3": 1,
+    "valorMercadoria": 67,
+    "valorFrete": 60.19,
+    "chave": "35220311552312000710570010036491021110161463",
+    "origemPrestacao": {
+        "nome": "OSASCO",
+        "uf": "SP",
+        "ibge": 3534401
+    },
+    "notaFiscal": {
+        "numero": 159684,
+        "serie": "1",
+        "dataEmissao": "2022-03-18T00:00:00.000Z",
+        "valor": 67,
+        "chaveNFe": "35220322860427000100550010001596841323618585"
+    },
+    "unidadeDestino": {
+        "sigla": "SLZ",
+        "nome": "TERMACO SAO LUIS",
+        "endereco": "PRACA JOAO LISBOA, 292",
+        "numero": "S/N",
+        "bairro": "CENTRO",
+        "cidade": {
+            "ibge": 2111300,
+            "nome": "SAO LUIS",
+            "uf": "MA"
+        }
+    },
+    "ocorrencias": [
+        {
+            "codigoInterno": 0,
+            "codigoProceda": 0,
+            "descricaoOcorrencia": "PROCESSO DE TRANSPORTE JA INICIADO",
+            "dataRegistro": "2022-03-22T19:37:10.000Z"
+        },
+        {
+            "codigoInterno": 101,
+            "codigoProceda": 101,
+            "descricaoOcorrencia": "EM TRANSFERENCIA ENTRE FILIAIS",
+            "dataRegistro": "2022-03-22T20:31:00.000Z"
+        },
+        {
+            "codigoInterno": 98,
+            "codigoProceda": 98,
+            "descricaoOcorrencia": "CHEGADA NA CIDADE OU FILIAL DESTINO",
+            "dataRegistro": "2022-03-28T08:13:00.000Z"
+        },
+        {
+            "codigoInterno": 100,
+            "codigoProceda": 100,
+            "descricaoOcorrencia": "EM ROTA PARA ENTREGA",
+            "dataRegistro": "2022-03-30T15:36:00.000Z"
+        },
+        {
+            "codigoInterno": 6,
+            "codigoProceda": 6,
+            "descricaoOcorrencia": "ENDERECO NAO LOCALIZADO",
+            "dataRegistro": "2022-03-31T15:58:15.000Z"
+        }
+    ],
+    "destinoPrestacao": {
+        "uf": "MA",
+        "nome": "SAO LUIS",
+        "ibge": 2111300
+    },
+    "localEntrega": {
+        "nome": "Breno Victor D. Januario",
+        "endereco": "Tv.Do Piquizeiro",
+        "numero": "10",
+        "bairro": "Novo Angelim",
+        "cidade": {
+            "nome": "SAO LUIS",
+            "uf": "MA",
+            "ibge": 2111300
+        }
+    },
+    "mapa": {
+        "codigo": "2-6201-2882",
+        "data": "2022-04-11T00:00:00.000Z",
+        "tipo": "N",
+        "veiculo": "JOM9931",
+        "motorista": "00085023558568",
+        "entrega": null
+    },
+    "documento": "SPOE3649102",
+    "conhecimento": "SPO-E-3649102",
+    "cnpj_remetente": "22860427000100",
+    "comprovantes": []
+}
