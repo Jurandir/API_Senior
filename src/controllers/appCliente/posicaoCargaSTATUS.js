@@ -29,10 +29,10 @@ async function posicaoCargaSTATUS( req, res ) {
                 ,   CON.DtEmissao         DT_EMISSAO
                 ,   CON.dtdigitacao       DT_DIGITACAO
                 FROM ${Base}.dbo.GTCCONHE CON
-                JOIN ${Base}.dbo.GTCSITCG SIT     ON SIT.CdSituacaoCarga = CON.CdSituacaoCarga
-                JOIN ${Base}.dbo.sisempre FIL ON FIL.CdEmpresa       = CON.CdEmpresa
+                LEFT JOIN ${Base}.dbo.GTCSITCG SIT ON SIT.CdSituacaoCarga = CON.CdSituacaoCarga
+                LEFT JOIN ${Base}.dbo.sisempre FIL ON FIL.CdEmpresa       = CON.CdEmpresa
                 WHERE FIL.DsApelido = '${emp}'
-                AND CON.NrDoctoFiscal = ${numero}
+                  AND CON.NrDoctoFiscal = ${numero}
                 `
     try {
         let data = await sqlQuery(wsql)
